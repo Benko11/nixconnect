@@ -1,0 +1,25 @@
+x fix bug in gallery (not posting description, examine why order can be messed up sometimes)
+x add genders, pronouns to profile
+x add flash messages to requests
+x fix article header not clickable
+x add max height option to posts (maybe separately?)
+x add search
+x add edit/delete option
+x change carousel, such that the attributes change, instead of the visible element
+x pinging posts
+! forking posts
+- adding comments?
+! add colour schemes
+x add switching themes
+x add privacy options for personal data
+x toggle private profile
+x add following
+x add password change
+x add delete account option
+- add cron task for removing an account after 30 days
+- complete first tour (privacy options, add bio, facts, change avatar and banner)
+- add tooltips
+x file upload component
+! generate feed with infinity scrolling
+x make textarea auto resizable with text
+x change font and background
