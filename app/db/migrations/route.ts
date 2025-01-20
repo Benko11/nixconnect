@@ -1,7 +1,7 @@
-import { db } from "@vercel/postgres";
+// import { db } from "@vercel/postgres";
 
-const client = await db.connect();
+// const client = await db.connect();
 
-async function users() {
-  client.sql``;
-}
+// async function users() {
+//   client.sql``;
+// }
