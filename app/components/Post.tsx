@@ -1,7 +1,7 @@
 interface PostProps {
   author: string;
   timestamp: string;
-  children: any;
+  children: React.ReactNode | React.ReactNode[];
 }
 
 export default function Post({ children, author, timestamp }: PostProps) {

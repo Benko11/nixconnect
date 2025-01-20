@@ -6,3 +6,8 @@
   font-family: "MS-DOS";
   src: url(../public/assets/fonts/Perfect_DOS_VGA_437_Win.ttf);
 }
+
+@font-face {
+  font-family: "Old Windows";
+  src: url(../public/assets/fonts/FSEX300.ttf);
+}
