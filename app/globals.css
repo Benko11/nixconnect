@@ -11,3 +11,13 @@
   font-family: "Old Windows";
   src: url(../public/assets/fonts/FSEX300.ttf);
 }
+
+:root {
+  --primary-colour: hsl(220, 70%, 70%);
+  --secondary-colour: hsl(12, 80%, 27%);
+  --accent-colour: hsl(300, 80%, 30%);
+  --neutral-colour: hsl(0, 0%, 20%);
+  --error-colour: hsl(60, 100%, 50%);
+  --light-colour: hsl(220, 5%, 90%);
+  --dark-colour: hsl(220, 5%, 10%);
+}

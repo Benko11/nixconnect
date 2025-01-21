@@ -3,10 +3,10 @@ import Post from "./components/Post";
 
 export default function Page() {
   return (
-    <div className="flex justify-center py-4">
-      <div className="w-[1100px]">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-rows-1 gap-2">
-          <div className="flex flex-col gap-2">
+    <div className="flex justify-center py-6">
+      <div className="w-[1100px] max-w-[95%]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-rows-1 gap-4">
+          <div className="flex flex-col gap-4">
             <Post author="benko11" timestamp="26 minutes ago">
               I like gay sex and that is very important to know about me and
               fucking everyooooone! aAAAAAAA
@@ -31,7 +31,7 @@ export default function Page() {
             </Post>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             <Post author="horny_benson" timestamp="3 hours ago">
               <div>
                 Fucking hell, when is Benson going to have sex with Mordecai,
@@ -61,7 +61,7 @@ export default function Page() {
             </Post>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             <Post author="chaucer666" timestamp="2 days ago">
               <div>Whan that Aprill with his shoures soote</div>
               <div>The droghte of March hath perced to the roote,</div>

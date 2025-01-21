@@ -80,6 +80,7 @@ async function createUserPreferencesTable() {
 async function createColourSchemesTable() {
   await client.sql`CREATE TABLE IF NOT EXISTS colour_schemes (
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        name VARCHAR UNIQUE NOT NULL,
         primary_colour VARCHAR NOT NULL,
         secondary_colour VARCHAR NOT NULL,
         accent_colour VARCHAR NOT NULL,
