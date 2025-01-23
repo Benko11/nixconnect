@@ -3,7 +3,7 @@ import { db } from "@vercel/postgres";
 const client = await db.connect();
 
 export async function getAllPronouns() {
-  const pronouns: any[] = [];
+  const pronouns: string[][] = [];
   const data = await client.sql`SELECT 
     p1.id AS pronoun_id, 
     p1.word AS pronoun, 
@@ -30,5 +30,6 @@ ORDER BY
   });
   pronouns.push(addingPronouns);
 
+  console.log(pronouns);
   return pronouns;
 }

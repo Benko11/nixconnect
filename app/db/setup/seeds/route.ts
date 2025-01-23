@@ -1,5 +1,4 @@
 import { db } from "@vercel/postgres";
-import bcrypt from "bcrypt";
 
 const client = await db.connect();
 
