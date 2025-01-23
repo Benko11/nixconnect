@@ -53,6 +53,7 @@ async function createPronounsTable() {
 
 async function createUserPronounsTable() {
   await client.sql`CREATE TABLE IF NOT EXISTS user_pronouns (
+      id INTEGER GENERATED ALWAYS AS IDENTITY,
       user_id UUID REFERENCES users(id) ON DELETE CASCADE,
       pronoun_id INTEGER REFERENCES pronouns(id) ON DELETE CASCADE,
       PRIMARY KEY (user_id, pronoun_id)
