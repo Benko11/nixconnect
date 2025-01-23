@@ -1,9 +1,11 @@
-import { db } from "@vercel/postgres";
+import { createClient } from "@vercel/postgres";
 
-const client = await db.connect();
+const client = createClient();
+await client.connect();
 
 export async function GET() {
   try {
+    await client.sql`BEGIN`;
     await deleteAll();
     await createGendersTable();
     await createPronounsTable();
@@ -13,10 +15,14 @@ export async function GET() {
     await createUserPreferencesTable();
     await createColourSchemesTable();
     await createPostsTable();
+    await client.sql`COMMIT`;
+    await client.end();
 
     return Response.json({ message: "Database migrated successfully" });
   } catch (error) {
     await client.sql`ROLLBACK`;
+    await client.end();
+
     return Response.json({ error }, { status: 500 });
   }
 }

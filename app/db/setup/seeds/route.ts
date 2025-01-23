@@ -1,16 +1,22 @@
-import { db } from "@vercel/postgres";
+import { createClient } from "@vercel/postgres";
 
-const client = await db.connect();
+const client = createClient();
+await client.connect();
 
 export async function GET() {
   try {
+    await client.sql`BEGIN`;
     await seedGenders();
     await seedColourSchemes();
     await seedPronouns();
+    await client.sql`COMMIT`;
+    await client.end();
 
     return Response.json({ message: "Data seeded successfully" });
   } catch (error) {
     await client.sql`ROLLBACK`;
+    await client.end();
+
     return Response.json({ error }, { status: 500 });
   }
 }

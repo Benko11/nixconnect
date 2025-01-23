@@ -1,15 +1,16 @@
 "use server";
 
 import bcrypt from "bcrypt";
-import { db } from "@vercel/postgres";
+import { createClient } from "@vercel/postgres";
 
-const client = await db.connect();
+const client = createClient();
+await client.connect();
 
 export async function createUserAccount(data: FormData) {
   const query = `INSERT INTO USERS(nickname, email, password, gender_id) VALUES($1, $2, $3, (SELECT id FROM genders WHERE name = $4)) RETURNING id;`;
 
   const dataPassword = data.get("password");
-  if (dataPassword == null) return;
+  if (dataPassword == null) throw new Error("Password is empty");
 
   const hashedPassword = await bcrypt.hash(dataPassword.toString(), 15);
   const values = [
@@ -18,27 +19,44 @@ export async function createUserAccount(data: FormData) {
     hashedPassword,
     data.get("gender"),
   ];
-  const insertedUserId = (await client.query(query, values)).rows[0].id;
 
-  const dataSelectedPronouns = data.get("selectedPrononus");
-  if (dataSelectedPronouns == null) return;
+  try {
+    await client.query("BEGIN");
 
-  const selectedPronouns: string[] = dataSelectedPronouns.toString().split(",");
+    const result = await client.query(query, values);
+    const insertedUserId = result.rows[0].id;
 
-  let queryPronouns = `INSERT INTO user_pronouns(user_id,pronoun_id) VALUES`;
-  const pronounsItems: string[] = [];
-  const pronounValues: string[] = [insertedUserId];
+    const dataSelectedPronouns = data.get("selectedPronouns");
+    if (dataSelectedPronouns == null) return;
 
-  selectedPronouns.forEach((selectedPronoun, index) => {
-    pronounsItems.push(
-      `($1,(SELECT id FROM pronouns WHERE word = $${index + 2}))`
-    );
-    pronounValues.push(selectedPronoun);
-  });
-  queryPronouns += pronounsItems.join(",");
+    const selectedPronouns: string[] = dataSelectedPronouns
+      .toString()
+      .split(",");
 
-  console.log(pronounValues);
-  console.log(queryPronouns);
+    let queryPronouns = `INSERT INTO user_pronouns(user_id, pronoun_id) VALUES`;
+    const pronounsItems: string[] = [];
+    const pronounValues: string[] = [insertedUserId];
 
-  await client.query(queryPronouns, pronounValues);
+    selectedPronouns.forEach((selectedPronoun, index) => {
+      pronounsItems.push(
+        `($1, (SELECT id FROM pronouns WHERE word = $${index + 2}))`
+      );
+      pronounValues.push(selectedPronoun);
+    });
+    queryPronouns += pronounsItems.join(",");
+
+    await client.query(queryPronouns, pronounValues);
+
+    await client.query("COMMIT");
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error("Error occurred:", err.stack);
+    } else {
+      console.error("Something happened:", err);
+    }
+
+    await client.query("ROLLBACK");
+  } finally {
+    await client.end();
+  }
 }
