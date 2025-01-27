@@ -1,12 +1,12 @@
 import Pronouns from "../components/Pronouns";
 import { getAllGenders } from "../db/genders";
 import { getAllPronouns } from "../db/pronouns";
-import { createUserAccount } from "../db/register";
+import { createUserAccount } from "../db/users";
 import { Gender } from "../types/gender";
 
 export default async function Page() {
   const genders: Gender[] = await getAllGenders();
-  const masterPronouns = await getAllPronouns();
+  const pronouns = await getAllPronouns();
 
   function displayGenders() {
     if (genders.length < 1) return <p>No genders found.</p>;
@@ -100,7 +100,7 @@ export default async function Page() {
 
             {displayGenders()}
 
-            <Pronouns pronouns={masterPronouns} />
+            <Pronouns pronouns={pronouns} />
 
             <div className="pt-4">
               <button

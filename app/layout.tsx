@@ -11,6 +11,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const signedIn = false;
   return (
     <html lang="en">
       <body className="font-display bg-default-background text-default-light">
@@ -18,9 +19,13 @@ export default function RootLayout({
           <a href="#" className="p-1">
             *NixConnect
           </a>
-          <div className="ml-auto bg-default-secondary text-default-light p-1">
-            ~benko11
-          </div>
+          {signedIn ? (
+            <div className="ml-auto bg-default-secondary text-default-light p-1">
+              ~benko11
+            </div>
+          ) : (
+            <div className="flex gap-2"></div>
+          )}
         </nav>
         <footer className="bg-default-accent fixed w-full bottom-0 flex">
           <a href="#" className="ml-auto">

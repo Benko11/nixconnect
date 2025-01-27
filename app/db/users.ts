@@ -60,3 +60,18 @@ export async function createUserAccount(data: FormData) {
     await client.end();
   }
 }
+
+export async function verifyCredentials(data: FormData) {
+  const query = `SELECT password FROM users WHERE nickname = $1;`;
+  const executed = await client.query(query, [data.get("nickname")]);
+  if (executed.rows.length < 1) throw new Error("Kill yourself");
+
+  const password = executed.rows[0].password;
+
+  const x = await bcrypt.compare(
+    data.get("password")?.toString() || "",
+    password
+  );
+
+  if (!x) throw new Error("Kill yourself");
+}
