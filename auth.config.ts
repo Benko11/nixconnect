@@ -4,5 +4,19 @@ export const authConfig = {
   pages: {
     signIn: "/login",
   },
+  callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnFeed = nextUrl.pathname.startsWith("/feed");
+
+      if (isOnFeed) {
+        if (isLoggedIn) return true;
+        return false;
+      }
+      console.log(nextUrl);
+      if (isLoggedIn) return Response.redirect(new URL("feed", nextUrl));
+      return true;
+    },
+  },
   providers: [],
 } satisfies NextAuthConfig;

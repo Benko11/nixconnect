@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "*NixConnect",
@@ -16,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-display bg-default-background text-default-light">
         <nav className="bg-default-primary fixed w-full text-default-dark flex">
-          <a href="#" className="p-1">
+          <a href="/" className="p-1">
             *NixConnect
           </a>
           {signedIn ? (
@@ -24,7 +25,14 @@ export default function RootLayout({
               ~benko11
             </div>
           ) : (
-            <div className="flex gap-2"></div>
+            <div className="flex gap-2 ml-auto items-center">
+              <Link href="/login" className="p-1">
+                Log in
+              </Link>
+              <Link href="/register" className="p-1">
+                Sign up
+              </Link>
+            </div>
           )}
         </nav>
         <footer className="bg-default-accent fixed w-full bottom-0 flex">

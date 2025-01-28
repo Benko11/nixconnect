@@ -2,6 +2,8 @@
 
 import bcrypt from "bcrypt";
 import { createClient } from "@vercel/postgres";
+import { signIn } from "@/auth";
+import { AuthError } from "next-auth";
 
 const client = createClient();
 await client.connect();
@@ -74,4 +76,22 @@ export async function verifyCredentials(data: FormData) {
   );
 
   if (!x) throw new Error("Kill yourself");
+}
+
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData
+) {
+  try {
+    await signIn("credentials", formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return "Invalid credentials";
+        default:
+          return "Something went wrong. Try again later.";
+      }
+    }
+  }
 }
