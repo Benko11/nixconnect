@@ -1,20 +1,22 @@
 "use server";
 
 import bcrypt from "bcrypt";
-import { createClient } from "@vercel/postgres";
+import { sql } from "@vercel/postgres";
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 
-const client = createClient();
-await client.connect();
-
 export async function createUserAccount(data: FormData) {
-  const query = `INSERT INTO USERS(nickname, email, password, gender_id) VALUES($1, $2, $3, (SELECT id FROM genders WHERE name = $4)) RETURNING id;`;
-
+  const nickname = (data.get("nickname") as string) || "";
+  const email = (data.get("email") as string) || "";
+  const gender = (data.get("gender") as string) || "";
   const dataPassword = data.get("password");
   if (dataPassword == null) throw new Error("Password is empty");
 
   const hashedPassword = await bcrypt.hash(dataPassword.toString(), 15);
+
+  const result =
+    await sql`INSERT INTO USERS(nickname, email, password, gender_id) VALUES(${nickname}, ${email}, ${hashedPassword}, (SELECT id FROM genders WHERE name = ${gender})) RETURNING id;`;
+
   const values = [
     data.get("nickname"),
     data.get("email"),
@@ -23,9 +25,9 @@ export async function createUserAccount(data: FormData) {
   ];
 
   try {
-    await client.query("BEGIN");
+    // await client.query("BEGIN");
 
-    const result = await client.query(query, values);
+    // const result = await client.query(query, values);
     const insertedUserId = result.rows[0].id;
 
     const dataSelectedPronouns = data.get("selectedPronouns");

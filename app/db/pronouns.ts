@@ -30,6 +30,5 @@ ORDER BY
   });
   pronouns.push(addingPronouns);
 
-  console.log(pronouns);
   return pronouns;
 }

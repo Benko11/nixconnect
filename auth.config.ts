@@ -13,7 +13,6 @@ export const authConfig = {
         if (isLoggedIn) return true;
         return false;
       }
-      console.log(nextUrl);
       if (isLoggedIn) return Response.redirect(new URL("feed", nextUrl));
       return true;
     },

@@ -24,7 +24,6 @@ export const { auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       async authorize(credentials) {
-        console.log("Credentials:", credentials);
         const parsedCredentials = z
           .object({
             nickname: z.string().min(2),

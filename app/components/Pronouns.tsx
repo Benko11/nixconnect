@@ -15,7 +15,6 @@ export default function Pronouns({ pronouns }: PronounsProps) {
       const correctPronouns = pronouns.filter((p) =>
         p.includes(selectedPronouns[0])
       );
-      console.log(correctPronouns.join("/"));
       return correctPronouns.join();
     }
     if (selectedPronouns.length === 2)
