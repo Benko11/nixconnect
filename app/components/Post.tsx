@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface PostProps {
   author: string;
   timestamp: string;
@@ -12,9 +14,9 @@ export default function Post({ children, author, timestamp }: PostProps) {
       </div>
       <div className="p-4 bg-default-neutral">
         <div className="flex text-sm">
-          <a href="#" className="text-default-primary">
+          <Link href="#" className="text-default-primary">
             ~{author}
-          </a>
+          </Link>
           <div className="ml-auto">{timestamp}</div>
         </div>
       </div>

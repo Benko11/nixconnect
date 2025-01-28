@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Pronouns from "../components/Pronouns";
 import { getAllGenders } from "../db/genders";
 import { getAllPronouns } from "../db/pronouns";
@@ -42,9 +43,9 @@ export default async function Page() {
     <div className="flex justify-center py-6">
       <div className="w-[990px] max-w-[95%]">
         <h2 className="text-2xl">
-          <a href="#" className="text-default-primary">
+          <Link href="#" className="text-default-primary">
             Home
-          </a>{" "}
+          </Link>{" "}
           / Create account
         </h2>
         <div className="bg-default-neutral p-4">

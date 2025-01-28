@@ -1,11 +1,13 @@
+import Link from "next/link";
+
 interface HashtagProps {
   name: string;
 }
 
 export default function Hashtag({ name }: HashtagProps) {
   return (
-    <a href={`#${name}`} className="text-default-primary">
+    <Link href={`#${name}`} className="text-default-primary">
       #{name}
-    </a>
+    </Link>
   );
 }
