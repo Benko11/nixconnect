@@ -1,34 +1,36 @@
-import { db } from "@vercel/postgres";
+import { PrismaClient } from "@prisma/client";
 
-const client = await db.connect();
+const prisma = new PrismaClient();
 
 export async function getAllPronouns() {
-  const pronouns: string[][] = [];
-  const data = await client.sql`SELECT 
-    p1.id AS pronoun_id, 
-    p1.word AS pronoun, 
-    p2.word AS master_pronoun
-FROM 
-    pronouns p1
-LEFT JOIN 
-    pronouns p2 ON p1.master_pronoun = p2.id
-ORDER BY 
-    COALESCE(p1.master_pronoun, p1.id),
-    p1.master_pronoun IS NOT NULL,
-    p1.word;
-`;
+  try {
+    const pronouns = await prisma.pronoun.findMany({
+      select: {
+        id: true,
+        word: true,
+        masterPronoun: { select: { word: true } },
+      },
+      orderBy: { id: "asc" },
+    });
 
-  let addingPronouns: string[] = [];
-  data.rows.map((row) => {
-    if (row.master_pronoun == null) {
-      if (addingPronouns.length > 0) {
-        pronouns.push(addingPronouns);
-        addingPronouns = [];
+    const returnPronouns: string[][] = [];
+    let addingPronouns: string[] = [];
+    pronouns.map((pronoun) => {
+      if (pronoun.masterPronoun == null) {
+        if (addingPronouns.length > 0) {
+          returnPronouns.push(addingPronouns);
+          addingPronouns = [];
+        }
       }
-    }
-    addingPronouns.push(row.pronoun);
-  });
-  pronouns.push(addingPronouns);
+      addingPronouns.push(pronoun.word);
+    });
+    returnPronouns.push(addingPronouns);
 
-  return pronouns;
+    return returnPronouns;
+  } catch (error) {
+    console.error("Pronouns error", error);
+    throw new Error("Something happened");
+  }
+
+  return [];
 }

@@ -4,8 +4,10 @@ import { getAllGenders } from "../db/genders";
 import { getAllPronouns } from "../db/pronouns";
 import { createUserAccount } from "../db/users";
 import { Gender } from "../types/gender";
+import { Suspense } from "react";
 
 export default async function Page() {
+  // @ts-ignore
   const genders: Gender[] = await getAllGenders();
   const pronouns = await getAllPronouns();
 
@@ -99,9 +101,17 @@ export default async function Page() {
               </div>
             </div>
 
-            {displayGenders()}
+            <Suspense
+              fallback={<p>Something went wrong with displaying genders</p>}
+            >
+              {displayGenders()}
+            </Suspense>
 
-            <Pronouns pronouns={pronouns} />
+            <Suspense
+              fallback={<p>Something went wrong with displaying pronouns.</p>}
+            >
+              <Pronouns pronouns={pronouns} />
+            </Suspense>
 
             <div className="pt-4">
               <button

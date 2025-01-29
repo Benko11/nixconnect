@@ -1,10 +1,14 @@
-import { db } from "@vercel/postgres";
-import { Gender } from "../types/gender";
+import { PrismaClient } from "@prisma/client";
 
-const client = await db.connect();
+const prisma = new PrismaClient();
 
 export async function getAllGenders() {
-  const data =
-    await client.sql`SELECT id,name,description FROM genders ORDER BY id`;
-  return [...data.rows] as Gender[];
+  try {
+    const genders = await prisma.gender.findMany({ orderBy: { id: "asc" } });
+    if (genders == null) throw new Error("Something happened");
+
+    return genders;
+  } catch (err) {
+    console.error("Gender error:", err);
+  }
 }
