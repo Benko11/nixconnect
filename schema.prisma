@@ -18,7 +18,7 @@ model Gender {
 
 model Pronoun {
   id              Int      @id @default(autoincrement())
-  word            String   @db.VarChar(255)
+  word            String @unique  @db.VarChar(255)
   masterPronoun   Pronoun? @relation("MasterPronoun", fields: [masterPronounId], references: [id])
   masterPronounId Int?
 
