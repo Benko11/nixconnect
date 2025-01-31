@@ -4,127 +4,61 @@ import { protectRoute, requireBasicInfo, retrieveClient } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import { makePost } from "@/app/actions";
+import React from "react";
 
 export default async function Page() {
-  await protectRoute();
-  await requireBasicInfo();
+  // await protectRoute();
+  // await requireBasicInfo();
 
-  // const posts = [
-  //   {
-  //     author: "benko11",
-  //     timestamp: "26 minutes ago",
-  //     content: (
-  //       <>
-  //         I like gay sex and that is very important to know about me and fucking
-  //         everyooooone! aAAAAAAA
-  //       </>
-  //     ),
-  //   },
-  //   {
-  //     author: "horny_benson",
-  //     timestamp: "3 hours ago",
-  //     content: (
-  //       <>
-  //         <div>
-  //           Fucking hell, when is Benson going to have sex with Mordecai, um,
-  //           CANONNICALLY? I CANNOT BEAR IT NOT EXISTING
-  //         </div>
-  //         <div>
-  //           {" "}
-  //           I am so sad about this shit not happening yet, like what the fuck is
-  //           this shit even?!
-  //         </div>
-  //       </>
-  //     ),
-  //   },
-  //   {
-  //     author: "chaucer666",
-  //     timestamp: "2 days ago",
-  //     content: (
-  //       <>
-  //         Whan Zephirus eek with his sweete breeth\n Inspired hath in every holt
-  //         and heeth\n The tendre croppes, and the yonge sonne\n Hath in the Ram
-  //         his half cours yronne,
-  //       </>
-  //     ),
-  //   },
-  //   {
-  //     author: "horny_benson",
-  //     timestamp: "41 minutes ago",
-  //     content: (
-  //       <>
-  //         <img
-  //           src="https://www.skwigly.co.uk/wp-content/uploads/2020/09/Regular-show-A1-poster-au-e1447099261159-1280x902-1-e1600348321444.jpg"
-  //           alt="Regular Sex"
-  //         />
-  //         When are they going to have sex together?
-  //       </>
-  //     ),
-  //   },
-  //   {
-  //     author: "chaucer666",
-  //     timestamp: "5 hours ago",
-  //     content: (
-  //       <>
-  //         <div>Whan Zephirus eek with his sweete breeth</div>
-  //         <div>Inspired hath in every holt and heeth</div>
-  //         <div>The tendre croppes, and the yonge sonne</div>
-  //         <div>Hath in the Ram his half cours yronne,</div>
-  //       </>
-  //     ),
-  //   },
-  //   {
-  //     author: "benko11",
-  //     timestamp: "6 days ago",
-  //     content: (
-  //       <>
-  //         When is JG Quintel releasing new episodes of{" "}
-  //         <Hashtag name="RegularShow" />
-  //         ?????
-  //       </>
-  //     ),
-  //   },
-  //   {
-  //     author: "chaucer666",
-  //     timestamp: "8 days ago",
-  //     content: (
-  //       <>
-  //         <div>And smale foweles maken melodye,</div>
-  //         <div>That slepen al the nyght with open ye</div>
-  //         <div>(So priketh hem Nature in hir corages),</div>
-  //         <div>Thanne longen folk to goon on pilgrimages,</div>
-  //       </>
-  //     ),
-  //   },
-  //   {
-  //     author: "benko11",
-  //     timestamp: "9 days ago",
-  //     content: (
-  //       <>
-  //         <img
-  //           src="https://static.tvtropes.org/pmwiki/pub/images/regularshowhq.jpg"
-  //           alt="Skips be dripping"
-  //         />
-  //         <div>
-  //           I also lift weights like <Hashtag name="Skips" /> does!
-  //         </div>
-  //       </>
-  //     ),
-  //   },
-  //   {
-  //     author: "hambone_king",
-  //     timestamp: "7 days ago",
-  //     content: (
-  //       <>
-  //         <img
-  //           src="https://play-images-prod-ctf.tech.tvnz.co.nz/api/v1/web/image/7gPbWAUxEKJdEQt3SfRtZF/82408d005424c415c7db335b4f2361d6/RegularShow_showtile.png.82408d005424c415c7db335b4f2361d6.jpg?width=1200&height=630"
-  //           alt="Regular Show"
-  //         />
-  //         <div>Me and Mordecai mowing the lawn, haha</div>
-  //       </>
-  //     ),
-  //   },
-  // ];
+  function handleNewLines(content: string) {
+    const formattedContent = content.split("\n").map((line, index) => (
+      <span key={index}>
+        {line}
+        <br />
+      </span>
+    ));
+
+    return <div>{formattedContent}</div>;
+  }
+
+  function renderPlaceholder() {
+    const words = [
+      "interesting",
+      "inspiring",
+      "amazing",
+      "gay",
+      "captivating",
+      "wholesome",
+      "honest",
+      "unique",
+      "marvellous",
+      "cute",
+    ];
+
+    const randomIndex = Math.floor(Math.random() * words.length);
+    return `Share something ${words[randomIndex]}...`;
+  }
+
+  function getDeltaTime(timestamp: string) {
+    const timestamp1 = new Number(new Date(timestamp));
+    const timestamp2 = new Number(new Date());
+    const deltaTime = +timestamp2 - +timestamp1;
+
+    const seconds = Math.floor(deltaTime / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${Math.ceil(days)} day${days > 1 ? "s" : ""}`;
+    } else if (hours > 0) {
+      return `${Math.ceil(hours)} hour${hours > 1 ? "s" : ""}`;
+    } else if (minutes > 0) {
+      return `${Math.ceil(minutes)} minute${minutes > 1 ? "s" : ""}`;
+    } else {
+      return `${Math.ceil(seconds)} second${seconds > 1 ? "s" : ""}`;
+    }
+  }
 
   const supabase = await createClient();
   const userId = (await supabase.auth.getUser()).data.user?.id;
@@ -132,7 +66,7 @@ export default async function Page() {
   const { data } = await supabase
     .from("posts")
     .select("*")
-    .order("updated_at", { ascending: true });
+    .order("updated_at", { ascending: false });
 
   const posts = await Promise.all(
     // @ts-ignore
@@ -148,8 +82,9 @@ export default async function Page() {
       return {
         id: row.id,
         author,
-        content: row.content,
-        timestamp: row.created_at,
+        content: handleNewLines(row.content),
+        timestamp: getDeltaTime(row.created_at) + " ago",
+        createdAt: row.created_at,
       };
     })
   );
@@ -161,9 +96,14 @@ export default async function Page() {
 
     if (posts == null) return;
 
-    posts.forEach(({ id, author, content, timestamp }, index) => {
+    posts.forEach(({ id, author, content, timestamp, createdAt }, index) => {
       const post = (
-        <Post author={author} timestamp={timestamp}>
+        <Post
+          key={id}
+          author={author}
+          createdAt={createdAt}
+          timestamp={timestamp}
+        >
           {content}
         </Post>
       );
@@ -178,11 +118,11 @@ export default async function Page() {
     });
 
     return (
-      <>
+      <React.Fragment>
         <div className="flex flex-col gap-4">{column1Posts.map((p) => p)}</div>
         <div className="flex flex-col gap-4">{column2Posts.map((p) => p)}</div>
         <div className="flex flex-col gap-4">{column3Posts.map((p) => p)}</div>
-      </>
+      </React.Fragment>
     );
   }
 
@@ -193,7 +133,7 @@ export default async function Page() {
           <textarea
             name="post"
             id="post"
-            placeholder="Share something interesting..."
+            placeholder={renderPlaceholder()}
             className="resize-none aspect-[9/2] bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-95 focus:opacity-95 w-full"
           ></textarea>
           <button className="bg-default-primary text-default-dark py-2 w-full -mt-2">
