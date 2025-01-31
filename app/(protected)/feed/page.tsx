@@ -129,7 +129,10 @@ export default async function Page() {
   const supabase = await createClient();
   const userId = (await supabase.auth.getUser()).data.user?.id;
 
-  const { data } = await supabase.from("posts").select("*").order("updated_at");
+  const { data } = await supabase
+    .from("posts")
+    .select("*")
+    .order("updated_at", { ascending: true });
 
   const posts = await Promise.all(
     // @ts-ignore
