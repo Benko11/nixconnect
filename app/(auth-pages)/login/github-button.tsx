@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
+import { redirect } from "next/navigation";
 
 export default function GithubButton() {
   async function handleGithub(e: any) {
@@ -11,6 +12,8 @@ export default function GithubButton() {
       options: { redirectTo: `https://nixconnect.vercel.app/auth/callback` },
       provider: "github",
     });
+
+    redirect("/feed");
   }
 
   return (
