@@ -62,6 +62,7 @@ export default async function Page() {
 
   const supabase = await createClient();
   const userId = (await supabase.auth.getUser()).data.user?.id;
+  const isSignedIn = userId != null;
 
   const { data } = await supabase
     .from("posts")
@@ -128,19 +129,21 @@ export default async function Page() {
 
   return (
     <UltraWideLayout>
-      <div className="flex flex-col items-center">
-        <form className="pb-8 w-[60%]" action={makePost}>
-          <textarea
-            name="post"
-            id="post"
-            placeholder={renderPlaceholder()}
-            className="resize-none aspect-[9/2] bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-95 focus:opacity-95 w-full"
-          ></textarea>
-          <button className="bg-default-primary text-default-dark py-2 w-full -mt-2">
-            Post
-          </button>
-        </form>
-      </div>
+      {isSignedIn && (
+        <div className="flex flex-col items-center">
+          <form className="pb-8 w-[60%]" action={makePost}>
+            <textarea
+              name="post"
+              id="post"
+              placeholder={renderPlaceholder()}
+              className="resize-none aspect-[9/2] bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-95 focus:opacity-95 w-full"
+            ></textarea>
+            <button className="bg-default-primary text-default-dark py-2 w-full -mt-2">
+              Post
+            </button>
+          </form>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-rows-1 gap-4">
         {renderPosts()}

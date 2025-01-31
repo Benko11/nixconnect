@@ -7,7 +7,7 @@ export default {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    fontFamily: { display: ["MS-DOS"] },
+    fontFamily: { display: ["MS-DOS", "monospace"] },
     colors: {
       default: {
         primary: "var(--primary-colour)",
