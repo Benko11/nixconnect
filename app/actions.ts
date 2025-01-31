@@ -248,3 +248,16 @@ export async function confirmInformation(formData: FormData) {
 
   return redirect("/feed");
 }
+
+export async function makePost(formData: FormData) {
+  const supabase = await createClient();
+  const userId = (await supabase.auth.getUser()).data.user?.id;
+  if (userId == null) return;
+
+  await supabase.from("posts").insert({
+    author_id: userId,
+    content: formData.get("post"),
+  });
+
+  return redirect("/feed");
+}
