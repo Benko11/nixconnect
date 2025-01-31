@@ -8,7 +8,7 @@ export default function GithubButton() {
 
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
-      options: { redirectTo: `http://localhost:3301/auth/callback` },
+      options: { redirectTo: `https://nixconnect.vercel.app/auth/callback` },
       provider: "github",
     });
   }
