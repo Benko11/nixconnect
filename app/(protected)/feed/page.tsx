@@ -6,20 +6,41 @@ import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import { makePost } from "@/app/actions";
 import React from "react";
 
+export function handleNewLines(content: string) {
+  const formattedContent = content.split("\n").map((line, index) => (
+    <span key={index}>
+      {line}
+      <br />
+    </span>
+  ));
+
+  return <div>{formattedContent}</div>;
+}
+
+export function getDeltaTime(timestamp: string) {
+  const timestamp1 = new Number(new Date(timestamp));
+  const timestamp2 = new Number(new Date());
+  const deltaTime = +timestamp2 - +timestamp1;
+
+  const seconds = Math.floor(deltaTime / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) {
+    return `${Math.ceil(days)} day${days > 1 ? "s" : ""}`;
+  } else if (hours > 0) {
+    return `${Math.ceil(hours)} hour${hours > 1 ? "s" : ""}`;
+  } else if (minutes > 0) {
+    return `${Math.ceil(minutes)} minute${minutes > 1 ? "s" : ""}`;
+  } else {
+    return `${Math.ceil(seconds)} second${seconds > 1 ? "s" : ""}`;
+  }
+}
+
 export default async function Page() {
   // await protectRoute();
   // await requireBasicInfo();
-
-  function handleNewLines(content: string) {
-    const formattedContent = content.split("\n").map((line, index) => (
-      <span key={index}>
-        {line}
-        <br />
-      </span>
-    ));
-
-    return <div>{formattedContent}</div>;
-  }
 
   function renderPlaceholder() {
     const words = [
@@ -39,41 +60,20 @@ export default async function Page() {
     return `Share something ${words[randomIndex]}...`;
   }
 
-  function getDeltaTime(timestamp: string) {
-    const timestamp1 = new Number(new Date(timestamp));
-    const timestamp2 = new Number(new Date());
-    const deltaTime = +timestamp2 - +timestamp1;
-
-    const seconds = Math.floor(deltaTime / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0) {
-      return `${Math.ceil(days)} day${days > 1 ? "s" : ""}`;
-    } else if (hours > 0) {
-      return `${Math.ceil(hours)} hour${hours > 1 ? "s" : ""}`;
-    } else if (minutes > 0) {
-      return `${Math.ceil(minutes)} minute${minutes > 1 ? "s" : ""}`;
-    } else {
-      return `${Math.ceil(seconds)} second${seconds > 1 ? "s" : ""}`;
-    }
-  }
-
   const supabase = await createClient();
   const userId = (await supabase.auth.getUser()).data.user?.id;
   const isSignedIn = userId != null;
 
-  const { data } = await supabase
+  const { data: posts } = await supabase
     .from("posts")
     .select("*")
     .order("updated_at", { ascending: false });
 
-  const posts = await Promise.all(
+  const postsArray = await Promise.all(
     // @ts-ignore
-    data.map(async (row) => {
+    posts.map(async (row) => {
       const { data: authorData, error } = await supabase
-        .from("user_details")
+        .from("users")
         .select("nickname")
         .eq("id", row.author_id)
         .single();
@@ -97,26 +97,28 @@ export default async function Page() {
 
     if (posts == null) return;
 
-    posts.forEach(({ id, author, content, timestamp, createdAt }, index) => {
-      const post = (
-        <Post
-          key={id}
-          author={author}
-          createdAt={createdAt}
-          timestamp={timestamp}
-        >
-          {content}
-        </Post>
-      );
+    postsArray.forEach(
+      ({ id, author, content, timestamp, createdAt }, index) => {
+        const post = (
+          <Post
+            key={id}
+            author={author}
+            createdAt={createdAt}
+            timestamp={timestamp}
+          >
+            {content}
+          </Post>
+        );
 
-      if (index % 3 === 0) {
-        column1Posts.push(post);
-      } else if (index % 3 === 1) {
-        column2Posts.push(post);
-      } else if (index % 3 === 2) {
-        column3Posts.push(post);
+        if (index % 3 === 0) {
+          column1Posts.push(post);
+        } else if (index % 3 === 1) {
+          column2Posts.push(post);
+        } else if (index % 3 === 2) {
+          column3Posts.push(post);
+        }
       }
-    });
+    );
 
     return (
       <React.Fragment>

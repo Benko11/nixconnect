@@ -49,10 +49,10 @@ export async function retrieveClient() {
   }
 
   const { data: me, error } = await supabase
-    .from("user_details")
+    .from("users")
     .select("*")
     .eq("id", user.id)
-    ?.single();
+    .maybeSingle();
 
   if (error) console.log(error);
 
@@ -61,7 +61,38 @@ export async function retrieveClient() {
 
 export async function requireBasicInfo() {
   const x = await retrieveClient();
-  if (x == null || x.length < 1) {
+  if (x == null) {
     return redirect("/first-time");
   }
+}
+
+export async function retrievePronouns(pronouns: string[]) {
+  if (pronouns.length > 2) {
+    return "any";
+  }
+  if (pronouns.length === 2) {
+    return pronouns.join("/");
+  }
+
+  if (pronouns.length === 1) {
+    const supabase = await createClient();
+    const { data: pronounId } = await supabase
+      .from("pronouns")
+      .select("id")
+      .eq("word", pronouns[0])
+      .maybeSingle();
+    if (pronounId == null) throw new Error("Something went wrong");
+
+    const { data: additionalPronouns } = await supabase
+      .from("pronouns")
+      .select("word")
+      .eq("master_pronoun_id", pronounId.id);
+    if (additionalPronouns == null) throw new Error("Something went wrong");
+
+    const additionalPronounsArray = additionalPronouns.map((p) => p.word);
+
+    return pronouns[0] + "/" + additionalPronounsArray.join("/");
+  }
+
+  return;
 }

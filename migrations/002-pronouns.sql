@@ -7,7 +7,7 @@ CREATE TABLE pronouns (
     CONSTRAINT "Master_pronoun_id_key" FOREIGN KEY (master_pronoun_id) REFERENCES pronouns(id)
 );
 
-CREATE UNIQUE INDEX "pronouns_word_key" ON pronouns(word);
+CREATE UNIQUE INDEX IF NOT EXISTS "pronouns_word_key" ON pronouns(word);
 
 INSERT INTO pronouns(id,word,master_pronoun_id) VALUES
 (1, 'he', NULL),
@@ -15,4 +15,5 @@ INSERT INTO pronouns(id,word,master_pronoun_id) VALUES
 (3, 'she', NULL),
 (4, 'her', 3),
 (5, 'they', NULL),
-(6, 'them', 5);
+(6, 'them', 5)
+ON CONFLICT (id) DO NOTHING;

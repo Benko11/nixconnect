@@ -20,7 +20,7 @@ export default function Post({
       </div>
       <div className="p-4 bg-default-neutral">
         <div className="flex text-sm">
-          <Link href="#" className="text-default-primary">
+          <Link href={`/profile/~${author}`} className="text-default-primary">
             ~{author}
           </Link>
           <div className="ml-auto" title={createdAt}>

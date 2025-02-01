@@ -194,7 +194,7 @@ export async function confirmInformation(formData: FormData) {
   if (gender == null) return;
   console.log(gender.id, userId);
 
-  await supabase.from("user_details").insert({
+  await supabase.from("users").insert({
     id: userId,
     nickname: formData.get("nickname"),
     gender_id: gender.id,

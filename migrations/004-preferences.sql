@@ -1,4 +1,4 @@
-CREATE TABLE preferences (
+CREATE TABLE IF NOT EXISTS preferences (
     title VARCHAR UNIQUE NOT NULL,
     identifier VARCHAR UNIQUE NOT NULL,
     defaultValue BIGINT NOT NULL,
