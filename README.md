@@ -1,104 +1,60 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# \*NixConnect
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+This is a project created by me. Yes, me. Why should you care? I don't know, but social media has been a toxic hellstew of negativity and apocalyptic scenarios, so I did my part in mitigating by creating \*NixConnect! Yes, the name implies a certain demographic in mind, but think about it like this - computers should be returned back to their basics. Actually, not really. Returning to basics would have meant I would have had to write \*NixConnect in C. But it's whatever, this is your space of peace and quiet to come to after roaming the safari of the interwebs all day long :)
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+I am not sure if I have put a licence on this baby, I am going to check that out after finishing this README file.
 
-## Features
+## Changelog
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+**2025-01-31**
+\*NixConnect only supports GitHub authentication for the time being, there are no validations on the server side, please keep that in mind. There's a lot more to come!
 
-## Demo
+## Technical specifications
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+- NextJS (with TypeScript)
+- Supabase (with PostgreSQL database)
+- ❤️🧡💛💚💙💜
 
-## Deploy to Vercel
+## FAQ
 
-Vercel deployment will guide you through creating a Supabase account and project.
+No one has ever asked anything about this project, except for maybe *Why?*.
+- Because retro stuff is amazing, old computers are amazing and I do not owe explaining myself to you any more.
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+Who are your favourite cartoon characters?
+- That's confidential. ⁉️
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+Can I run \*NixConnect on my own computer?
+- Go ahead, it's not like I am going to stop you.
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+Why is it called \*NixConnect?
+- Because it is for the people who love \*NIX stuff and want to stay connected.
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+Why is it not in the Fediverse?
+- That's a good question.
 
-## Clone and run locally
+Does \*NixConnect contain nuts?
+- What are you, nuts? 🥜
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+Why does your GitHub bio say LGBTQ+ forever?
+- Because we're here, we're queer, get used to it, etc.
 
-2. Create a Next.js app using the Supabase Starter template npx command
+Why did the chicken cross the road?
+- To check out the news on \*NixConnect. 🐔💻
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+No one is ever going to read this FAQ.
+- That means I can write whatever I want in here. 🧠
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+Why did you choose to make \*NixConnect in J\*vaScript?
+- Because it's an amazing language and it was the easiest to deploy, also, it was free to deploy with it.
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+What's your idea of a perfect date?
+- Arch Linux install. Never mind, I'm using Ubuntu. Never mind, YYYY-MM-DD.
 
-3. Use `cd` to change into the app's directory
+What is gender?
+- Some bullshit to sell more toilets. 🚽
 
-   ```bash
-   cd with-supabase-app
-   ```
+Does this project have a future?
+- I hope so, I went to hell and back to finish it. 🔥
 
-4. Rename `.env.example` to `.env.local` and update the following:
-
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
-
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
-
-5. You can now run the Next.js local development server:
-
-   ```bash
-   npm run dev
-   ```
-
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
-
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
-
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
-
-## Feedback and issues
-
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
-
-## More Supabase examples
-
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+Hotel?
+- Expensive.
