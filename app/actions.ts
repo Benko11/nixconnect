@@ -185,7 +185,8 @@ export const getAllPronouns = async (): Promise<string[][]> => {
 
 export async function confirmInformation(formData: FormData) {
   const supabase = await createClient();
-  const userId = (await supabase.auth.getUser()).data.user?.id;
+  const { data: userObject } = await supabase.auth.getUser();
+  const userId = userObject.user?.id;
   const { data: gender } = await supabase
     .from("genders")
     .select("id")
@@ -198,6 +199,7 @@ export async function confirmInformation(formData: FormData) {
     id: userId,
     nickname: formData.get("nickname"),
     gender_id: gender.id,
+    avatar_url: userObject.user?.user_metadata.avatar_url,
   });
 
   const getPronounId = async (pronounWord: string) => {

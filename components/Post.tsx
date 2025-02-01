@@ -16,7 +16,12 @@ export default function Post({
   return (
     <div className="select-none flex flex-col gap-0.5">
       <div className="p-4 bg-default-neutral pb-6">
-        <div className="flex flex-col gap-2">{children}</div>
+        <div
+          className="flex flex-col gap-2 "
+          style={{ overflowWrap: "break-word" }}
+        >
+          {children}
+        </div>
       </div>
       <div className="p-4 bg-default-neutral">
         <div className="flex text-sm">
