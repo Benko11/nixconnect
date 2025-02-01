@@ -6,6 +6,9 @@ I am not sure if I have put a licence on this baby, I am going to check that out
 
 ## Changelog
 
+**2025-02-01**
+Addition of user profiles, avatars are now properly integrated with the user's profile
+
 **2025-01-31**
 \*NixConnect only supports GitHub authentication for the time being, there are no validations on the server side, please keep that in mind. There's a lot more to come!
 
@@ -17,44 +20,58 @@ I am not sure if I have put a licence on this baby, I am going to check that out
 
 ## FAQ
 
-No one has ever asked anything about this project, except for maybe *Why?*.
+No one has ever asked anything about this project, except for maybe _Why?_.
+
 - Because retro stuff is amazing, old computers are amazing and I do not owe explaining myself to you any more.
 
 Who are your favourite cartoon characters?
+
 - That's confidential. ⁉️
 
 Can I run \*NixConnect on my own computer?
+
 - Go ahead, it's not like I am going to stop you.
 
 Why is it called \*NixConnect?
+
 - Because it is for the people who love \*NIX stuff and want to stay connected.
 
 Why is it not in the Fediverse?
+
 - That's a good question.
 
 Does \*NixConnect contain nuts?
+
 - What are you, nuts? 🥜
 
 Why does your GitHub bio say LGBTQ+ forever?
+
 - Because we're here, we're queer, get used to it, etc.
 
 Why did the chicken cross the road?
+
 - To check out the news on \*NixConnect. 🐔💻
 
 No one is ever going to read this FAQ.
+
 - That means I can write whatever I want in here. 🧠
 
 Why did you choose to make \*NixConnect in J\*vaScript?
+
 - Because it's an amazing language and it was the easiest to deploy, also, it was free to deploy with it.
 
 What's your idea of a perfect date?
+
 - Arch Linux install. Never mind, I'm using Ubuntu. Never mind, YYYY-MM-DD.
 
 What is gender?
+
 - Some bullshit to sell more toilets. 🚽
 
 Does this project have a future?
+
 - I hope so, I went to hell and back to finish it. 🔥
 
 Hotel?
+
 - Expensive.

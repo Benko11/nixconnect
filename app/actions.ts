@@ -193,7 +193,6 @@ export async function confirmInformation(formData: FormData) {
     .eq("name", formData.get("gender"))
     .single();
   if (gender == null) return;
-  console.log(gender.id, userId);
 
   await supabase.from("users").insert({
     id: userId,

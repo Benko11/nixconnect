@@ -31,9 +31,6 @@ export default async function Page() {
   }
 
   const supabase = await createClient();
-  console.log(
-    (await supabase.auth.getUser()).data.user?.user_metadata.avatar_url
-  );
   const userId = (await supabase.auth.getUser()).data.user?.id;
   const isSignedIn = userId != null;
 
