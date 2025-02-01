@@ -16,3 +16,20 @@
   --light-colour: hsl(220, 5%, 90%);
   --dark-colour: hsl(220, 5%, 10%);
 }
+
+.markdown-block {
+  @apply flex flex-col gap-2;
+}
+
+.markdown-block h1 {
+  @apply hidden;
+}
+
+.markdown-block h2 {
+  @apply text-xl pb-1 pt-2;
+}
+
+.markdown-block ul li {
+  list-style-type: "-";
+  @apply ml-8 pl-4;
+}

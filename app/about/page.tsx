@@ -1,7 +1,18 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
+import fs from "fs/promises";
+import { marked } from "marked";
 
 export default async function Page() {
+  const path = process.cwd() + "/README.md";
+
+  function convertMarkdown() {
+    const rawMarkup = marked.parse(x);
+    return { __html: rawMarkup };
+  }
+
+  const x = await fs.readFile(path, "utf-8");
+  console.log(x);
   return (
     <NarrowLayout>
       <div>
@@ -19,19 +30,10 @@ export default async function Page() {
         </a>{" "}
         on GitHub
       </div>
-
-      <h3 className="text-xl">Features</h3>
-      <div>Things that work:</div>
-      <ul>
-        <li>user authentication (GitHub only)</li>
-        <li>signing out</li>
-        <li>sending posts in pure plain text and with new line breaks</li>
-        <li>single user login (no multiple users)</li>
-      </ul>
-      <div>
-        Be careful, as currently there are no safeguards for sending user input,
-        so be nice!
-      </div>
+      <div
+        dangerouslySetInnerHTML={convertMarkdown()}
+        className="markdown-block py-4"
+      ></div>
     </NarrowLayout>
   );
 }
