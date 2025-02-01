@@ -4,14 +4,16 @@ import React from "react";
 interface BreadcrumbsProps {
   hierachy: { title: string; href: string }[];
   currentTitle: string;
+  classes?: string;
 }
 
 export default function Breadcrumbs({
   hierachy,
   currentTitle,
+  classes = "",
 }: BreadcrumbsProps) {
   return (
-    <h2 className="text-2xl">
+    <h2 className={`text-2xl ${classes}`}>
       {hierachy.map((item) => (
         <React.Fragment key={item.href}>
           <Link href={item.href} className="text-default-primary">

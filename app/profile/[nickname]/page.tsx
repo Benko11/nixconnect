@@ -1,5 +1,6 @@
 import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
 import { handleNewLines } from "@/app/(protected)/feed/handleNewLines";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
 import { createClient } from "@/utils/supabase/server";
@@ -83,6 +84,11 @@ export default async function Page({
   return (
     <>
       <NarrowLayout>
+        <Breadcrumbs
+          currentTitle="User profile"
+          hierachy={[{ title: "Home", href: "/" }]}
+          classes="pb-4"
+        />
         <div className="flex gap-2">
           {userDetails.avatar_url && (
             <img
