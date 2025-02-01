@@ -1,4 +1,5 @@
-import { getDeltaTime, handleNewLines } from "@/app/(protected)/feed/page";
+import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
+import { handleNewLines } from "@/app/(protected)/feed/handleNewLines";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
 import { createClient } from "@/utils/supabase/server";
