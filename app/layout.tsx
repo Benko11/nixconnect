@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { signOutAction } from "./actions";
 import { retrieveClient } from "@/utils/utils";
+import DisableRightClick from "./disable-right-click";
 
 export const metadata: Metadata = {
   title: "*NixConnect",
@@ -55,6 +56,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="font-display bg-default-background text-default-light">
+        <DisableRightClick />
         <nav
           className="bg-default-primary fixed w-full text-default-dark flex "
           style={{ zIndex: 1000 }}
