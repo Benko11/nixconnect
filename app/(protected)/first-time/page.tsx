@@ -13,8 +13,6 @@ import { Suspense } from "react";
 export default async function Page() {
   await protectRoute();
 
-  const genders = await getAllGenders();
-  const pronouns = await getAllPronouns();
   const hierarchy = [{ title: "Home", href: "/feed" }];
 
   return (
@@ -43,12 +41,12 @@ export default async function Page() {
           <Suspense
             fallback={<p>Something went wrong with displaying genders</p>}
           >
-            {<Genders genders={genders as any} />}
+            {<Genders />}
           </Suspense>
           <Suspense
             fallback={<p>Something went wrong with displaying pronouns.</p>}
           >
-            <Pronouns pronouns={pronouns} />
+            <Pronouns />
           </Suspense>
 
           <div className="pt-4">
