@@ -12,8 +12,6 @@ export default function GithubButton() {
       options: { redirectTo: `https://nixconnect.vercel.app/auth/callback` },
       provider: "github",
     });
-
-    redirect("/feed");
   }
 
   return (

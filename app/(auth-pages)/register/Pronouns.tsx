@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-interface PronounsProps {
-  pronouns: string[][];
-}
-
-export default function Pronouns({ pronouns }: PronounsProps) {
+export default function Pronouns() {
+  const [pronouns, setPronouns] = useState<string[][]>([]);
   const [selectedPronouns, setSelectedPronouns] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function run() {
+      const raw = await fetch("/api/pronouns");
+      const data = await raw.json();
+      setPronouns(data);
+    }
+    run();
+  }, []);
 
   function displayCurrentPronouns() {
     if (selectedPronouns.length === 0) return "-";

@@ -1,10 +1,7 @@
 import { getAllGenders } from "@/app/actions";
 
-interface GenderProps {
-  genders: { id: number; name: string; description: string }[];
-}
-
-export default async function Genders({ genders }: GenderProps) {
+export default async function Genders() {
+  const genders = await getAllGenders();
   if (genders == null || genders.length < 1) return <p>No genders found.</p>;
 
   return (
