@@ -1,10 +1,6 @@
 import Genders from "@/app/(auth-pages)/register/Genders";
 import Pronouns from "@/app/(auth-pages)/register/Pronouns";
-import {
-  confirmInformation,
-  getAllGenders,
-  getAllPronouns,
-} from "@/app/actions";
+import { confirmInformation } from "@/app/actions";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import { protectRoute } from "@/utils/utils";
