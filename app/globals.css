@@ -33,3 +33,7 @@
   list-style-type: "-";
   @apply ml-8 pl-4;
 }
+
+.markdown-block a {
+  @apply text-default-primary;
+}
