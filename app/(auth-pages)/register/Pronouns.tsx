@@ -1,11 +1,7 @@
 "use client";
 
+import { Pronoun } from "@/types/Pronoun";
 import { useState } from "react";
-
-interface Pronoun {
-  id: number;
-  word: string;
-}
 
 export default function Pronouns({ pronouns }: { pronouns: Pronoun[][] }) {
   const [selectedPronouns, setSelectedPronouns] = useState<number[]>([]);

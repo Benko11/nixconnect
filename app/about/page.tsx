@@ -12,7 +12,6 @@ export default async function Page() {
   }
 
   const x = await fs.readFile(path, "utf-8");
-  console.log(x);
   return (
     <NarrowLayout>
       <div>

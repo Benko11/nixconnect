@@ -8,6 +8,7 @@ import {
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import { Gender } from "@/types/Gender";
+import { Pronoun } from "@/types/Pronoun";
 import { protectRoute } from "@/utils/utils";
 import { Suspense } from "react";
 
@@ -16,7 +17,7 @@ export default async function Page() {
 
   const hierarchy = [{ title: "Home", href: "/feed" }];
   const genders = (await getAllGenders()) as Gender[];
-  const pronouns = await getAllPronouns();
+  const pronouns = (await getAllPronouns()) as unknown as Pronoun[][];
 
   return (
     <NarrowLayout>
