@@ -1,9 +1,7 @@
 import Post from "@/components/Post";
-import { createClient } from "@/utils/supabase/server";
 import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import React from "react";
 import Form from "./form";
-import { marked } from "marked";
 import { getPosts } from "@/actions/get-posts";
 import { isSignedIn } from "@/utils/utils";
 
