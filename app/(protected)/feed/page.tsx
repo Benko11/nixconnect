@@ -1,32 +1,14 @@
 import Post from "@/components/Post";
 import { createClient } from "@/utils/supabase/server";
 import UltraWideLayout from "@/components/layouts/UltraWideLayout";
-import { makePost } from "@/app/actions";
 import React from "react";
 import { handleNewLines } from "./handleNewLines";
 import { getDeltaTime } from "./getDeltaTime";
+import Form from "./form";
 
 export default async function Page() {
   // await protectRoute();
   // await requireBasicInfo();
-
-  function renderPlaceholder() {
-    const words = [
-      "interesting",
-      "inspiring",
-      "amazing",
-      "gay",
-      "captivating",
-      "wholesome",
-      "honest",
-      "unique",
-      "marvellous",
-      "cute",
-    ];
-
-    const randomIndex = Math.floor(Math.random() * words.length);
-    return `Share something ${words[randomIndex]}...`;
-  }
 
   const supabase = await createClient();
   const userId = (await supabase.auth.getUser()).data.user?.id;
@@ -100,17 +82,7 @@ export default async function Page() {
     <UltraWideLayout>
       {isSignedIn && (
         <div className="flex flex-col items-center">
-          <form className="pb-8 w-[60%]" action={makePost}>
-            <textarea
-              name="post"
-              id="post"
-              placeholder={renderPlaceholder()}
-              className="resize-none aspect-[9/2] bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-95 focus:opacity-95 w-full"
-            ></textarea>
-            <button className="bg-default-primary text-default-dark py-2 w-full -mt-2">
-              Post
-            </button>
-          </form>
+          <Form />
         </div>
       )}
 
