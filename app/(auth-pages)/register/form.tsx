@@ -9,7 +9,7 @@ import { createAccount, State } from "@/lib/actions";
 export default function Form() {
   const initialState: State = { message: null, errors: {}, formData: {} };
   const [state, formAction, pending] = useActionState<State, FormData>(
-    // @ts-expect-error
+    // @ts-expect-error createAccount is angry
     createAccount,
     initialState
   );
