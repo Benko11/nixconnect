@@ -6,6 +6,9 @@ I am not sure if I have put a licence on this baby, I am going to check that out
 
 ## Changelog
 
+**2025-02-04**
+Users can now register and log in using password authentication, there is also a great deal of form validation in place.
+
 **2025-02-01**
 Addition of user profiles, avatars are now properly integrated with the user's profile
 
