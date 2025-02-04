@@ -91,7 +91,8 @@ export default function Form() {
       <div className="pt-4">
         <button
           type="submit"
-          className="text-default-dark bg-default-primary p-3 px-8 text-lg"
+          className="text-default-dark bg-default-primary p-3 px-8 text-lg disabled:opacity-70"
+          disabled={pending}
         >
           Sign up
         </button>

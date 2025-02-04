@@ -1,6 +1,4 @@
 import Post from "@/components/Post";
-import Hashtag from "@/components/Hashtag";
-import { protectRoute, requireBasicInfo, retrieveClient } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import { makePost } from "@/app/actions";
@@ -38,11 +36,10 @@ export default async function Page() {
     .from("posts")
     .select("*")
     .order("updated_at", { ascending: false });
-
+  if (posts == null) return;
   const postsArray = await Promise.all(
-    // @ts-ignore
     posts.map(async (row) => {
-      const { data: authorData, error } = await supabase
+      const { data: authorData } = await supabase
         .from("users")
         .select("nickname")
         .eq("id", row.author_id)

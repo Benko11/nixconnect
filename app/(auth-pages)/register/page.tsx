@@ -3,7 +3,7 @@ import WideLayout from "@/components/layouts/WideLayout";
 import { dismissRoute } from "@/utils/utils";
 import Form from "./form";
 
-export default async function Page(props: { searchParams: Promise<string> }) {
+export default async function Page() {
   await dismissRoute();
 
   const hierarchy = [{ href: "/login", title: "Home" }];

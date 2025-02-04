@@ -22,7 +22,7 @@ export async function GET() {
       const filePath = path.join(migrationsDir, file);
       const sql = await fs.readFile(filePath, "utf-8");
 
-      const { data, error } = await supabase.rpc("execute_sql", { sql });
+      const { error } = await supabase.rpc("execute_sql", { sql });
 
       if (error) {
         console.error(`Error executing migration ${file}:`, error);

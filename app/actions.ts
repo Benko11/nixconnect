@@ -4,7 +4,6 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -136,10 +135,7 @@ export const signOutAction = async () => {
 
 export const getAllGenders = async () => {
   const supabase = await createClient();
-  const { data: genders, error } = await supabase
-    .from("genders")
-    .select()
-    .order("id");
+  const { data: genders } = await supabase.from("genders").select().order("id");
   return genders;
 };
 

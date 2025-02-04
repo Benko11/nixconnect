@@ -5,7 +5,6 @@ import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
 import { createClient } from "@/utils/supabase/server";
 import { retrievePronouns } from "@/utils/utils";
-import { Divide } from "lucide-react";
 import { notFound } from "next/navigation";
 
 export default async function Page({
@@ -63,7 +62,7 @@ export default async function Page({
 
   const postsArray = await Promise.all(
     posts.map(async (row) => {
-      const { data: authorData, error } = await supabase
+      const { data: authorData } = await supabase
         .from("users")
         .select("nickname")
         .eq("id", row.author_id)
