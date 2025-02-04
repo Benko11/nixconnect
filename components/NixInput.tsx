@@ -5,6 +5,7 @@ interface NixInputProps {
   placeholder?: string;
   type?: string;
   autoFocus?: boolean;
+  value?: string;
 }
 
 export default function NixInput({
@@ -14,6 +15,7 @@ export default function NixInput({
   placeholder = "",
   type = "text",
   autoFocus = false,
+  value = "",
 }: NixInputProps) {
   const inputId =
     id == null
@@ -30,8 +32,8 @@ export default function NixInput({
         name={inputId}
         id={inputId}
         placeholder={placeholder}
+        defaultValue={value}
         className="bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-100 focus:opacity-100"
-        required={required}
         autoFocus={autoFocus}
       />
     </>

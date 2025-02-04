@@ -1,8 +1,28 @@
-import { getAllGenders } from "@/app/actions";
+"use client";
 
-export default async function Genders() {
-  const genders = await getAllGenders();
-  if (genders == null || genders.length < 1) return <p>No genders found.</p>;
+import { useState } from "react";
+
+interface Gender {
+  id: number;
+  name: string;
+  description: string;
+}
+export default function Genders({
+  value,
+  genders,
+}: {
+  value?: string;
+  genders: Gender[];
+}) {
+  const [selected, setSelected] = useState(value == null ? 0 : +value);
+
+  function handleGenderChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const selected = +e.target.value;
+    setSelected(selected);
+  }
+
+  if (genders == null || genders.length < 1)
+    return <div>No genders found.</div>;
 
   return (
     <div className="py-2 pb-4">
@@ -15,8 +35,10 @@ export default async function Genders() {
                 <input
                   type="radio"
                   name="gender"
-                  value={name}
+                  value={id}
                   id={`gender-${id}`}
+                  onChange={handleGenderChange}
+                  checked={selected === id}
                 />
               </div>
               <div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
-import { redirect } from "next/navigation";
 
 export default function GithubButton() {
   async function handleGithub(e: any) {
@@ -9,7 +8,7 @@ export default function GithubButton() {
 
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
-      options: { redirectTo: `https://nixconnect.vercel.app/auth/callback` },
+      options: { redirectTo: `http://nixconnect.vercel.app/auth/callback` },
       provider: "github",
     });
   }

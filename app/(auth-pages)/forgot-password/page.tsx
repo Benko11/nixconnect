@@ -3,7 +3,7 @@ import Link from "next/link";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 
 export default async function ForgotPassword(props: {
-  searchParams: Promise<any>;
+  searchParams: Promise<string>;
 }) {
   const searchParams = await props.searchParams;
   return (

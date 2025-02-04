@@ -1,23 +1,32 @@
+"use server";
+
 import { dismissRoute } from "@/utils/utils";
 import GithubButton from "./github-button";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Link from "next/link";
 import NixInput from "@/components/NixInput";
+import { signIn } from "@/actions/sign-in";
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ error: string }>;
+}) {
   await dismissRoute();
 
+  const sp = await searchParams;
   return (
     <NarrowLayout>
       <h1 className="text-2xl pb-2">Log in</h1>
 
       <div className="bg-default-neutral p-4">
-        <form>
+        {sp.error && <div className="text-default-error">{sp.error}</div>}
+        <form action={signIn}>
           <div className="flex flex-col pb-4">
             <NixInput label="Nickname" autoFocus />
           </div>
           <div className="flex flex-col pb-4">
-            <NixInput label="Password" type="pasword" />
+            <NixInput label="Password" type="password" />
           </div>
           <div className="flex">
             <button

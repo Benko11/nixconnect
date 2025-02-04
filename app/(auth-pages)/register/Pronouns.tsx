@@ -2,41 +2,61 @@
 
 import { useEffect, useState } from "react";
 
-export default function Pronouns() {
-  const [pronouns, setPronouns] = useState<string[][]>([]);
-  const [selectedPronouns, setSelectedPronouns] = useState<string[]>([]);
+interface Pronoun {
+  id: number;
+  word: string;
+}
 
-  useEffect(() => {
-    async function run() {
-      const raw = await fetch("/api/pronouns");
-      const data = await raw.json();
-      setPronouns(data);
-    }
-    run();
-  }, []);
+export default function Pronouns({ pronouns }: { pronouns: Pronoun[][] }) {
+  const [selectedPronouns, setSelectedPronouns] = useState<number[]>([]);
+
+  function getPronounById(id: number) {
+    return pronouns
+      .filter((pronoun) => pronoun[0].id === id)
+      .map((p) => {
+        return [p[0].word, p[1].word];
+      })[0];
+  }
 
   function displayCurrentPronouns() {
     if (selectedPronouns.length === 0) return "-";
-    if (selectedPronouns.length === 1) {
-      const correctPronouns = pronouns.filter((p) =>
-        p.includes(selectedPronouns[0])
-      );
-      return correctPronouns.join();
-    }
+
+    if (selectedPronouns.length === 1)
+      return getPronounById(selectedPronouns[0]).join("/");
+
     if (selectedPronouns.length === 2)
-      return selectedPronouns[0] + "/" + selectedPronouns[1];
+      return selectedPronouns.map((p) => getPronounById(p)[0]).join("/");
+
     return "any";
   }
 
   function handlePronounsChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { value } = event.target;
     if (event.target.checked) {
-      setSelectedPronouns((prev) => [...prev, value]);
+      setSelectedPronouns((prev) => [...prev, +value]);
     } else {
       setSelectedPronouns((prev) =>
-        prev.filter((pronoun) => pronoun !== value)
+        prev.filter((pronoun) => pronoun !== +value)
       );
     }
+  }
+
+  function displayPronouns() {
+    return pronouns.map((pronoun) => {
+      const p: Pronoun = pronoun[0];
+      return (
+        <div className="flex gap-2 select-none" key={p.id}>
+          <input
+            type="checkbox"
+            name="pronouns"
+            value={p.id}
+            id={`pronoun-${p.id}`}
+            onChange={handlePronounsChange}
+          />
+          <label htmlFor={`pronoun-${p.id}`}>{p.word}</label>
+        </div>
+      );
+    });
   }
 
   return (
@@ -44,18 +64,7 @@ export default function Pronouns() {
       <h3>
         Pronouns <span className="text-default-error">*</span>
       </h3>
-      {pronouns.map((pronoun) => (
-        <div className="flex gap-2 select-none" key={pronoun[0]}>
-          <input
-            type="checkbox"
-            name="pronouns"
-            value={`${pronoun[0]}`}
-            id={`pronoun-${pronoun[0]}`}
-            onChange={handlePronounsChange}
-          />
-          <label htmlFor={`pronoun-${pronoun[0]}`}>{pronoun[0]}</label>
-        </div>
-      ))}
+      {displayPronouns()}
       Current pronouns: {displayCurrentPronouns()}
       <input
         type="hidden"

@@ -4,6 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -142,47 +143,6 @@ export const getAllGenders = async () => {
   return genders;
 };
 
-export const getAllPronouns = async (): Promise<string[][]> => {
-  const supabase = await createClient();
-
-  const { data: masterPronounsData, error: masterError } = await supabase
-    .from("pronouns")
-    .select("id, word")
-    .is("master_pronoun_id", null)
-    .order("id");
-
-  if (masterError) {
-    console.error("Error fetching master pronouns:", masterError);
-    return [];
-  }
-
-  if (!masterPronounsData || masterPronounsData.length === 0) {
-    return [];
-  }
-
-  const allPronouns: string[][] = await Promise.all(
-    masterPronounsData.map(async (masterPronoun) => {
-      const { data: subPronounsData, error: subError } = await supabase
-        .from("pronouns")
-        .select("word")
-        .eq("master_pronoun_id", masterPronoun.id);
-
-      if (subError) {
-        console.error(
-          `Error fetching sub-pronouns for master_pronoun_id ${masterPronoun.id}:`,
-          subError
-        );
-        return [masterPronoun.word];
-      }
-
-      const subPronouns = subPronounsData.map((item) => item.word);
-      return [masterPronoun.word, ...subPronouns];
-    })
-  );
-
-  return allPronouns;
-};
-
 export async function confirmInformation(formData: FormData) {
   const supabase = await createClient();
   const { data: userObject } = await supabase.auth.getUser();
@@ -261,4 +221,49 @@ export async function makePost(formData: FormData) {
   });
 
   return redirect("/feed");
+}
+
+export async function createAccount(formData: FormData) {
+  const nickname = formData.get("nickname")?.toString();
+  const email = formData.get("email")?.toString();
+  const password = formData.get("password")?.toString();
+  const passwordAgain = formData.get("password_again")?.toString();
+  const gender = formData.get("genders")?.toString();
+  const selectedPronouns = formData.get("selectedPronouns")?.toString();
+
+  if (nickname == null || nickname.trim() === "") {
+    return encodedRedirect("error", "/register", "Nickname is required");
+  }
+
+  if (email == null || email.trim() === "") {
+    return encodedRedirect("error", "/register", "Email is required");
+  }
+
+  // TODO: dynamic genders
+  if (
+    gender != null &&
+    gender?.toLowerCase() !== "male" &&
+    gender?.toLowerCase() !== "female" &&
+    gender?.toLowerCase() !== "non-binary"
+  ) {
+    return encodedRedirect("error", "/register", "Invalid gender");
+  }
+
+  if (
+    password == null ||
+    password.trim() === "" ||
+    passwordAgain == null ||
+    passwordAgain.trim() === ""
+  ) {
+    return encodedRedirect("error", "/register", "Password is required");
+  }
+
+  if (selectedPronouns == null || selectedPronouns.length < 1)
+    return encodedRedirect(
+      "error",
+      "/register",
+      "We need to refer to you! Please select your pronouns"
+    );
+
+  console.log("totally adding the user...");
 }
