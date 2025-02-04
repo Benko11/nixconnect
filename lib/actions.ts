@@ -58,7 +58,6 @@ export async function createAccount(prevState: State, formData: FormData) {
   }
 
   const supabase = createClient();
-  await supabase.rpc("begin");
   const { data } = await supabase.auth.signUp({
     email: result.data.email,
     password: result.data.password,
@@ -84,7 +83,6 @@ export async function createAccount(prevState: State, formData: FormData) {
     email: result.data.email,
     gender_id: rawData.gender?.toString(),
   });
-  await supabase.rpc("commit");
 
   return {
     message:
