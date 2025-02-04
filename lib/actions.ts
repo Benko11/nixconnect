@@ -77,12 +77,14 @@ export async function createAccount(prevState: State, formData: FormData) {
     await supabase.from("user_pronouns").insert({ user_id: id, pronoun_id: p });
   });
 
-  await supabase.from("users").insert({
+  const { error } = await supabase.from("users").insert({
     id,
     nickname: result.data.nickname,
     email: result.data.email,
     gender_id: rawData.gender?.toString(),
   });
+
+  if (error) return;
 
   return {
     message:

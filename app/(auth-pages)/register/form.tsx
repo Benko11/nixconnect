@@ -40,7 +40,7 @@ export default function Form() {
 
   return (
     <form action={formAction}>
-      {state.message && (
+      {state?.message && (
         <div className="text-default-error pb-6">{state.message}</div>
       )}
       <div className="flex flex-col pb-4">
