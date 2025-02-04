@@ -9,6 +9,7 @@ import { createAccount, State } from "@/lib/actions";
 export default function Form() {
   const initialState: State = { message: null, errors: {}, formData: {} };
   const [state, formAction, pending] = useActionState<State, FormData>(
+    // @ts-ignore
     createAccount,
     initialState
   );
