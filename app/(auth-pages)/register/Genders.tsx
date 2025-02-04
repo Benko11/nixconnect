@@ -1,12 +1,8 @@
 "use client";
 
+import { Gender } from "@/types/Gender";
 import { useState } from "react";
 
-interface Gender {
-  id: number;
-  name: string;
-  description: string;
-}
 export default function Genders({
   value,
   genders,

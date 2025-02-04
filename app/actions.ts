@@ -4,6 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { Pronoun } from "@/types/Pronoun";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -264,7 +265,7 @@ export async function createAccount(formData: FormData) {
   console.log("totally adding the user...");
 }
 
-export const getAllPronouns = async (): Promise<string[][]> => {
+export const getAllPronouns = async (): Promise<Pronoun[][]> => {
   const supabase = await createClient();
 
   const { data: masterPronounsData, error: masterError } = await supabase

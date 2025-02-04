@@ -1,8 +1,13 @@
 import Genders from "@/app/(auth-pages)/register/Genders";
 import Pronouns from "@/app/(auth-pages)/register/Pronouns";
-import { confirmInformation } from "@/app/actions";
+import {
+  confirmInformation,
+  getAllGenders,
+  getAllPronouns,
+} from "@/app/actions";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
+import { Gender } from "@/types/Gender";
 import { protectRoute } from "@/utils/utils";
 import { Suspense } from "react";
 
@@ -10,6 +15,8 @@ export default async function Page() {
   await protectRoute();
 
   const hierarchy = [{ title: "Home", href: "/feed" }];
+  const genders = (await getAllGenders()) as Gender[];
+  const pronouns = await getAllPronouns();
 
   return (
     <NarrowLayout>
@@ -37,12 +44,12 @@ export default async function Page() {
           <Suspense
             fallback={<p>Something went wrong with displaying genders</p>}
           >
-            {<Genders />}
+            {<Genders genders={genders} />}
           </Suspense>
           <Suspense
             fallback={<p>Something went wrong with displaying pronouns.</p>}
           >
-            <Pronouns />
+            <Pronouns pronouns={pronouns} />
           </Suspense>
 
           <div className="pt-4">
