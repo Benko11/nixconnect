@@ -1,10 +1,10 @@
 import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
 import { handleNewLines } from "@/app/(protected)/feed/handleNewLines";
+import { getAllPronouns } from "@/app/actions";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
 import { createClient } from "@/utils/supabase/server";
-import { retrievePronouns } from "@/utils/utils";
 import { notFound } from "next/navigation";
 
 export default async function Page({
@@ -98,7 +98,7 @@ export default async function Page({
           )}
           <div>
             <h2 className="">
-              ~{userDetails.nickname} ({await retrievePronouns(pronounArray)})
+              ~{userDetails.nickname} ({await getAllPronouns()})
             </h2>
             <div>
               Contact email:{" "}
