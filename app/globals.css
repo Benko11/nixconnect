@@ -41,5 +41,9 @@
 }
 
 .markdown-block code {
-  @apply font-display;
+  @apply font-display overflow-auto w-[20px] bg-default-background;
+}
+
+.markdown-block pre {
+  @apply bg-default-background p-2 whitespace-pre overflow-y-hidden overflow-x-auto p-0 m-0 max-w-full;
 }

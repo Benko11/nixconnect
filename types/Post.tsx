@@ -1,7 +1,7 @@
 export interface Post {
   id: string;
   author: string;
-  content: { __html: string | Promise<string> };
+  content: string;
   timestamp: string;
   createdAt: string;
 }

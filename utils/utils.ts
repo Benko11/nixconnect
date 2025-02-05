@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { createClient } from "./supabase/server";
-import { marked } from "marked";
 
 /**
  * Redirects to a specified path with an encoded message as a query parameter.
@@ -71,9 +70,4 @@ export async function isSignedIn() {
   const supabase = await createClient();
   const userId = (await supabase.auth.getUser()).data.user?.id;
   return userId != null;
-}
-
-export function convertMarkdown(content: string) {
-  const rawMarkup = marked.parse(content);
-  return { __html: rawMarkup };
 }

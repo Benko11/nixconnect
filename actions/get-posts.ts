@@ -2,7 +2,6 @@ import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
 import { handleNewLines } from "@/app/(protected)/feed/handleNewLines";
 import { Post } from "@/types/Post";
 import { createClient } from "@/utils/supabase/server";
-import { convertMarkdown } from "@/utils/utils";
 
 export async function getRawPosts(desc = true) {
   const supabase = await createClient();
@@ -32,7 +31,7 @@ export async function getPosts(desc = true) {
     data.push({
       id: row.id,
       author,
-      content: convertMarkdown(handleNewLines(row.content)),
+      content: row.content,
       timestamp: getDeltaTime(row.created_at) + " ago",
       createdAt: row.created_at,
     });

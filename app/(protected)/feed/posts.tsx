@@ -3,6 +3,7 @@
 import Post from "@/components/Post";
 import { Post as PostType } from "@/types/Post";
 import React from "react";
+import Markdown from "react-markdown";
 
 function renderSinglePost(post: PostType, id: string) {
   return (
@@ -12,7 +13,7 @@ function renderSinglePost(post: PostType, id: string) {
       createdAt={post.createdAt}
       timestamp={post.timestamp}
     >
-      <div dangerouslySetInnerHTML={post.content} className="markdown-block" />
+      <Markdown className="markdown-block">{post.content}</Markdown>
     </Post>
   );
 }
@@ -34,7 +35,6 @@ export default function Posts({ posts }: { posts: PostType[] }) {
       if (index % 2 === 1) col2Posts.push(post);
     });
 
-    console.log(col1Posts);
     return (
       <React.Fragment>
         <div className="flex flex-col gap-4">
@@ -51,6 +51,7 @@ export default function Posts({ posts }: { posts: PostType[] }) {
     const col1Posts: PostType[] = [];
     const col2Posts: PostType[] = [];
     const col3Posts: PostType[] = [];
+
     posts.map((post, index) => {
       if (index % 3 === 0) col1Posts.push(post);
       if (index % 3 === 1) col2Posts.push(post);
