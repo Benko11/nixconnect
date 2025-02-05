@@ -1,4 +1,3 @@
-import Post from "@/components/Post";
 import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import React from "react";
 import Form from "./form";
