@@ -127,7 +127,7 @@ export default async function Page({
             <h2>
               ~{userDetails.nickname} ({pronounArray.join("/")})
             </h2>
-            <div>
+            {/* <div>
               Contact email:{" "}
               <a
                 href={`mailto:${userDetails.email}`}
@@ -135,7 +135,7 @@ export default async function Page({
               >
                 {userDetails.email}
               </a>
-            </div>
+            </div> */}
             {gender && <div>Gender: {gender.name}</div>}
           </div>
         </div>
