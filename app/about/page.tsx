@@ -24,7 +24,7 @@ export default async function Page() {
         </a>{" "}
         on GitHub
       </div>
-      <Markdown>x</Markdown>
+      <Markdown>{x}</Markdown>
     </NarrowLayout>
   );
 }

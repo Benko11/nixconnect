@@ -4,8 +4,8 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
 import { createClient } from "@/utils/supabase/server";
-import { convertMarkdown } from "@/utils/utils";
 import { notFound } from "next/navigation";
+import Markdown from "react-markdown";
 
 export default async function Page({
   params,
@@ -92,12 +92,7 @@ export default async function Page({
               createdAt={createdAt}
               timestamp={timestamp}
             >
-              <div
-                className="markdown-block"
-                dangerouslySetInnerHTML={convertMarkdown(
-                  handleNewLines(content)
-                )}
-              ></div>
+              <Markdown>{content}</Markdown>
             </Post>
           ))}
         </div>
