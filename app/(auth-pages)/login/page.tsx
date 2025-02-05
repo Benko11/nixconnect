@@ -40,11 +40,11 @@ export default async function Page({
             <GithubButton />
           </div>
 
-          <input type="hidden" name="redirectTo" value={"callbackUrl"} />
+          <input type="hidden" name="redirectTo" value="callbackUrl" />
         </form>
       </div>
       <div className="pt-4">
-        Don't feel like making an account yet?{" "}
+        Don&apos;t feel like making an account yet?
         <Link href="/feed" className="text-default-primary">
           Preview the conversations
         </Link>
