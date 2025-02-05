@@ -93,6 +93,7 @@ export default async function Page({
               timestamp={timestamp}
             >
               <div
+                className="markdown-block"
                 dangerouslySetInnerHTML={convertMarkdown(
                   handleNewLines(content)
                 )}
