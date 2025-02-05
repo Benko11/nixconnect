@@ -1,7 +1,7 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
-import { convertMarkdown } from "@/utils/utils";
 import fs from "fs/promises";
+import Markdown from "react-markdown";
 
 export default async function Page() {
   const path = process.cwd() + "/README.md";
@@ -24,10 +24,7 @@ export default async function Page() {
         </a>{" "}
         on GitHub
       </div>
-      <div
-        dangerouslySetInnerHTML={convertMarkdown(x)}
-        className="markdown-block py-4"
-      ></div>
+      <Markdown>x</Markdown>
     </NarrowLayout>
   );
 }
