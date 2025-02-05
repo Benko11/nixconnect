@@ -43,8 +43,8 @@ export default async function Page({
           <input type="hidden" name="redirectTo" value="callbackUrl" />
         </form>
       </div>
-      <div className="pt-4">
-        Don&apos;t feel like making an account yet?
+      <div className="pt-4 flex gap-2">
+        <div>Don&apos;t feel like making an account yet?</div>
         <Link href="/feed" className="text-default-primary">
           Preview the conversations
         </Link>
