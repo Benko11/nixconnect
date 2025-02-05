@@ -1,6 +1,5 @@
 import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
 import { handleNewLines } from "@/app/(protected)/feed/handleNewLines";
-import { getAllPronouns } from "@/app/actions";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
