@@ -4,7 +4,12 @@ This is a project created by me. Yes, me. Why should you care? I don't know, but
 
 I am not sure if I have put a licence on this baby, I am going to check that out after finishing this README file.
 
+Fonts are downloaded from the site: [https://int10h.org/](https://int10h.org/) Huge kudos to them!
+
 ## Changelog
+
+**2025-02-05**
+Fix the special character handling for the font
 
 **2025-02-04**
 Users can now register and log in using password authentication, there is also a great deal of form validation in place.

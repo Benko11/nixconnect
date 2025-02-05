@@ -4,7 +4,9 @@
 
 @font-face {
   font-family: "MS-DOS";
-  src: url(../public/assets/fonts/Perfect_DOS_VGA_437_Win.ttf);
+  font-style: normal;
+  font-weight: 400;
+  src: url(../public/assets/fonts/PxPlus_IBM_VGA_9x16.ttf) format("woff");
 }
 
 :root {
