@@ -1,5 +1,6 @@
 import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
 import { handleNewLines } from "@/app/(protected)/feed/handleNewLines";
+import { Post } from "@/types/Post";
 import { createClient } from "@/utils/supabase/server";
 import { convertMarkdown } from "@/utils/utils";
 
@@ -18,7 +19,7 @@ export async function getPosts(desc = true) {
   const raw = await getRawPosts();
   if (raw == null) return;
 
-  const data = [];
+  const data: Post[] = [];
   for (const row of raw) {
     const { data: authorData } = await supabase
       .from("users")

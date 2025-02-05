@@ -4,6 +4,7 @@ import React from "react";
 import Form from "./form";
 import { getPosts } from "@/actions/get-posts";
 import { isSignedIn } from "@/utils/utils";
+import Posts from "./posts";
 
 export default async function Page() {
   // await protectRoute();
@@ -25,10 +26,7 @@ export default async function Page() {
           createdAt={createdAt}
           timestamp={timestamp}
         >
-          <div
-            dangerouslySetInnerHTML={content}
-            className="markdown-block"
-          ></div>
+          <div dangerouslySetInnerHTML={content} className="markdown-block" />
         </Post>
       );
 
@@ -43,9 +41,9 @@ export default async function Page() {
 
     return (
       <React.Fragment>
-        <div className="flex flex-col gap-4">{column1Posts.map((p) => p)}</div>
+        {/* <div className="flex flex-col gap-4">{column1Posts.map((p) => p)}</div>
         <div className="flex flex-col gap-4">{column2Posts.map((p) => p)}</div>
-        <div className="flex flex-col gap-4">{column3Posts.map((p) => p)}</div>
+        <div className="flex flex-col gap-4">{column3Posts.map((p) => p)}</div> */}
       </React.Fragment>
     );
   }
@@ -57,6 +55,8 @@ export default async function Page() {
           <Form />
         </div>
       )}
+
+      {posts != null && <Posts posts={posts} />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-rows-1 gap-4">
         {renderPosts()}

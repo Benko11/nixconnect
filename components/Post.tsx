@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 interface PostProps {
@@ -13,8 +15,15 @@ export default function Post({
   timestamp,
   createdAt,
 }: PostProps) {
+  const handleContextMenu = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e.target);
+  };
+
   return (
-    <div className="select-none flex flex-col gap-0.5">
+    <div
+      className="select-none flex flex-col gap-0.5"
+      onContextMenu={handleContextMenu}
+    >
       <div className="p-4 bg-default-neutral pb-6">
         <div
           className="flex flex-col gap-2 "
