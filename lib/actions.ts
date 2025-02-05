@@ -19,22 +19,22 @@ export interface State {
   };
 }
 
-export async function createAccount(prevState: State, formData: FormData) {
-  const FormSchema = z
-    .object({
-      nickname: z.string().min(1, "Nickname is required"),
-      email: z.string().email("Invalid email address"),
-      password: z.string().min(1, "Password must be at least 8 characters"),
-      passwordAgain: z.string(),
-      pronouns: z
-        .string()
-        .min(1, "We need to refer to you! Please select your pronouns"),
-    })
-    .refine((data) => data.password === data.passwordAgain, {
-      message: "Passwords do not match",
-      path: ["passwordAgain"],
-    });
+const FormSchema = z
+  .object({
+    nickname: z.string().min(1, "Nickname is required"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    passwordAgain: z.string(),
+    pronouns: z
+      .string()
+      .min(1, "We need to refer to you! Please select your pronouns"),
+  })
+  .refine((data) => data.password === data.passwordAgain, {
+    message: "Passwords do not match",
+    path: ["passwordAgain"],
+  });
 
+export async function createAccount(prevState: State, formData: FormData) {
   const rawData = {
     nickname: formData.get("nickname")?.toString(),
     email: formData.get("email")?.toString(),
@@ -58,7 +58,8 @@ export async function createAccount(prevState: State, formData: FormData) {
   }
 
   const supabase = createClient();
-  const { data } = await supabase.auth.signUp({
+
+  const { data, error: signUpError } = await supabase.auth.signUp({
     email: result.data.email,
     password: result.data.password,
     options: {
@@ -68,6 +69,17 @@ export async function createAccount(prevState: State, formData: FormData) {
       },
     },
   });
+  if (signUpError) {
+    return {
+      message: signUpError.message,
+      formData: {
+        nickname: rawData.nickname?.toString(),
+        email: rawData.email?.toString(),
+        gender: rawData.gender?.toString(),
+      },
+      errors: {},
+    };
+  }
 
   const id = data.user?.id;
   if (id == null) return;
@@ -81,10 +93,17 @@ export async function createAccount(prevState: State, formData: FormData) {
     id,
     nickname: result.data.nickname,
     email: result.data.email,
-    gender_id: rawData.gender?.toString(),
+    gender_id: rawData.gender?.toString() || null,
   });
 
-  if (error) return;
+  if (error) {
+    console.error(error);
+    return {
+      message: error,
+      errors: {},
+      formData: {},
+    };
+  }
 
   return {
     message:
