@@ -18,7 +18,6 @@ export default async function Page({
   return (
     <NarrowLayout>
       <h1 className="text-2xl pb-2">Log in</h1>
-
       <div className="bg-default-neutral p-4">
         {sp.error && <div className="text-default-error">{sp.error}</div>}
         <form action={signIn}>
@@ -43,6 +42,12 @@ export default async function Page({
 
           <input type="hidden" name="redirectTo" value={"callbackUrl"} />
         </form>
+      </div>
+      <div className="pt-4">
+        Don't feel like making an account yet?{" "}
+        <Link href="/feed" className="text-default-primary">
+          Preview the conversations
+        </Link>
       </div>
     </NarrowLayout>
   );
