@@ -5,6 +5,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
 import { createClient } from "@/utils/supabase/server";
+import { convertMarkdown } from "@/utils/utils";
 import { notFound } from "next/navigation";
 
 export default async function Page({
@@ -80,6 +81,32 @@ export default async function Page({
     })
   );
 
+  function renderPosts() {
+    return postsArray.length > 0 ? (
+      <>
+        <h3 className="text-xl pt-8 pb-4">Latest</h3>
+        <div className="pb-8 flex flex-col gap-6">
+          {postsArray.map(({ author, content, createdAt, id, timestamp }) => (
+            <Post
+              key={id}
+              author={author}
+              createdAt={createdAt}
+              timestamp={timestamp}
+            >
+              <div
+                dangerouslySetInnerHTML={convertMarkdown(
+                  handleNewLines(content)
+                )}
+              ></div>
+            </Post>
+          ))}
+        </div>
+      </>
+    ) : (
+      <div>No posts from this user so far, what a lazy fellow.</div>
+    );
+  }
+
   return (
     <>
       <NarrowLayout>
@@ -97,8 +124,8 @@ export default async function Page({
             />
           )}
           <div>
-            <h2 className="">
-              ~{userDetails.nickname} ({await getAllPronouns()})
+            <h2>
+              ~{userDetails.nickname} ({pronounArray.join("/")})
             </h2>
             <div>
               Contact email:{" "}
@@ -113,27 +140,7 @@ export default async function Page({
           </div>
         </div>
 
-        {postsArray.length > 0 ? (
-          <>
-            <h3 className="text-xl pt-8 pb-4">Latest</h3>
-            <div className="pb-8 flex flex-col gap-6">
-              {postsArray.map(
-                ({ author, content, createdAt, id, timestamp }) => (
-                  <Post
-                    key={id}
-                    author={author}
-                    createdAt={createdAt}
-                    timestamp={timestamp}
-                  >
-                    {content}
-                  </Post>
-                )
-              )}
-            </div>
-          </>
-        ) : (
-          <div>No posts from this user so far, what a lazy fellow.</div>
-        )}
+        {renderPosts()}
       </NarrowLayout>
     </>
   );
