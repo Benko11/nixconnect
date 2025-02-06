@@ -1,5 +1,4 @@
 import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
-import { handleNewLines } from "@/app/(protected)/feed/handleNewLines";
 import { Post } from "@/types/Post";
 import { createClient } from "@/utils/supabase/server";
 
@@ -13,16 +12,18 @@ export async function getRawPosts(desc = true) {
   return posts;
 }
 
-export async function getPosts(desc = true) {
+export async function getPosts(desc = true, authorId?: string) {
   const supabase = await createClient();
-  const raw = await getRawPosts();
+  const raw = authorId
+    ? await getRawPostsByUser(desc, authorId)
+    : await getRawPosts(desc);
   if (raw == null) return;
 
   const data: Post[] = [];
   for (const row of raw) {
     const { data: authorData } = await supabase
       .from("users")
-      .select("nickname")
+      .select("nickname,avatar_url")
       .eq("id", row.author_id)
       .single();
 
@@ -31,6 +32,7 @@ export async function getPosts(desc = true) {
     data.push({
       id: row.id,
       author,
+      avatarUrl: authorData?.avatar_url,
       content: row.content,
       timestamp: getDeltaTime(row.created_at) + " ago",
       createdAt: row.created_at,
@@ -38,4 +40,16 @@ export async function getPosts(desc = true) {
   }
 
   return data;
+}
+
+export async function getRawPostsByUser(desc = true, authorId: string) {
+  const supabase = await createClient();
+  const { data: posts } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("author_id", authorId)
+    .order("updated_at", { ascending: !desc });
+  if (posts == null) return;
+
+  return posts;
 }

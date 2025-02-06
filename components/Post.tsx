@@ -6,6 +6,7 @@ interface PostProps {
   author: string;
   timestamp: string;
   createdAt: string;
+  avatarUrl?: string;
   children: React.ReactNode | React.ReactNode[];
 }
 
@@ -14,6 +15,7 @@ export default function Post({
   author,
   timestamp,
   createdAt,
+  avatarUrl,
 }: PostProps) {
   const handleContextMenu = (e: React.MouseEvent<HTMLElement>) => {
     console.log(e.target);
@@ -32,12 +34,20 @@ export default function Post({
           {children}
         </div>
       </div>
-      <div className="p-4 bg-default-neutral">
-        <div className="flex text-sm">
-          <Link href={`/profile/~${author}`} className="text-default-primary">
+      <div className="bg-default-neutral">
+        <div className="flex text-sm items-center">
+          {avatarUrl && (
+            <Link href={`/profile/~${author}`}>
+              <img src={avatarUrl} alt={author} className="w-14" />
+            </Link>
+          )}
+          <Link
+            href={`/profile/~${author}`}
+            className="p-4 text-default-primary"
+          >
             ~{author}
           </Link>
-          <div className="ml-auto" title={createdAt}>
+          <div className="ml-auto pr-4" title={createdAt}>
             {timestamp}
           </div>
         </div>

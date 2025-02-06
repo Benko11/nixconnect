@@ -10,6 +10,7 @@ function renderSinglePost(post: PostType, id: string) {
     <Post
       key={id}
       author={post.author}
+      avatarUrl={post.avatarUrl}
       createdAt={post.createdAt}
       timestamp={post.timestamp}
     >

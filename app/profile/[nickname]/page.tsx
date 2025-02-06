@@ -1,9 +1,10 @@
-import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
-import { handleNewLines } from "@/app/(protected)/feed/handleNewLines";
+import { getGenderById } from "@/actions/get-gender";
+import { getPosts } from "@/actions/get-posts";
+import getPronounsForUser from "@/actions/get-pronouns";
+import { getUserByNickname } from "@/actions/get-user";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
-import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 
@@ -14,87 +15,38 @@ export default async function Page({
 }) {
   const { nickname } = await params;
 
-  if (!nickname.startsWith("~")) {
-    return notFound();
-  }
+  if (!nickname.startsWith("~")) return notFound();
 
-  const supabase = await createClient();
-  const { data: userDetails } = await supabase
-    .from("users")
-    .select("*")
-    .eq("nickname", nickname.substring(1))
-    .maybeSingle();
+  const user = await getUserByNickname(nickname);
+  if (user == null) return notFound();
 
-  if (userDetails == null) {
-    return notFound();
-  }
-
-  const { data: pronounIds } = await supabase
-    .from("user_pronouns")
-    .select("pronoun_id")
-    .eq("user_id", userDetails.id);
-
-  if (pronounIds == null || pronounIds.length < 1)
+  const pronouns = await getPronounsForUser(user.id);
+  if (pronouns == null || pronouns.length < 1)
     return <div>Invalid profile</div>;
 
-  const pronounIdArray = pronounIds.map((p) => p.pronoun_id);
-  const { data: pronouns } = await supabase
-    .from("pronouns")
-    .select("word")
-    .in("id", pronounIdArray);
-  if (pronouns == null) return;
+  const gender = await getGenderById(user.gender_id);
 
-  const pronounArray = pronouns.map((p) => p.word);
-  if (pronounArray == null) return;
-
-  const { data: gender } = await supabase
-    .from("genders")
-    .select("name")
-    .eq("id", userDetails.gender_id)
-    .maybeSingle();
-
-  const { data: posts } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("author_id", userDetails.id)
-    .order("updated_at", { ascending: false });
-  if (posts == null) return;
-
-  const postsArray = await Promise.all(
-    posts.map(async (row) => {
-      const { data: authorData } = await supabase
-        .from("users")
-        .select("nickname")
-        .eq("id", row.author_id)
-        .single();
-
-      const author = authorData?.nickname ?? null;
-
-      return {
-        id: row.id,
-        author,
-        content: handleNewLines(row.content),
-        timestamp: getDeltaTime(row.created_at) + " ago",
-        createdAt: row.created_at,
-      };
-    })
-  );
+  const posts = await getPosts(true, user.id);
+  if (posts == null) return <div>No posts found for {nickname}</div>;
 
   function renderPosts() {
-    return postsArray.length > 0 ? (
+    return posts && posts.length > 0 ? (
       <>
         <h3 className="text-xl pt-8 pb-4">Latest</h3>
         <div className="pb-8 flex flex-col gap-6">
-          {postsArray.map(({ author, content, createdAt, id, timestamp }) => (
-            <Post
-              key={id}
-              author={author}
-              createdAt={createdAt}
-              timestamp={timestamp}
-            >
-              <Markdown>{content}</Markdown>
-            </Post>
-          ))}
+          {posts.map(
+            ({ author, content, createdAt, id, timestamp, avatarUrl }) => (
+              <Post
+                key={id}
+                author={author}
+                createdAt={createdAt}
+                avatarUrl={avatarUrl}
+                timestamp={timestamp}
+              >
+                <Markdown className="markdown-block">{content}</Markdown>
+              </Post>
+            )
+          )}
         </div>
       </>
     ) : (
@@ -111,27 +63,17 @@ export default async function Page({
           classes="pb-4"
         />
         <div className="flex gap-2">
-          {userDetails.avatar_url && (
+          {user.avatar_url && (
             <img
-              src={userDetails.avatar_url}
-              alt={`${userDetails.nickname}'s profile picture`}
+              src={user.avatar_url}
+              alt={`${user.nickname}'s profile picture`}
               className="aspect-square max-w-48"
             />
           )}
           <div>
-            <h2>
-              ~{userDetails.nickname} ({pronounArray.join("/")})
-            </h2>
-            {/* <div>
-              Contact email:{" "}
-              <a
-                href={`mailto:${userDetails.email}`}
-                className="text-default-primary"
-              >
-                {userDetails.email}
-              </a>
-            </div> */}
-            {gender && <div>Gender: {gender.name}</div>}
+            <h2 className="text-2xl">~{user.nickname}</h2>
+            <div>({pronouns.join("/")})</div>
+            <div>{gender}</div>
           </div>
         </div>
 
