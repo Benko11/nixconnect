@@ -2,7 +2,7 @@ interface ContextMenuProps {
   x: number;
   y: number;
   visible: boolean;
-  actions: { title: string; action: () => void }[];
+  actions: { title: string; action: () => void | Promise<void> }[];
 }
 
 export default function ContextMenu({

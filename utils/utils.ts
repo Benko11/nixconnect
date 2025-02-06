@@ -71,3 +71,14 @@ export async function isSignedIn() {
   const userId = (await supabase.auth.getUser()).data.user?.id;
   return userId != null;
 }
+
+export async function getUserById(userId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data;
+}

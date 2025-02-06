@@ -6,3 +6,5 @@ REFERENCES pronouns(id)
 ON DELETE CASCADE;
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url VARCHAR NULL;
+
+ALTER TABLE posts ADD CONSTRAINT posts_author_id_fkey FOREIGN KEY (author_id) REFERENCES users(id); 

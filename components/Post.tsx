@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import ContextMenu from "./ContextMenu";
+import { useSignedIn } from "@/hooks/useSignedIn";
 
 interface PostProps {
   id: string;
@@ -30,6 +31,14 @@ export default function Post({
     y: 0,
     postId: null,
   });
+  const isSignedIn = useSignedIn();
+
+  useEffect(() => {
+    document.addEventListener("click", handleClick);
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   const handleContextMenu = (e: React.MouseEvent<HTMLElement>) => {
     handleClick();
@@ -46,21 +55,26 @@ export default function Post({
     } catch (error) {
       console.error("Failed to copy", error);
     }
-    console.log(raw);
   };
 
-  const handlePing = () => {};
+  const handleTogglePing = async () => {
+    const raw = await fetch(`/api/ping/${id}`, { method: "POST" });
+    const data = await raw.json();
+    console.log(data);
+  };
 
   const handleRedirectToPost = () => {
     redirect(`/posts/${id}`);
   };
 
-  useEffect(() => {
-    document.addEventListener("click", handleClick);
-    return () => {
-      document.removeEventListener("click", handleClick);
-    };
-  }, []);
+  const actions = [
+    { title: "Copy", action: handleCopyToClipboard },
+    { title: "View", action: handleRedirectToPost },
+  ];
+
+  if (isSignedIn) {
+    actions.unshift({ title: "Ping", action: handleTogglePing });
+  }
 
   return (
     <div
@@ -98,11 +112,7 @@ export default function Post({
         visible={contextMenu.visible}
         x={contextMenu.x}
         y={contextMenu.y}
-        actions={[
-          { title: "Ping", action: handlePing },
-          { title: "Copy", action: handleCopyToClipboard },
-          { title: "View", action: handleRedirectToPost },
-        ]}
+        actions={actions}
       />
     </div>
   );
