@@ -9,10 +9,12 @@ function renderSinglePost(post: PostType, id: string) {
   return (
     <Post
       key={id}
+      id={id}
       author={post.author}
       avatarUrl={post.avatarUrl}
       createdAt={post.createdAt}
       timestamp={post.timestamp}
+      raw={post.content}
     >
       <Markdown className="markdown-block">{post.content}</Markdown>
     </Post>

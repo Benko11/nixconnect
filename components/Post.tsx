@@ -1,25 +1,66 @@
 "use client";
 
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
+import ContextMenu from "./ContextMenu";
 
 interface PostProps {
+  id: string;
   author: string;
   timestamp: string;
+  raw: string;
   createdAt: string;
   avatarUrl?: string;
   children: React.ReactNode | React.ReactNode[];
 }
 
 export default function Post({
+  id,
   children,
   author,
+  raw,
   timestamp,
   createdAt,
   avatarUrl,
 }: PostProps) {
+  const [contextMenu, setContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    postId: null,
+  });
+
   const handleContextMenu = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e.target);
+    handleClick();
+    setContextMenu({ postId: null, visible: true, x: e.pageX, y: e.pageY });
   };
+
+  const handleClick = () => {
+    setContextMenu({ postId: null, visible: false, x: 0, y: 0 });
+  };
+
+  const handleCopyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(raw);
+    } catch (error) {
+      console.error("Failed to copy", error);
+    }
+    console.log(raw);
+  };
+
+  const handlePing = () => {};
+
+  const handleRedirectToPost = () => {
+    redirect(`/posts/${id}`);
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClick);
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   return (
     <div
@@ -52,6 +93,17 @@ export default function Post({
           </div>
         </div>
       </div>
+
+      <ContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        actions={[
+          { title: "Ping", action: handlePing },
+          { title: "Copy", action: handleCopyToClipboard },
+          { title: "View", action: handleRedirectToPost },
+        ]}
+      />
     </div>
   );
 }

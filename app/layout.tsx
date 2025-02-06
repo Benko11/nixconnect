@@ -66,7 +66,10 @@ export default async function RootLayout({
           </Link>
           {renderUserActions()}
         </nav>
-        <footer className="bg-default-accent fixed w-full bottom-0 flex">
+        <footer
+          className="bg-default-accent fixed w-full bottom-0 flex"
+          style={{ zIndex: 1000 }}
+        >
           <Link href="/about" className="ml-auto">
             <div className="p-1">About</div>
           </Link>

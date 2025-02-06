@@ -37,8 +37,10 @@ export default async function Page({
           {posts.map(
             ({ author, content, createdAt, id, timestamp, avatarUrl }) => (
               <Post
+                id={id}
                 key={id}
                 author={author}
+                raw={content}
                 createdAt={createdAt}
                 avatarUrl={avatarUrl}
                 timestamp={timestamp}

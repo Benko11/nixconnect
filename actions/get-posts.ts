@@ -53,3 +53,31 @@ export async function getRawPostsByUser(desc = true, authorId: string) {
 
   return posts;
 }
+
+export async function getPostById(id: string) {
+  const supabase = await createClient();
+  const { data: post, error: postError } = await supabase
+    .from("posts")
+    .select()
+    .eq("id", id)
+    .maybeSingle();
+  if (postError) throw new Error(postError.message);
+
+  const { data: user, error: nicknameError } = await supabase
+    .from("users")
+    .select("nickname")
+    .eq("id", post.author_id)
+    .maybeSingle();
+  if (nicknameError) throw new Error(nicknameError.message);
+  if (user == null) throw new Error("User error");
+
+  const timestamp = getDeltaTime(post.created_at) + " ago";
+  console.log(post);
+  return {
+    id,
+    author: user.nickname,
+    content: post.content,
+    createdAt: post.created_at,
+    timestamp,
+  };
+}
