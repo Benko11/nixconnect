@@ -30,7 +30,11 @@ export default async function Page({
         {pings.map((ping) => (
           <div key={ping.timestamp} className="flex items-center mt-2 gap-2">
             {ping.author.avatarUrl && (
-              <img src={ping.author.avatarUrl} alt={ping.author.name} />
+              <img
+                src={ping.author.avatarUrl}
+                alt={ping.author.name}
+                className="w-14"
+              />
             )}
             <Link
               href={`/profile/~${ping.author}`}
