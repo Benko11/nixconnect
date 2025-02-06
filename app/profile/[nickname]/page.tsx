@@ -5,6 +5,7 @@ import { getUserByNickname } from "@/actions/get-user";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
+import { isSignedIn } from "@/utils/utils";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 
@@ -35,10 +36,18 @@ export default async function Page({
         <h3 className="text-xl pt-8 pb-4">Latest</h3>
         <div className="pb-8 flex flex-col gap-6">
           {posts.map(
-            ({ author, content, createdAt, id, timestamp, avatarUrl }) => (
+            async ({
+              author,
+              content,
+              createdAt,
+              id,
+              timestamp,
+              avatarUrl,
+            }) => (
               <Post
                 id={id}
                 key={id}
+                isSignedIn={await isSignedIn()}
                 author={author}
                 raw={content}
                 createdAt={createdAt}

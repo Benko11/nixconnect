@@ -3,6 +3,7 @@ import { getPingsForPost } from "@/actions/ping";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
+import { isSignedIn } from "@/utils/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
@@ -57,6 +58,7 @@ export default async function Page({
       <Post
         id={id}
         author={post.author}
+        isSignedIn={await isSignedIn()}
         createdAt={post.createdAt}
         timestamp={post.timestamp}
         raw={post.content}

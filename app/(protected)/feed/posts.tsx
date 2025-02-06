@@ -1,15 +1,17 @@
 "use client";
 
 import Post from "@/components/Post";
+import { useSignedIn } from "@/hooks/useSignedIn";
 import { Post as PostType } from "@/types/Post";
 import React from "react";
 import Markdown from "react-markdown";
 
-function renderSinglePost(post: PostType, id: string) {
+function renderSinglePost(post: PostType, id: string, isSignedIn: boolean) {
   return (
     <Post
       key={id}
       id={id}
+      isSignedIn={isSignedIn}
       author={post.author}
       avatarUrl={post.avatarUrl}
       createdAt={post.createdAt}
@@ -22,10 +24,13 @@ function renderSinglePost(post: PostType, id: string) {
 }
 
 export default function Posts({ posts }: { posts: PostType[] }) {
+  const isSignedIn = useSignedIn();
+  console.log(isSignedIn);
+
   const renderSmallPosts = () => {
     return (
       <React.Fragment>
-        {posts.map((post) => renderSinglePost(post, post.id))}
+        {posts.map((post) => renderSinglePost(post, post.id, isSignedIn))}
       </React.Fragment>
     );
   };
@@ -41,10 +46,10 @@ export default function Posts({ posts }: { posts: PostType[] }) {
     return (
       <React.Fragment>
         <div className="flex flex-col gap-4">
-          {col1Posts.map((c) => renderSinglePost(c, c.id))}
+          {col1Posts.map((c) => renderSinglePost(c, c.id, isSignedIn))}
         </div>
         <div className="flex flex-col gap-4">
-          {col2Posts.map((c) => renderSinglePost(c, c.id))}
+          {col2Posts.map((c) => renderSinglePost(c, c.id, isSignedIn))}
         </div>
       </React.Fragment>
     );
@@ -64,13 +69,13 @@ export default function Posts({ posts }: { posts: PostType[] }) {
     return (
       <React.Fragment>
         <div className="flex flex-col gap-4">
-          {col1Posts.map((c) => renderSinglePost(c, c.id))}
+          {col1Posts.map((c) => renderSinglePost(c, c.id, isSignedIn))}
         </div>
         <div className="flex flex-col gap-4">
-          {col2Posts.map((c) => renderSinglePost(c, c.id))}
+          {col2Posts.map((c) => renderSinglePost(c, c.id, isSignedIn))}
         </div>
         <div className="flex flex-col gap-4">
-          {col3Posts.map((c) => renderSinglePost(c, c.id))}
+          {col3Posts.map((c) => renderSinglePost(c, c.id, isSignedIn))}
         </div>
       </React.Fragment>
     );

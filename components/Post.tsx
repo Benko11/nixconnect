@@ -4,12 +4,12 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import ContextMenu from "./ContextMenu";
-import { useSignedIn } from "@/hooks/useSignedIn";
 
 interface PostProps {
   id: string;
   author: string;
   timestamp: string;
+  isSignedIn: boolean;
   raw: string;
   createdAt: string;
   avatarUrl?: string;
@@ -24,6 +24,7 @@ export default function Post({
   timestamp,
   createdAt,
   avatarUrl,
+  isSignedIn,
 }: PostProps) {
   const [contextMenu, setContextMenu] = useState({
     visible: false,
@@ -31,7 +32,6 @@ export default function Post({
     y: 0,
     postId: null,
   });
-  const isSignedIn = useSignedIn();
 
   useEffect(() => {
     document.addEventListener("click", handleClick);
