@@ -23,8 +23,12 @@
   @apply flex flex-col gap-2;
 }
 
-.markdown-block h1 {
+.docs h1 {
   @apply hidden;
+}
+
+.markdown-block:not(.docs) h1 {
+  @apply text-2xl;
 }
 
 .markdown-block h2 {
