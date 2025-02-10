@@ -43,7 +43,13 @@ function PostsPage() {
         </div>
       )}
 
-      {isPending ? <FeedSkeleton /> : <Posts posts={posts} />}
+      {error ? (
+        <div>Something went wrong, please try refreshing the page.</div>
+      ) : isPending ? (
+        <FeedSkeleton />
+      ) : (
+        <Posts posts={posts} />
+      )}
     </UltraWideLayout>
   );
 }

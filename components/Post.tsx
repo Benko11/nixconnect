@@ -16,6 +16,8 @@ interface PostProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
+const MAX_HEIGHT = 400;
+
 export default function Post({
   id,
   children,
@@ -45,8 +47,7 @@ export default function Post({
 
   useEffect(() => {
     if (contentRef.current) {
-      console.log(contentRef.current.clientHeight > 400, raw);
-      setIsLargePost(contentRef.current.clientHeight > 400);
+      setIsLargePost(contentRef.current.clientHeight > MAX_HEIGHT);
     }
   }, [raw]);
 
@@ -68,7 +69,7 @@ export default function Post({
   };
 
   const handleTogglePing = async () => {
-    const raw = await fetch(`/api/ping/${id}`, { method: "POST" });
+    const raw = await fetch(`/api/pings/${id}`, { method: "POST" });
     const data = await raw.json();
     console.log(data);
   };

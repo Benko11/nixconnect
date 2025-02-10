@@ -1,6 +1,15 @@
-import { pingExists } from "@/actions/ping";
+import { getPingsForPost, pingExists } from "@/actions/ping";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ postId: string }> }
+) {
+  const { postId } = await params;
+  const pings = await getPingsForPost(postId);
+  return NextResponse.json({ pings });
+}
 
 export async function POST(
   request: NextRequest,
