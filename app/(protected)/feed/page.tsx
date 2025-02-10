@@ -29,11 +29,10 @@ function PostsPage() {
   const { data, error, isPending } = useQuery({
     queryKey: ["posts"],
     queryFn: fetchPosts,
+    retry: 0,
   });
 
   const posts = data?.posts || [];
-
-  if (error) return <p>{JSON.stringify(error.message)}</p>;
 
   return (
     <UltraWideLayout>
