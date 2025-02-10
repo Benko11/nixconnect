@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
 
 interface PostProps {
@@ -32,6 +32,9 @@ export default function Post({
     y: 0,
     postId: null,
   });
+  const [isTruncated, setIsTruncated] = useState(true);
+  const [isLargePost, setIsLargePost] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.addEventListener("click", handleClick);
@@ -39,6 +42,13 @@ export default function Post({
       document.removeEventListener("click", handleClick);
     };
   }, []);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      console.log(contentRef.current.clientHeight > 400, raw);
+      setIsLargePost(contentRef.current.clientHeight > 400);
+    }
+  }, [raw]);
 
   const handleContextMenu = (e: React.MouseEvent<HTMLElement>) => {
     handleClick();
@@ -76,18 +86,29 @@ export default function Post({
     actions.unshift({ title: "Ping", action: handleTogglePing });
   }
 
+  const containerClasses = `p-4 flex flex-col gap-2 pb-8`.split(" ");
+  if (isTruncated) containerClasses.push("max-h-[30rem] overflow-hidden");
   return (
     <div
       className="select-none flex flex-col gap-0.5"
       onContextMenu={handleContextMenu}
     >
-      <div className="p-4 bg-default-neutral pb-6">
+      <div className="bg-default-neutral">
         <div
-          className="flex flex-col gap-2 "
+          ref={contentRef}
+          className={containerClasses.join(" ")}
           style={{ overflowWrap: "break-word" }}
         >
           {children}
         </div>
+        {isTruncated && isLargePost && (
+          <button
+            className="w-full bg-default-dark p-2"
+            onClick={() => setIsTruncated(false)}
+          >
+            Show more
+          </button>
+        )}
       </div>
       <div className="bg-default-neutral">
         <div className="flex text-sm items-center">

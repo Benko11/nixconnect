@@ -27,18 +27,18 @@ export default function FeedSkeleton() {
           <div className="bg-default-neutral w-full h-24 skeleton-loading"></div>
         </div>
         <div className="flex flex-col gap-4">
-          <div className="bg-default-neutral w-full h-20"></div>
-          <div className="bg-default-neutral w-full h-52"></div>
-          <div className="bg-default-neutral w-full h-64"></div>
-          <div className="bg-default-neutral w-full h-24"></div>
+          <div className="bg-default-neutral w-full h-20 skeleton-loading"></div>
+          <div className="bg-default-neutral w-full h-52 skeleton-loading"></div>
+          <div className="bg-default-neutral w-full h-64 skeleton-loading"></div>
+          <div className="bg-default-neutral w-full h-24 skeleton-loading"></div>
         </div>
       </div>
       <div className="md:hidden flex flex-col gap-4">
-        <div className="bg-default-neutral w-full h-48"></div>
-        <div className="bg-default-neutral w-full h-24"></div>
-        <div className="bg-default-neutral w-full h-32"></div>
-        <div className="bg-default-neutral w-full h-28"></div>
-        <div className="bg-default-neutral w-full h-40"></div>
+        <div className="bg-default-neutral w-full h-48 skeleton-loading"></div>
+        <div className="bg-default-neutral w-full h-24 skeleton-loading"></div>
+        <div className="bg-default-neutral w-full h-32 skeleton-loading"></div>
+        <div className="bg-default-neutral w-full h-28 skeleton-loading"></div>
+        <div className="bg-default-neutral w-full h-40 skeleton-loading"></div>
       </div>
     </div>
   );
