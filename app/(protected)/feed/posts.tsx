@@ -83,7 +83,7 @@ export default function Posts({ posts }: { posts: PostType[] }) {
 
   return (
     <>
-      <div className="hidden lg:grid grid-cols-3  gap-4">
+      <div className="hidden lg:grid grid-cols-3 gap-4">
         {renderLargePosts()}
       </div>
       <div className="hidden lg:hidden md:grid grid-cols-2 gap-4">

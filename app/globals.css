@@ -55,3 +55,22 @@
 .markdown-block img {
   @apply mx-auto;
 }
+
+.skeleton-loading {
+  animation-name: feed-skeleton-loading;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: steps(1);
+}
+
+@keyframes feed-skeleton-loading {
+  0% {
+    background: var(--neutral-colour);
+  }
+  50% {
+    background-color: hsl(from var(--neutral-colour) h s calc(l + 5));
+  }
+  100% {
+    background: var(--neutral-colour);
+  }
+}

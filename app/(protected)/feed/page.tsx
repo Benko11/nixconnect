@@ -1,24 +1,49 @@
+"use client";
+
 import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import React from "react";
 import Form from "./form";
-import { getPosts } from "@/actions/get-posts";
-import { isSignedIn } from "@/utils/utils";
 import Posts from "./posts";
+import { useSignedIn } from "@/hooks/useSignedIn";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
+import FeedSkeleton from "./FeedSkeleton";
 
-export default async function Page() {
-  // await protectRoute();
-  // await requireBasicInfo();
-  const posts = await getPosts();
+const fetchPosts = () => fetch("/api/posts").then((res) => res.json());
+
+export default function Page() {
+  const queryClient = new QueryClient();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <PostsPage />
+    </QueryClientProvider>
+  );
+}
+
+function PostsPage() {
+  const isSignedIn = useSignedIn();
+  const { data, error, isPending } = useQuery({
+    queryKey: ["posts"],
+    queryFn: fetchPosts,
+  });
+
+  const posts = data?.posts || [];
+
+  if (error) return <p>{JSON.stringify(error.message)}</p>;
 
   return (
     <UltraWideLayout>
-      {(await isSignedIn()) && (
+      {isSignedIn && (
         <div className="flex flex-col items-center">
           <Form />
         </div>
       )}
 
-      {posts != null && <Posts posts={posts} />}
+      {isPending ? <FeedSkeleton /> : <Posts posts={posts} />}
     </UltraWideLayout>
   );
 }

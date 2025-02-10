@@ -11,7 +11,7 @@ export default function Form() {
     initialState
   );
 
-  const [placeholder, setPlaceholder] = useState<string>();
+  const [placeholder, setPlaceholder] = useState<string>("Share something fun");
   useEffect(() => {
     function renderPlaceholder() {
       const words = [
@@ -34,9 +34,8 @@ export default function Form() {
     setPlaceholder(renderPlaceholder());
   }, []);
 
-  if (placeholder == null) return;
   return (
-    <form className="pb-8 w-[60%]" action={formAction}>
+    <form className="pb-8 w-full md:w-[60%]" action={formAction}>
       {state?.message && (
         <div className="text-default-error">{state.message}</div>
       )}
@@ -44,7 +43,7 @@ export default function Form() {
         name="post"
         id="post"
         className="resize-none aspect-[9/2] bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-95 focus:opacity-95 w-full"
-        placeholder={placeholder}
+        placeholder={placeholder || "Share something fun..."}
       ></textarea>
       <button
         className="bg-default-primary text-default-dark py-2 w-full -mt-2 disabled:opacity-70"
