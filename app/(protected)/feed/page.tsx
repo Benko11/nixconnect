@@ -29,7 +29,6 @@ function PostsPage() {
   const { data, error, isPending } = useQuery({
     queryKey: ["posts"],
     queryFn: fetchPosts,
-    retry: 0,
   });
 
   const posts = data?.posts || [];
