@@ -2,25 +2,45 @@ import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
 import { Post } from "@/types/Post";
 import { createClient } from "@/utils/supabase/server";
 
-export async function getRawPosts(desc = true) {
+const LIMIT = 15;
+
+export async function getRawPosts(cursor: string | null = null, desc = true) {
   const supabase = await createClient();
-  const { data: posts } = await supabase
+  let query = supabase
     .from("posts")
     .select("*")
-    .order("updated_at", { ascending: !desc });
+    .order("updated_at", { ascending: !desc })
+    .limit(LIMIT);
+  if (cursor != null) {
+    query = query.gt("updated_at", cursor);
+  }
 
-  return posts;
+  const { data: posts, error } = await query;
+  if (error) {
+    console.error("Error fetching posts:", error);
+    return { posts: [], nextCursor: null };
+  }
+
+  const nextCursor =
+    posts.length > 0 ? posts[posts.length - 1].updated_at : null;
+  return { posts, nextCursor };
 }
 
-export async function getPosts(desc = true, authorId?: string) {
+export async function getPosts(
+  cursor: string | null = null,
+  desc = true,
+  authorId?: string
+) {
   const supabase = await createClient();
-  const raw = authorId
-    ? await getRawPostsByUser(desc, authorId)
-    : await getRawPosts(desc);
+  const raw =
+    authorId == null
+      ? await getRawPosts(cursor, desc)
+      : await getRawPostsByUser(cursor, authorId, desc);
   if (raw == null) return;
 
+  const rawPosts = raw.posts;
   const data: Post[] = [];
-  for (const row of raw) {
+  for (const row of rawPosts) {
     const { data: authorData } = await supabase
       .from("users")
       .select("nickname,avatar_url")
@@ -39,19 +59,37 @@ export async function getPosts(desc = true, authorId?: string) {
     });
   }
 
-  return data;
+  return { data, nextCursor: raw.nextCursor };
 }
 
-export async function getRawPostsByUser(desc = true, authorId: string) {
+export async function getRawPostsByUser(
+  cursor: string | null,
+  authorId: string,
+  desc = true
+) {
   const supabase = await createClient();
-  const { data: posts } = await supabase
+  let query = supabase
     .from("posts")
     .select("*")
     .eq("author_id", authorId)
-    .order("updated_at", { ascending: !desc });
+    .order("updated_at", { ascending: !desc })
+    .limit(LIMIT);
+
+  if (cursor != null) {
+    query = query.gt("updated_at", cursor);
+  }
+  const { data: posts, error } = await query;
+  if (error) {
+    console.error("Error fetching posts:", error);
+    return { posts: [], nextCursor: null };
+  }
+
+  const nextCursor =
+    posts.length > 0 ? posts[posts.length - 1].updated_at : null;
+
   if (posts == null) return;
 
-  return posts;
+  return { posts, nextCursor };
 }
 
 export async function getPostById(id: string) {
@@ -72,7 +110,6 @@ export async function getPostById(id: string) {
   if (user == null) throw new Error("User error");
 
   const timestamp = getDeltaTime(post.created_at) + " ago";
-  console.log(post);
   return {
     id,
     author: user.nickname,

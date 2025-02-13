@@ -12,26 +12,20 @@ import {
 } from "@tanstack/react-query";
 import FeedSkeleton from "./FeedSkeleton";
 
-const fetchPosts = () => fetch("/api/posts").then((res) => res.json());
-
-export default function Page() {
-  const queryClient = new QueryClient();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <PostsPage />
-    </QueryClientProvider>
+const fetchPosts = (pageParam: string | null) =>
+  fetch(pageParam ? `/api/posts?cursor=${pageParam}` : `/api/posts`).then(
+    (res) => res.json()
   );
-}
 
 function PostsPage() {
   const isSignedIn = useSignedIn();
   const { data, error, isPending } = useQuery({
     queryKey: ["posts"],
-    queryFn: fetchPosts,
+    queryFn: () => fetchPosts(null),
   });
 
-  const posts = data?.posts || [];
+  const raw = data?.posts || [];
+  const posts = raw?.data || [];
 
   return (
     <UltraWideLayout>
@@ -49,5 +43,15 @@ function PostsPage() {
         <Posts posts={posts} />
       )}
     </UltraWideLayout>
+  );
+}
+
+export default function Page() {
+  const queryClient = new QueryClient();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <PostsPage />
+    </QueryClientProvider>
   );
 }

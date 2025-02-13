@@ -25,7 +25,6 @@ function renderSinglePost(post: PostType, id: string, isSignedIn: boolean) {
 
 export default function Posts({ posts }: { posts: PostType[] }) {
   const isSignedIn = useSignedIn();
-  console.log(isSignedIn);
 
   const renderSmallPosts = () => {
     return (
