@@ -1,69 +1,114 @@
-import { getGenderById } from "@/actions/get-gender";
-import { getPosts } from "@/actions/get-posts";
-import getPronounsForUser from "@/actions/get-pronouns";
-import { getUserByNickname } from "@/actions/get-user";
+"use client";
+
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
-import Post from "@/components/Post";
-import { isSignedIn } from "@/utils/utils";
-import { notFound } from "next/navigation";
-import Markdown from "react-markdown";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useInfiniteQuery,
+  useQuery,
+} from "@tanstack/react-query";
+import { notFound, useParams } from "next/navigation";
+import SimpleFeedSkeleton from "./SimpleFeedSkeleton";
+import UserSkeleton from "./UserSkeleton";
+import SimplePosts from "./simple-posts";
+import { useCallback } from "react";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ nickname: string }>;
-}) {
-  const { nickname } = await params;
+async function fetchUser(nickname: string) {
+  const raw = await fetch(`/api/users/${nickname}`);
+  return raw.json();
+}
 
-  if (!nickname.startsWith("~")) return notFound();
+async function fetchPosts(
+  { pageParam }: { pageParam: number },
+  userId: string
+) {
+  const raw = await fetch(`/api/posts/user/${userId}?page=${pageParam}`);
+  return raw.json();
+}
 
-  const user = await getUserByNickname(nickname);
-  if (user == null) return notFound();
+function ProfilePage() {
+  const { nickname } = useParams<{ nickname: string }>();
+  const { data: user, isPending: userIsPending } = useQuery({
+    queryKey: ["user", nickname],
+    queryFn: () => fetchUser(nickname.substring(1)),
+    enabled: !!nickname,
+  });
 
-  const pronouns = await getPronounsForUser(user.id);
-  if (pronouns == null || pronouns.length < 1)
-    return <div>Invalid profile</div>;
+  const {
+    data: postsRaw,
+    error: postsError,
+    isFetching: postsIsFetching,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["posts", "infinite", nickname],
+    initialPageParam: 0,
+    queryFn: ({ pageParam }) => fetchPosts({ pageParam }, user.id),
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    enabled: user != null,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000,
+  });
 
-  const gender = await getGenderById(user.gender_id);
+  const renderUser = useCallback(() => {
+    if (userIsPending) return <UserSkeleton />;
 
-  const posts = await getPosts(true, user.id);
-  if (posts == null) return <div>No posts found for {nickname}</div>;
-
-  function renderPosts() {
-    return posts && posts.length > 0 ? (
-      <>
-        <h3 className="text-xl pt-8 pb-4">Latest</h3>
-        <div className="pb-8 flex flex-col gap-6">
-          {posts.map(
-            async ({
-              author,
-              content,
-              createdAt,
-              id,
-              timestamp,
-              avatarUrl,
-            }) => (
-              <Post
-                id={id}
-                key={id}
-                isSignedIn={await isSignedIn()}
-                author={author}
-                raw={content}
-                createdAt={createdAt}
-                avatarUrl={avatarUrl}
-                timestamp={timestamp}
-              >
-                <Markdown className="markdown-block">{content}</Markdown>
-              </Post>
-            )
-          )}
+    return (
+      <div className="flex gap-2">
+        {user.avatar_url && (
+          <img
+            src={user.avatar_url}
+            alt={`${user.nickname}'s profile picture`}
+            className="aspect-square max-w-48"
+          />
+        )}
+        <div>
+          <h2 className="text-2xl">~{user.nickname}</h2>
+          <div>({user.pronouns.join("/")})</div>
+          <div>{user.gender.name}</div>
         </div>
-      </>
-    ) : (
-      <div>No posts from this user so far, what a lazy fellow.</div>
+      </div>
     );
-  }
+  }, [userIsPending, user]);
+
+  if (!userIsPending && user == null) return notFound();
+
+  const posts = postsRaw?.pages.flatMap((page) => page.data) || [];
+
+  const renderPosts = () => {
+    if (postsError) {
+      return (
+        <div className="text-default-error py-8">
+          Something went wrong when displaying the page, please try refreshing.
+        </div>
+      );
+    }
+
+    if (!userIsPending && !postsIsFetching && posts.length === 0) {
+      return (
+        <div className="py-8">No posts from this user, what a lazy fellow.</div>
+      );
+    }
+
+    return (
+      <div className="py-8">
+        {posts.length > 0 && <h3 className="text-xl pb-4">Latest</h3>}
+        <SimplePosts posts={posts} />
+        {hasNextPage && !postsIsFetching && (
+          <div className="flex justify-center">
+            <button
+              onClick={() => fetchNextPage()}
+              className="bg-default-dark w-full md:w-[80%] py-4"
+            >
+              Load more posts
+            </button>
+          </div>
+        )}
+        {(userIsPending || postsIsFetching) && <SimpleFeedSkeleton />}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -73,23 +118,19 @@ export default async function Page({
           hierachy={[{ title: "Home", href: "/" }]}
           classes="pb-4"
         />
-        <div className="flex gap-2">
-          {user.avatar_url && (
-            <img
-              src={user.avatar_url}
-              alt={`${user.nickname}'s profile picture`}
-              className="aspect-square max-w-48"
-            />
-          )}
-          <div>
-            <h2 className="text-2xl">~{user.nickname}</h2>
-            <div>({pronouns.join("/")})</div>
-            <div>{gender}</div>
-          </div>
-        </div>
-
+        {renderUser()}
         {renderPosts()}
       </NarrowLayout>
     </>
+  );
+}
+
+export default function Page() {
+  const queryClient = new QueryClient();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ProfilePage />
+    </QueryClientProvider>
   );
 }

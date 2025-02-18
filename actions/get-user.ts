@@ -1,11 +1,16 @@
 import { createClient } from "@/utils/supabase/server";
+import getPronounsForUser from "./get-pronouns";
+import { getGenderByUser } from "./get-gender";
 
 export async function getUserByNickname(nickname: string) {
   const supabase = await createClient();
-  const { data: userDetails } = await supabase
+  const { data: user } = await supabase
     .from("users")
     .select("*")
-    .eq("nickname", nickname.substring(1))
+    .ilike("nickname", nickname.toLowerCase())
     .maybeSingle();
-  return userDetails;
+  const pronouns = await getPronounsForUser(user.id);
+  const gender = await getGenderByUser(user.id);
+
+  return { ...user, pronouns, gender };
 }

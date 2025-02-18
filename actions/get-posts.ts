@@ -1,41 +1,42 @@
 import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
 import { Post } from "@/types/Post";
 import { createClient } from "@/utils/supabase/server";
+import { getRangeIndexes } from "@/utils/utils";
 
 const LIMIT = 15;
 
-export async function getRawPosts(cursor: string | null = null, desc = true) {
+export async function getRawPosts(page: number | null, desc = true) {
   const supabase = await createClient();
-  let query = supabase
+  const pageNumber = page == null ? 1 : page;
+  const [start, end] = getRangeIndexes(pageNumber, LIMIT);
+
+  const query = supabase
     .from("posts")
     .select("*")
-    .order("updated_at", { ascending: !desc })
-    .limit(LIMIT);
-  if (cursor != null) {
-    query = query.gt("updated_at", cursor);
-  }
+    .order("created_at", { ascending: !desc })
+    .limit(LIMIT)
+    .range(start, end);
 
   const { data: posts, error } = await query;
   if (error) {
     console.error("Error fetching posts:", error);
-    return { posts: [], nextCursor: null };
+    return { posts: [], nextPage: null };
   }
 
-  const nextCursor =
-    posts.length > 0 ? posts[posts.length - 1].updated_at : null;
-  return { posts, nextCursor };
+  return { posts, nextPage: pageNumber + 1 };
 }
 
 export async function getPosts(
-  cursor: string | null = null,
-  desc = true,
-  authorId?: string
+  page: number | null,
+  authorId?: string,
+  desc = true
 ) {
+  const pageNumber = page == null ? 1 : page;
   const supabase = await createClient();
   const raw =
     authorId == null
-      ? await getRawPosts(cursor, desc)
-      : await getRawPostsByUser(cursor, authorId, desc);
+      ? await getRawPosts(pageNumber, desc)
+      : await getRawPostsByUser(pageNumber, authorId, desc);
   if (raw == null) return;
 
   const rawPosts = raw.posts;
@@ -59,37 +60,35 @@ export async function getPosts(
     });
   }
 
-  return { data, nextCursor: raw.nextCursor };
+  const nextPage = data.length < LIMIT ? null : raw.nextPage;
+
+  return { data, nextPage };
 }
 
 export async function getRawPostsByUser(
-  cursor: string | null,
+  page: number | null,
   authorId: string,
   desc = true
 ) {
   const supabase = await createClient();
-  let query = supabase
+
+  const pageNumber = page == null ? 1 : page;
+  const [start, end] = getRangeIndexes(pageNumber, LIMIT);
+
+  const query = supabase
     .from("posts")
     .select("*")
     .eq("author_id", authorId)
-    .order("updated_at", { ascending: !desc })
-    .limit(LIMIT);
+    .order("created_at", { ascending: !desc })
+    .range(start, end);
 
-  if (cursor != null) {
-    query = query.gt("updated_at", cursor);
-  }
   const { data: posts, error } = await query;
   if (error) {
     console.error("Error fetching posts:", error);
-    return { posts: [], nextCursor: null };
+    return { posts: [], nextPage: null };
   }
 
-  const nextCursor =
-    posts.length > 0 ? posts[posts.length - 1].updated_at : null;
-
-  if (posts == null) return;
-
-  return { posts, nextCursor };
+  return { posts, nextPage: pageNumber + 1 };
 }
 
 export async function getPostById(id: string) {

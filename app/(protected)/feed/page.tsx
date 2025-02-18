@@ -8,24 +8,31 @@ import { useSignedIn } from "@/hooks/useSignedIn";
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery,
+  useInfiniteQuery,
 } from "@tanstack/react-query";
 import FeedSkeleton from "./FeedSkeleton";
 
-const fetchPosts = (pageParam: string | null) =>
-  fetch(pageParam ? `/api/posts?cursor=${pageParam}` : `/api/posts`).then(
-    (res) => res.json()
-  );
+const fetchPosts = async ({ pageParam }: { pageParam: number }) => {
+  const raw = await fetch(`/api/posts?page=${pageParam}`);
+  return raw.json();
+};
 
 function PostsPage() {
   const isSignedIn = useSignedIn();
-  const { data, error, isPending } = useQuery({
-    queryKey: ["posts"],
-    queryFn: () => fetchPosts(null),
+  const {
+    data: raw,
+    error,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["posts", "infinite"],
+    queryFn: fetchPosts,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
   });
 
-  const raw = data?.posts || [];
-  const posts = raw?.data || [];
+  const posts = raw?.pages.flatMap((page) => page.data) || [];
 
   return (
     <UltraWideLayout>
@@ -34,13 +41,30 @@ function PostsPage() {
           <Form />
         </div>
       )}
-
       {error ? (
-        <div>Something went wrong, please try refreshing the page.</div>
-      ) : isPending ? (
-        <FeedSkeleton />
+        <div className="text-default-error">
+          Something went wrong, please try refreshing the page.
+        </div>
       ) : (
-        <Posts posts={posts} />
+        <>
+          <Posts posts={posts} />
+          {isFetching && (
+            <div className="py-4">
+              <FeedSkeleton />
+            </div>
+          )}
+        </>
+      )}
+
+      {hasNextPage && !isFetching && !error && (
+        <div className="flex justify-center py-4">
+          <button
+            onClick={() => fetchNextPage()}
+            className="bg-default-dark w-full md:w-[80%] py-4"
+          >
+            Load more posts
+          </button>
+        </div>
       )}
     </UltraWideLayout>
   );

@@ -18,6 +18,7 @@ export default function ContextMenu({
       style={{
         top: `${y + 10}px`,
         left: `${x + 10}px`,
+        zIndex: 1000,
       }}
     >
       {actions.map(({ action, title }) => {

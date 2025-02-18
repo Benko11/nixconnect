@@ -82,3 +82,9 @@ export async function getUserById(userId: string) {
   if (error) throw new Error(error.message);
   return data;
 }
+
+export function getRangeIndexes(pageNumber: number, LIMIT: number) {
+  const startPage = pageNumber * LIMIT;
+  const endPage = (pageNumber + 1) * LIMIT - 1;
+  return [startPage, endPage];
+}
