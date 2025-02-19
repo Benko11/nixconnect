@@ -72,9 +72,14 @@ export default async function RootLayout({
             className="bg-default-accent fixed w-full bottom-0 flex"
             style={{ zIndex: 1000 }}
           >
-            <Link href="/about" className="ml-auto">
-              <div className="p-1">About</div>
-            </Link>
+            <div className="flex ml-auto gap-2">
+              <Link href="/help">
+                <div className="p-1">Help</div>
+              </Link>
+              <Link href="/about">
+                <div className="p-1">About</div>
+              </Link>
+            </div>
           </footer>
 
           <main className="py-8">{children}</main>

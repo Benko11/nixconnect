@@ -13,6 +13,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const { content } = await request.json();
-  const newPost = await createPost(content);
-  return NextResponse.json({ newPost, message: "Post created successfully" });
+  try {
+    const newPost = await createPost(content);
+    return NextResponse.json({ newPost, message: "Post created successfully" });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      {
+        message: "Something went wrong with sending your post",
+      },
+      { status: 500 }
+    );
+  }
 }

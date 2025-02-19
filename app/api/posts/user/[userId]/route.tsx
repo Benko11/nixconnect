@@ -10,6 +10,16 @@ export async function GET(
   const pageNumber = page == null ? 0 : +page;
   const { userId } = await params;
 
-  const posts = await getPosts(pageNumber, userId);
-  return NextResponse.json({ ...posts });
+  try {
+    const posts = await getPosts(pageNumber, userId);
+    return NextResponse.json({ ...posts });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      {
+        message: "Something went wrong with retrieving the posts",
+      },
+      { status: 500 }
+    );
+  }
 }

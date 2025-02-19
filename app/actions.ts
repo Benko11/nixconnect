@@ -135,7 +135,11 @@ export const signOutAction = async () => {
 
 export const getAllGenders = async () => {
   const supabase = await createClient();
-  const { data: genders } = await supabase.from("genders").select().order("id");
+  const { data: genders, error } = await supabase
+    .from("genders")
+    .select()
+    .order("id");
+  if (error) throw new Error("Gender error");
   return genders;
 };
 

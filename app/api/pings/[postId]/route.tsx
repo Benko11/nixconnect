@@ -19,7 +19,10 @@ export async function POST(
   const authUser = await supabase.auth.getUser();
   const userId = authUser.data.user?.id;
   if (userId == null)
-    return NextResponse.json({ message: "" }, { status: 400 });
+    return NextResponse.json(
+      { message: "You are not signed in" },
+      { status: 401 }
+    );
 
   const { postId } = await params;
   const { data: user, error: authorIdError } = await supabase
