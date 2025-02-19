@@ -30,6 +30,7 @@ function PostsPage() {
     queryFn: fetchPosts,
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextPage,
+    refetchOnWindowFocus: false,
   });
 
   const posts = raw?.pages.flatMap((page) => page.data) || [];
