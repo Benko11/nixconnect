@@ -67,7 +67,16 @@ export function ToastMessageProvider({ children }: { children: ReactNode }) {
   return (
     <ToastMessageContext.Provider value={{ show, errorShow }}>
       {children}
-      <div className="fixed flex flex-col gap-4 bottom-16 right-8">
+      <div
+        style={{
+          position: "fixed",
+          bottom: "4rem",
+          right: "2rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+      >
         {messages.map(({ id, message, variant }, index) => (
           <ToastMessage
             key={index}

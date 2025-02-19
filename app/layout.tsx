@@ -60,7 +60,7 @@ export default async function RootLayout({
         <ToastMessageWrapper>
           <DisableRightClick />
           <nav
-            className="bg-default-primary fixed w-full text-default-dark flex "
+            className="bg-default-primary sticky w-full text-default-dark flex "
             style={{ zIndex: 1000 }}
           >
             <Link href="/" className="p-1">

@@ -5,10 +5,7 @@ import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  ToastMessageProvider,
-  useToastMessage,
-} from "@/contexts/ToastMessageContext";
+import { useToastMessage } from "@/contexts/ToastMessageContext";
 
 interface PostProps {
   id: string;
@@ -116,54 +113,52 @@ export default function Post({
   const containerClasses = `p-4 flex flex-col gap-2 pb-8`.split(" ");
   if (isTruncated) containerClasses.push("max-h-[30rem] overflow-hidden");
   return (
-    <ToastMessageProvider>
-      <div
-        className="select-none flex flex-col gap-0.5"
-        onContextMenu={handleContextMenu}
-      >
-        <div className="bg-default-neutral">
-          <div
-            ref={contentRef}
-            className={containerClasses.join(" ")}
-            style={{ overflowWrap: "break-word" }}
+    <div
+      className="select-none flex flex-col gap-0.5"
+      onContextMenu={handleContextMenu}
+    >
+      <div className="bg-default-neutral">
+        <div
+          ref={contentRef}
+          className={containerClasses.join(" ")}
+          style={{ overflowWrap: "break-word" }}
+        >
+          {children}
+        </div>
+        {isTruncated && isLargePost && (
+          <button
+            className="w-full bg-default-dark p-2"
+            onClick={() => setIsTruncated(false)}
           >
-            {children}
-          </div>
-          {isTruncated && isLargePost && (
-            <button
-              className="w-full bg-default-dark p-2"
-              onClick={() => setIsTruncated(false)}
-            >
-              Show more
-            </button>
-          )}
-        </div>
-        <div className="bg-default-neutral">
-          <div className="flex text-sm items-center">
-            {avatarUrl && (
-              <Link href={`/profile/~${author}`}>
-                <img src={avatarUrl} alt={author} className="w-14" />
-              </Link>
-            )}
-            <Link
-              href={`/profile/~${author}`}
-              className="p-4 text-default-primary"
-            >
-              ~{author}
-            </Link>
-            <div className="ml-auto pr-4" title={createdAt}>
-              {timestamp}
-            </div>
-          </div>
-        </div>
-
-        <ContextMenu
-          visible={contextMenu.visible}
-          x={contextMenu.x}
-          y={contextMenu.y}
-          actions={actions}
-        />
+            Show more
+          </button>
+        )}
       </div>
-    </ToastMessageProvider>
+      <div className="bg-default-neutral">
+        <div className="flex text-sm items-center">
+          {avatarUrl && (
+            <Link href={`/profile/~${author}`}>
+              <img src={avatarUrl} alt={author} className="w-14" />
+            </Link>
+          )}
+          <Link
+            href={`/profile/~${author}`}
+            className="p-4 text-default-primary"
+          >
+            ~{author}
+          </Link>
+          <div className="ml-auto pr-4" title={createdAt}>
+            {timestamp}
+          </div>
+        </div>
+      </div>
+
+      <ContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        actions={actions}
+      />
+    </div>
   );
 }
