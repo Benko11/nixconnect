@@ -1,4 +1,4 @@
-import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
+import { getDeltaTime } from "@/utils/getDeltaTime";
 import { Ping } from "@/types/Ping";
 import { createClient } from "@/utils/supabase/server";
 import { getUserById } from "@/utils/utils";
@@ -35,7 +35,7 @@ export async function getPingsForPost(postId: string) {
     pings.push({
       author: { name: author.nickname, avatarUrl: author.avatar_url },
       createdAt: raw.created_at,
-      timestamp: getDeltaTime(raw.created_at) + " ago",
+      timestamp: getDeltaTime(raw.created_at),
     });
   }
   return pings;

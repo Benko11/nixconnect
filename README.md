@@ -8,6 +8,18 @@ Fonts are downloaded from the site: [https://int10h.org/](https://int10h.org/) H
 
 ## Changelog
 
+**2025-02-18**
+Infinite loading of posts, toast messages, integration of tests on the backend
+
+**2025-02-10**
+Skeleton loading, shrinking very long posts (posts can be expanded)
+
+**2025-02-07**
+Pinging posts actually works now
+
+**2025-02-06**
+Posts can now be interacted with in basic ways (pinging, viewing, copying), new code blocks in posts. To interact with a post, right-click on it.
+
 **2025-02-05**
 Fix the special character handling for the font
 

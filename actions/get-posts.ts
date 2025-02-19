@@ -1,4 +1,4 @@
-import { getDeltaTime } from "@/app/(protected)/feed/getDeltaTime";
+import { getDeltaTime } from "@/utils/getDeltaTime";
 import { Post } from "@/types/Post";
 import { createClient } from "@/utils/supabase/server";
 import { getRangeIndexes } from "@/utils/utils";
@@ -55,7 +55,7 @@ export async function getPosts(
       author,
       avatarUrl: authorData?.avatar_url,
       content: row.content,
-      timestamp: getDeltaTime(row.created_at) + " ago",
+      timestamp: getDeltaTime(row.created_at),
       createdAt: row.created_at,
     });
   }
@@ -108,7 +108,7 @@ export async function getPostById(id: string) {
   if (nicknameError) throw new Error(nicknameError.message);
   if (user == null) throw new Error("User error");
 
-  const timestamp = getDeltaTime(post.created_at) + " ago";
+  const timestamp = getDeltaTime(post.created_at);
   return {
     id,
     author: user.nickname,

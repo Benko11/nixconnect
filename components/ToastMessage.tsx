@@ -1,24 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
-
-interface ToastProps {
+interface ToastMessageProps {
   message: string;
-  onClose: () => void;
+  onClick: () => void;
+  variant: "success" | "error";
 }
 
-export default function ToastMessage({ message, onClose }: ToastProps) {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onClose();
-    }, 5000);
-
-    return clearTimeout(timer);
-  }, [onClose]);
+export default function ToastMessage({
+  message,
+  onClick,
+  variant = "success",
+}: ToastMessageProps) {
+  const classes = ["p-4", "select-none", "max-w-80", "cursor-pointer"];
+  if (variant === "success") classes.push("bg-default-dark");
+  if (variant === "error")
+    classes.push("bg-default-error", "text-default-dark");
   return (
     <div
-      className="fixed bg-default-dark p-4 bottom-16 right-8 select-none max-w-80"
-      style={{ boxShadow: "5px 5px var(--secondary-colour)" }}
+      className={classes.join(" ")}
+      style={{ boxShadow: "5px 5px var(--accent-colour)" }}
+      onClick={onClick}
     >
       {message}
     </div>

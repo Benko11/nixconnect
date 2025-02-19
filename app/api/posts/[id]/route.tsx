@@ -1,4 +1,6 @@
 import { getPostById } from "@/actions/get-posts";
+import deletePostById from "@/actions/posts";
+import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -18,4 +20,36 @@ export async function GET(
     }
   }
   return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
+}
+
+export async function DELETE(
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  try {
+    const supabase = await createClient();
+    const auth = await supabase.auth.getUser();
+
+    const { data: post } = await supabase
+      .from("posts")
+      .select("author_id")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (auth.data.user?.id !== post?.author_id)
+      return NextResponse.json(
+        { message: "Cannot delete post" },
+        { status: 401 }
+      );
+
+    await deletePostById(id);
+    return NextResponse.json({ message: "Post deleted" });
+  } catch (err) {
+    if (err instanceof Error) {
+      return NextResponse.json({ message: err.message }, { status: 500 });
+    }
+  }
+
+  return NextResponse.json({ id });
 }

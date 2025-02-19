@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { signOutAction } from "./actions";
 import { retrieveClient } from "@/utils/utils";
 import DisableRightClick from "./disable-right-click";
+import ToastMessageWrapper from "./ToastMessageWrapper";
 
 export const metadata: Metadata = {
   title: "*NixConnect",
@@ -56,26 +57,28 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="font-display bg-default-background text-default-light">
-        <DisableRightClick />
-        <nav
-          className="bg-default-primary fixed w-full text-default-dark flex "
-          style={{ zIndex: 1000 }}
-        >
-          <Link href="/" className="p-1">
-            {metadata.title as string}
-          </Link>
-          {renderUserActions()}
-        </nav>
-        <footer
-          className="bg-default-accent fixed w-full bottom-0 flex"
-          style={{ zIndex: 1000 }}
-        >
-          <Link href="/about" className="ml-auto">
-            <div className="p-1">About</div>
-          </Link>
-        </footer>
+        <ToastMessageWrapper>
+          <DisableRightClick />
+          <nav
+            className="bg-default-primary fixed w-full text-default-dark flex "
+            style={{ zIndex: 1000 }}
+          >
+            <Link href="/" className="p-1">
+              {metadata.title as string}
+            </Link>
+            {renderUserActions()}
+          </nav>
+          <footer
+            className="bg-default-accent fixed w-full bottom-0 flex"
+            style={{ zIndex: 1000 }}
+          >
+            <Link href="/about" className="ml-auto">
+              <div className="p-1">About</div>
+            </Link>
+          </footer>
 
-        <main className="py-8">{children}</main>
+          <main className="py-8">{children}</main>
+        </ToastMessageWrapper>
       </body>
     </html>
   );

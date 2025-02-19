@@ -1,40 +1,79 @@
 import ToastMessage from "@/components/ToastMessage";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 
 interface ToastMessageContextType {
-  showToastMessage: (message: string) => void;
+  show: (
+    message: string,
+    duration: number,
+    variant?: "success" | "error"
+  ) => void;
+  errorShow: (message: string, duration: number) => void;
 }
 
-const ToastMessageContext = createContext<ToastMessageContextType | undefined>(
-  undefined
-);
+const ToastMessageContext = createContext<ToastMessageContextType | null>(null);
+export function ToastMessageProvider({ children }: { children: ReactNode }) {
+  const [messages, setMessages] = useState<
+    {
+      id: string;
+      timeoutId: NodeJS.Timeout | null;
+      message: string;
+      duration: number;
+      variant: "success" | "error";
+    }[]
+  >([]);
 
-export default function ToastMessageProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  const [toasts, setToasts] = useState<{ id: number; message: string }[]>([]);
-  const [toastId, setToastId] = useState(0);
+  const show = useCallback(
+    (
+      message: string,
+      duration: number = 8000,
+      variant: "success" | "error" = "success"
+    ) => {
+      const id = Date.now().toString();
+      const timeoutId = setTimeout(() => {
+        setMessages((prev) => prev.slice(1));
+      }, duration);
 
-  const showToastMessage = (message: string) => {
-    const id = toastId;
-    setToastId((prev) => prev++);
-    console.log(toastId);
-    setToasts((prev) => [...prev, { id, message }]);
-  };
+      setMessages((prev) => [
+        ...prev,
+        { id, timeoutId, message, duration, variant },
+      ]);
+    },
+    []
+  );
+
+  const errorShow = useCallback(
+    (message: string, duration: number = 8000) => {
+      show(message, duration, "error");
+    },
+    [show]
+  );
+
+  function handleClick(id: string) {
+    setMessages((prev) => {
+      const toast = prev.find((t) => t.id);
+      if (toast && toast.timeoutId) {
+        clearTimeout(toast.timeoutId);
+      }
+      return prev.filter((t) => t.id !== id);
+    });
+  }
 
   return (
-    <ToastMessageContext.Provider value={{ showToastMessage }}>
+    <ToastMessageContext.Provider value={{ show, errorShow }}>
       {children}
-      <div>
-        {toasts.map((toast) => (
+      <div className="fixed flex flex-col gap-4 bottom-16 right-8">
+        {messages.map(({ id, message, variant }, index) => (
           <ToastMessage
-            key={toast.id}
-            message={toast.message}
-            onClose={() =>
-              setToasts((prev) => prev.filter((t) => t.id !== toast.id))
-            }
+            key={index}
+            message={message}
+            variant={variant}
+            onClick={() => handleClick(id)}
           />
         ))}
       </div>
@@ -42,11 +81,13 @@ export default function ToastMessageProvider({
   );
 }
 
-export const useToast = () => {
+export function useToastMessage() {
   const context = useContext(ToastMessageContext);
   if (!context) {
-    throw new Error("useToast must be used within a ToastMessageProvider");
+    throw new Error(
+      "useToastMessage must be used within a ToastMessageProvider"
+    );
   }
 
   return context;
-};
+}

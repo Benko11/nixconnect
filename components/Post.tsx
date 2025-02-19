@@ -4,6 +4,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  ToastMessageProvider,
+  useToastMessage,
+} from "@/contexts/ToastMessageContext";
 
 interface PostProps {
   id: string;
@@ -38,6 +43,9 @@ export default function Post({
   const [isLargePost, setIsLargePost] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  const queryClient = useQueryClient();
+  const toastMessage = useToastMessage();
+
   useEffect(() => {
     document.addEventListener("click", handleClick);
     return () => {
@@ -63,7 +71,9 @@ export default function Post({
   const handleCopyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(raw);
+      toastMessage.show("Post copied to clipboard", 8000);
     } catch (error) {
+      toastMessage.errorShow("Failed to copy", 8000);
       console.error("Failed to copy", error);
     }
   };
@@ -71,7 +81,22 @@ export default function Post({
   const handleTogglePing = async () => {
     const raw = await fetch(`/api/pings/${id}`, { method: "POST" });
     const data = await raw.json();
-    console.log(data);
+    if (raw.ok) {
+      toastMessage.show(data.message, 8000);
+    } else {
+      toastMessage.errorShow(data.message, 8000);
+    }
+  };
+
+  const handleDelete = async () => {
+    const raw = await fetch(`/api/posts/${id}`, { method: "DELETE" });
+    const data = await raw.json();
+    if (raw.ok) {
+      await queryClient.invalidateQueries({ queryKey: ["posts", "infinite"] });
+      toastMessage.show(data.message, 8000);
+    } else {
+      toastMessage.errorShow(data.message, 8000);
+    }
   };
 
   const handleRedirectToPost = () => {
@@ -85,57 +110,60 @@ export default function Post({
 
   if (isSignedIn) {
     actions.unshift({ title: "Ping", action: handleTogglePing });
+    actions.push({ title: "Delete", action: handleDelete });
   }
 
   const containerClasses = `p-4 flex flex-col gap-2 pb-8`.split(" ");
   if (isTruncated) containerClasses.push("max-h-[30rem] overflow-hidden");
   return (
-    <div
-      className="select-none flex flex-col gap-0.5"
-      onContextMenu={handleContextMenu}
-    >
-      <div className="bg-default-neutral">
-        <div
-          ref={contentRef}
-          className={containerClasses.join(" ")}
-          style={{ overflowWrap: "break-word" }}
-        >
-          {children}
-        </div>
-        {isTruncated && isLargePost && (
-          <button
-            className="w-full bg-default-dark p-2"
-            onClick={() => setIsTruncated(false)}
+    <ToastMessageProvider>
+      <div
+        className="select-none flex flex-col gap-0.5"
+        onContextMenu={handleContextMenu}
+      >
+        <div className="bg-default-neutral">
+          <div
+            ref={contentRef}
+            className={containerClasses.join(" ")}
+            style={{ overflowWrap: "break-word" }}
           >
-            Show more
-          </button>
-        )}
-      </div>
-      <div className="bg-default-neutral">
-        <div className="flex text-sm items-center">
-          {avatarUrl && (
-            <Link href={`/profile/~${author}`}>
-              <img src={avatarUrl} alt={author} className="w-14" />
-            </Link>
+            {children}
+          </div>
+          {isTruncated && isLargePost && (
+            <button
+              className="w-full bg-default-dark p-2"
+              onClick={() => setIsTruncated(false)}
+            >
+              Show more
+            </button>
           )}
-          <Link
-            href={`/profile/~${author}`}
-            className="p-4 text-default-primary"
-          >
-            ~{author}
-          </Link>
-          <div className="ml-auto pr-4" title={createdAt}>
-            {timestamp}
+        </div>
+        <div className="bg-default-neutral">
+          <div className="flex text-sm items-center">
+            {avatarUrl && (
+              <Link href={`/profile/~${author}`}>
+                <img src={avatarUrl} alt={author} className="w-14" />
+              </Link>
+            )}
+            <Link
+              href={`/profile/~${author}`}
+              className="p-4 text-default-primary"
+            >
+              ~{author}
+            </Link>
+            <div className="ml-auto pr-4" title={createdAt}>
+              {timestamp}
+            </div>
           </div>
         </div>
-      </div>
 
-      <ContextMenu
-        visible={contextMenu.visible}
-        x={contextMenu.x}
-        y={contextMenu.y}
-        actions={actions}
-      />
-    </div>
+        <ContextMenu
+          visible={contextMenu.visible}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          actions={actions}
+        />
+      </div>
+    </ToastMessageProvider>
   );
 }
