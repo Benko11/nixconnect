@@ -4,6 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { Pronoun } from "@/types/Pronoun";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -125,12 +126,6 @@ export const resetPasswordAction = async (formData: FormData) => {
   }
 
   encodedRedirect("success", "/protected/reset-password", "Password updated");
-};
-
-export const signOutAction = async () => {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  return redirect("/login");
 };
 
 export const getAllGenders = async () => {
@@ -286,7 +281,7 @@ export const getAllPronouns = async () => {
     return [];
   }
 
-  const allPronouns: string[][] = await Promise.all(
+  const allPronouns: Pronoun[][] = await Promise.all(
     masterPronounsData.map(async (masterPronoun) => {
       const { data: subPronounsData, error: subError } = await supabase
         .from("pronouns")

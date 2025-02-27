@@ -1,7 +1,7 @@
 "use client";
 
 import Post from "@/components/Post";
-import { useSignedIn } from "@/hooks/useSignedIn";
+import { useAuthUser } from "@/contexts/UserContext";
 import { Post as PostType } from "@/types/Post";
 import React from "react";
 import Markdown from "react-markdown";
@@ -24,7 +24,8 @@ function renderSinglePost(post: PostType, id: string, isSignedIn: boolean) {
 }
 
 export default function Posts({ posts }: { posts: PostType[] }) {
-  const isSignedIn = useSignedIn();
+  const { user } = useAuthUser();
+  const isSignedIn = user != null;
 
   const renderSmallPosts = () => {
     return (

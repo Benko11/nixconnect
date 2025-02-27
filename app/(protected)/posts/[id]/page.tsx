@@ -3,18 +3,14 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Post from "@/components/Post";
-import { useSignedIn } from "@/hooks/useSignedIn";
 import { Ping } from "@/types/Ping";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import Markdown from "react-markdown";
 import PingSkeletonLoading from "./PingSkeletonLoading";
 import PostSkeletonLoading from "./PostSkeletonLoading";
+import { useAuthUser } from "@/contexts/UserContext";
 
 const fetchPingsForPost = (postId: string) =>
   fetch(`/api/pings/${postId}`).then((res) => res.json());
@@ -22,10 +18,11 @@ const fetchPingsForPost = (postId: string) =>
 const fetchPostById = (id: string) =>
   fetch(`/api/posts/${id}`).then((res) => res.json());
 
-function PostPage() {
+export default function Page() {
   const params = useParams();
   const { id } = params;
-  const isSignedIn = useSignedIn();
+  const { user } = useAuthUser();
+  const isSignedIn = user != null;
 
   const { data: post, isPending: postIsPending } = useQuery({
     queryKey: ["posts", id],
@@ -99,15 +96,5 @@ function PostPage() {
 
       {renderPings()}
     </NarrowLayout>
-  );
-}
-
-export default function Page() {
-  const queryClient = new QueryClient();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <PostPage />
-    </QueryClientProvider>
   );
 }

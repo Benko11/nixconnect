@@ -1,22 +1,16 @@
 "use client";
 
 import { Gender } from "@/types/Gender";
-import { useState } from "react";
 
 export default function Genders({
   value,
   genders,
+  onChange,
 }: {
-  value?: string;
+  value?: number;
   genders: Gender[];
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
-  const [selected, setSelected] = useState(value == null ? 0 : +value);
-
-  function handleGenderChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const selected = +e.target.value;
-    setSelected(selected);
-  }
-
   if (genders == null || genders.length < 1)
     return <div>No genders found.</div>;
 
@@ -33,8 +27,8 @@ export default function Genders({
                   name="gender"
                   value={id}
                   id={`gender-${id}`}
-                  onChange={handleGenderChange}
-                  checked={selected === id}
+                  onChange={onChange}
+                  checked={value === id}
                 />
               </div>
               <div>

@@ -1,31 +1,69 @@
-"use server";
+"use client";
 
-import { dismissRoute } from "@/utils/utils";
 import GithubButton from "./github-button";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import Link from "next/link";
 import NixInput from "@/components/NixInput";
-import { signIn } from "@/actions/sign-in";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useAuthUser } from "@/contexts/UserContext";
+import { useRouter } from "next/navigation";
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: Promise<{ error: string }>;
-}) {
-  await dismissRoute();
+async function fetchSignIn(data: { nickname: string; password: string }) {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
 
-  const sp = await searchParams;
+export default function Page() {
+  const [form, setForm] = useState({ nickname: "", password: "" });
+  const [error, setError] = useState("");
+  const { refetchUser } = useAuthUser();
+  const router = useRouter();
+  const loginMutation = useMutation({
+    mutationFn: fetchSignIn,
+    onSuccess: (data) => {
+      if (!data.success) setError(data.message);
+      else {
+        setError("");
+        refetchUser();
+        router.push("/feed");
+      }
+    },
+  });
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginMutation.mutate(form);
+  };
+
   return (
     <NarrowLayout>
       <h1 className="text-2xl pb-2">Log in</h1>
       <div className="bg-default-neutral p-4">
-        {sp.error && <div className="text-default-error">{sp.error}</div>}
-        <form action={signIn}>
+        {error && <div className="text-default-error">{error}</div>}
+        <form onSubmit={handleSubmit}>
           <div className="flex flex-col pb-4">
-            <NixInput label="Nickname" autoFocus />
+            <NixInput
+              label="Nickname"
+              autoFocus
+              stateValue={form.nickname}
+              onChange={handleInput}
+            />
           </div>
           <div className="flex flex-col pb-4">
-            <NixInput label="Password" type="password" />
+            <NixInput
+              label="Password"
+              type="password"
+              stateValue={form.password}
+              onChange={handleInput}
+            />
           </div>
           <div className="flex">
             <button

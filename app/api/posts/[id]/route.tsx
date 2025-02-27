@@ -40,7 +40,7 @@ export async function DELETE(
     if (auth.data.user?.id !== post?.author_id)
       return NextResponse.json(
         { message: "Cannot delete post" },
-        { status: 401 }
+        { status: 403 }
       );
 
     await deletePostById(id);

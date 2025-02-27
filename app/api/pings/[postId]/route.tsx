@@ -37,7 +37,7 @@ export async function POST(
   if (author_id == userId)
     return NextResponse.json(
       { message: "Cannot ping own post" },
-      { status: 401 }
+      { status: 403 }
     );
 
   if (await pingExists(userId, postId)) {

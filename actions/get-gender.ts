@@ -20,7 +20,7 @@ export async function getGenderByUser(userId: string) {
     .maybeSingle();
 
   if (genderIdError) throw new Error(genderIdError.message);
-  if (genderId == null) throw new Error("Gender id is null");
+  if (genderId?.gender_id == null) throw new Error("Gender id is null");
 
   const { data: gender, error: genderError } = await supabase
     .from("genders")

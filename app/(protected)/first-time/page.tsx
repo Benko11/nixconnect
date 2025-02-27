@@ -1,23 +1,66 @@
+"use client";
+
 import Genders from "@/app/(auth-pages)/register/Genders";
 import Pronouns from "@/app/(auth-pages)/register/Pronouns";
-import {
-  confirmInformation,
-  getAllGenders,
-  getAllPronouns,
-} from "@/app/actions";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
-import { Gender } from "@/types/Gender";
-import { Pronoun } from "@/types/Pronoun";
-import { protectRoute } from "@/utils/utils";
-import { Suspense } from "react";
+import NixInput from "@/components/NixInput";
+import { ConfirmDataClient } from "@/types/ConfirmDataClient";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
-export default async function Page() {
-  await protectRoute();
+export default function Page() {
+  const [form, setForm] = useState<ConfirmDataClient>({
+    nickname: "",
+    pronouns: [],
+    gender: 0,
+  });
+
+  const {
+    data: genders,
+    error: gendersError,
+    isPending: gendersIsPending,
+  } = useQuery({
+    queryKey: ["genders"],
+    queryFn: fetchGenders,
+  });
+
+  const {
+    data: pronouns,
+    error: pronounsError,
+    isPending: pronounsIsPending,
+  } = useQuery({ queryKey: ["pronouns"], queryFn: fetchPronouns });
+
+  const confirmMutation = useMutation({
+    mutationFn: confirmInformation,
+  });
 
   const hierarchy = [{ title: "Home", href: "/feed" }];
-  const genders = (await getAllGenders()) as Gender[];
-  const pronouns = (await getAllPronouns()) as unknown as Pronoun[][];
+
+  const handleGenderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = +e.target.value;
+    setForm({ ...form, gender: selected });
+  };
+
+  const handlePronounsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const pronouns = [...form.pronouns];
+    if (e.target.checked) {
+      pronouns.push(value);
+      setForm({ ...form, pronouns });
+    } else {
+      const filtered = pronouns.filter((p) => p !== value);
+      setForm({ ...form, pronouns: filtered });
+    }
+  };
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    confirmMutation.mutate(form);
+  };
 
   return (
     <NarrowLayout>
@@ -29,29 +72,39 @@ export default async function Page() {
           *NixConnect, we need just a couple more details about you.
         </p>
 
-        <form className="pt-4" action={confirmInformation}>
+        <form className="pt-4" onSubmit={handleSubmit}>
           <div className="flex flex-col pb-4">
-            <label htmlFor="nickname">
-              Nickname <span className="text-default-error">*</span>
-            </label>
-            <input
-              type="text"
-              name="nickname"
-              id="nickname"
+            <NixInput
+              label="Nickname"
+              stateValue={form.nickname}
+              onChange={handleInput}
               placeholder="Your unique identifier on the platform"
-              className="bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-100 focus:opacity-100"
             />
           </div>
-          <Suspense
-            fallback={<p>Something went wrong with displaying genders</p>}
-          >
-            {<Genders genders={genders} />}
-          </Suspense>
-          <Suspense
-            fallback={<p>Something went wrong with displaying pronouns.</p>}
-          >
-            <Pronouns pronouns={pronouns} />
-          </Suspense>
+
+          {gendersIsPending ? (
+            <div> Loading genders...</div>
+          ) : gendersError ? (
+            <div className="text-default-error">Could not load genders</div>
+          ) : (
+            <Genders
+              value={form.gender}
+              genders={genders}
+              onChange={handleGenderChange}
+            />
+          )}
+
+          {pronounsIsPending ? (
+            <div>Loading pronouns...</div>
+          ) : pronounsError ? (
+            <div className="text-default-error">Could not load pronouns</div>
+          ) : (
+            <Pronouns
+              pronouns={pronouns}
+              selected={form.pronouns}
+              onChange={handlePronounsChange}
+            />
+          )}
 
           <div className="pt-4">
             <button
@@ -65,4 +118,23 @@ export default async function Page() {
       </div>
     </NarrowLayout>
   );
+}
+
+async function fetchGenders() {
+  return await fetch("/api/genders").then((res) => res.json());
+}
+
+async function fetchPronouns() {
+  return await fetch("/api/pronouns").then((res) => res.json());
+}
+
+async function confirmInformation(data: ConfirmDataClient) {
+  if (data.gender === 0) data.gender = undefined;
+
+  const res = await fetch("/api/auth/confirm-information", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
 }

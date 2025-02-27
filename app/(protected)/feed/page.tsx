@@ -4,21 +4,18 @@ import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import React from "react";
 import Form from "./form";
 import Posts from "./posts";
-import { useSignedIn } from "@/hooks/useSignedIn";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import FeedSkeleton from "./FeedSkeleton";
+import { useAuthUser } from "@/contexts/UserContext";
 
 const fetchPosts = async ({ pageParam }: { pageParam: number }) => {
   const raw = await fetch(`/api/posts?page=${pageParam}`);
   return raw.json();
 };
 
-function PostsPage() {
-  const isSignedIn = useSignedIn();
+export default function Page() {
+  const { user } = useAuthUser();
+  const isSignedIn = user != null;
   const {
     data: raw,
     error,
@@ -68,15 +65,5 @@ function PostsPage() {
         </div>
       )}
     </UltraWideLayout>
-  );
-}
-
-export default function Page() {
-  const queryClient = new QueryClient();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <PostsPage />
-    </QueryClientProvider>
   );
 }

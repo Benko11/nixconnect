@@ -2,17 +2,13 @@
 
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useInfiniteQuery,
-  useQuery,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { notFound, useParams } from "next/navigation";
-import SimpleFeedSkeleton from "./SimpleFeedSkeleton";
-import UserSkeleton from "./UserSkeleton";
-import SimplePosts from "./simple-posts";
+import SimpleFeedSkeleton from "../SimpleFeedSkeleton";
+import UserSkeleton from "../UserSkeleton";
+import SimplePosts from "../simple-posts";
 import { useCallback } from "react";
+import { useAuthUser } from "@/contexts/UserContext";
 
 async function fetchUser(nickname: string) {
   const raw = await fetch(`/api/users/${nickname}`);
@@ -27,14 +23,15 @@ async function fetchPosts(
   return raw.json();
 }
 
-function ProfilePage() {
+export default function Page() {
   const { nickname } = useParams<{ nickname: string }>();
+  const { user: authUser } = useAuthUser();
+
   const { data: user, isPending: userIsPending } = useQuery({
     queryKey: ["user", nickname],
     queryFn: () => fetchUser(nickname.substring(1)),
     enabled: !!nickname,
   });
-
   const {
     data: postsRaw,
     error: postsError,
@@ -67,6 +64,11 @@ function ProfilePage() {
           <h2 className="text-2xl">~{user.nickname}</h2>
           <div>({user.pronouns.join("/")})</div>
           <div>{user.gender.name}</div>
+          {authUser?.id === user.id && (
+            <div className="text-default-error">
+              You are viewing your profile in public view
+            </div>
+          )}
         </div>
       </div>
     );
@@ -122,15 +124,5 @@ function ProfilePage() {
         {renderPosts()}
       </NarrowLayout>
     </>
-  );
-}
-
-export default function Page() {
-  const queryClient = new QueryClient();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <ProfilePage />
-    </QueryClientProvider>
   );
 }

@@ -79,6 +79,7 @@ export default function Form() {
         placeholder={placeholder || "Share something fun..."}
         onChange={(e) => setPost(e.target.value)}
         value={post}
+        autoFocus
       ></textarea>
       <button
         className="bg-default-primary text-default-dark py-2 w-full -mt-2 disabled:opacity-70"
