@@ -24,8 +24,8 @@ export async function getUserById(id: string) {
 export async function getAuthUser() {
   const supabase = await createClient();
   const auth = await supabase.auth.getUser();
-  const id = auth.data.user?.id;
-  if (id == null) throw new Error("Empty user");
+  const user = auth.data.user;
+  if (user == null) throw new Error("Empty user");
 
-  return getUserById(id);
+  return getUserById(user.id);
 }
