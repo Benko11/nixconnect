@@ -24,6 +24,7 @@ async function createPost(content: string): Promise<PostClient> {
 
 export default function Form() {
   const [post, setPost] = useState("");
+  const [message, setMessage] = useState("");
   const [placeholder, setPlaceholder] = useState<string>(
     "Share something fun..."
   );
@@ -67,11 +68,16 @@ export default function Form() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (post === "" || post.length < 1) {
+      setMessage("Post cannot be empty");
+      return;
+    }
     addMutation.mutate(post);
   }
 
   return (
     <form className="pb-8 w-full md:w-[60%]" onSubmit={handleSubmit}>
+      {message && <div className="text-default-error pb-2">{message}</div>}
       <textarea
         name="post"
         id="post"
