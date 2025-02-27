@@ -8,6 +8,9 @@ Fonts are downloaded from the site: [https://int10h.org/](https://int10h.org/) H
 
 ## Changelog
 
+**2025-02-27**
+Refactoring and solifidication of project's structure, profile page is now viewable for the authenticated user
+
 **2025-02-18**
 Infinite loading of posts, toast messages, integration of tests on the backend
 
