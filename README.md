@@ -8,32 +8,7 @@ Fonts are downloaded from the site: [https://int10h.org/](https://int10h.org/) H
 
 ## Changelog
 
-**2025-02-27**
-Refactoring and solifidication of project's structure, profile page is now viewable for the authenticated user
-
-**2025-02-18**
-Infinite loading of posts, toast messages, integration of tests on the backend
-
-**2025-02-10**
-Skeleton loading, shrinking very long posts (posts can be expanded)
-
-**2025-02-07**
-Pinging posts actually works now
-
-**2025-02-06**
-Posts can now be interacted with in basic ways (pinging, viewing, copying), new code blocks in posts. To interact with a post, right-click on it.
-
-**2025-02-05**
-Fix the special character handling for the font
-
-**2025-02-04**
-Users can now register and log in using password authentication, there is also a great deal of form validation in place.
-
-**2025-02-01**
-Addition of user profiles, avatars are now properly integrated with the user's profile
-
-**2025-01-31**
-\*NixConnect only supports GitHub authentication for the time being, there are no validations on the server side, please keep that in mind. There's a lot more to come!
+You can find the changelog in [changelog.md](/changelog.md) file.
 
 ## Technical specifications
 

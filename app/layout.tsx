@@ -38,6 +38,9 @@ export default async function RootLayout({
                 style={{ zIndex: 1000 }}
               >
                 <div className="flex ml-auto gap-2">
+                  <Link href="/changelog">
+                    <div className="p-1">Changelog</div>
+                  </Link>
                   <Link href="/help">
                     <div className="p-1">Help</div>
                   </Link>

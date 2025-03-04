@@ -23,8 +23,18 @@
   @apply flex flex-col gap-2;
 }
 
-.docs h1 {
+.markdown-block.docs h1 {
   @apply hidden;
+}
+
+.markdown-block.docs h3::before {
+  content: "##";
+  @apply pr-2 text-default-accent;
+}
+
+.markdown-block.docs h2::before {
+  content: "#";
+  @apply pr-2 text-default-accent;
 }
 
 .markdown-block:not(.docs) h1 {
@@ -32,6 +42,10 @@
 }
 
 .markdown-block h2 {
+  @apply text-2xl pb-1 pt-2;
+}
+
+.markdown-block h3 {
   @apply text-xl pb-1 pt-2;
 }
 
