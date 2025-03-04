@@ -21,7 +21,14 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Image upload in posts** - upload images in posts
 - **Story/gallery posts** - upload posts with a carousel of images
 
-## [0.1.0] - 2025-03-04
+## [0.1.1] - 2025-03-04
+
+### Changed
+
+- **Changelog removed from About** - all of the Changelog details are now available here
+- **ENV Versioning** - current version of \*NixConnect is available from a global source and in the About section
+
+## [0.1.0] - 2025-03-03
 
 ### Added
 

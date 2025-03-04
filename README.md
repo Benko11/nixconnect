@@ -6,10 +6,6 @@ I am not sure if I have put a licence on this baby, I am going to check that out
 
 Fonts are downloaded from the site: [https://int10h.org/](https://int10h.org/) Huge kudos to them!
 
-## Changelog
-
-You can find the changelog in [changelog.md](/changelog.md) file.
-
 ## Technical specifications
 
 - NextJS (with TypeScript)
