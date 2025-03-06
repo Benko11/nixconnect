@@ -11,7 +11,7 @@ export async function searchUsers(query: string) {
     .ilike("nickname", `${query.toLowerCase()}%`);
 
   if (error) {
-    errorLogger.error("Could not search for users:", error);
+    // errorLogger.error("Could not search for users:", error);
     return;
   }
 
