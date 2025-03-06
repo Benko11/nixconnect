@@ -44,7 +44,7 @@ export async function searchPosts(query: string) {
   data?.forEach(async (item) => {});
 
   if (error) {
-    errorLogger.error("Could not search for posts:", error);
+    // errorLogger.error("Could not search for posts:", error);
     return;
   }
 
