@@ -1,4 +1,4 @@
-import { getUserByNickname } from "@/actions/get-user";
+import { getUserByNickname } from "@/actions/users";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(

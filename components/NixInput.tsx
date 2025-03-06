@@ -8,6 +8,7 @@ interface NixInputProps {
   value?: string;
   stateValue?: string | null;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  showLabel?: boolean;
 }
 
 export default function NixInput({
@@ -20,12 +21,15 @@ export default function NixInput({
   value = "",
   stateValue = null,
   onChange = () => {},
+  showLabel = true,
 }: NixInputProps) {
   const inputId =
     id == null
       ? label.toLowerCase().replaceAll(/ /g, "_").replaceAll(/-/g, "_")
       : id;
 
+  const classes =
+    "bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-100 focus:opacity-100 w-full";
   const renderInput = () => {
     if (stateValue == null) {
       return (
@@ -35,7 +39,7 @@ export default function NixInput({
           id={inputId}
           placeholder={placeholder}
           defaultValue={value}
-          className="bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-100 focus:opacity-100"
+          className={classes}
           autoFocus={autoFocus}
         />
       );
@@ -49,7 +53,7 @@ export default function NixInput({
         placeholder={placeholder}
         value={stateValue}
         onChange={onChange}
-        className="bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-100 focus:opacity-100"
+        className={classes}
         autoFocus={autoFocus}
       />
     );
@@ -57,7 +61,8 @@ export default function NixInput({
   return (
     <>
       <label htmlFor={inputId}>
-        {label} {required && <span className="text-default-error">*</span>}
+        {showLabel && label}{" "}
+        {showLabel && required && <span className="text-default-error">*</span>}
       </label>
       {renderInput()}
     </>

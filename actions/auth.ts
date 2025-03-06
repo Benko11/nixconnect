@@ -1,9 +1,9 @@
-import { getAllPronouns } from "@/app/actions";
 import { ConfirmDataClient } from "@/types/ConfirmDataClient";
 import LoginClient from "@/types/LoginClient";
 import RegisterClient from "@/types/RegisterClient";
 import { createClient } from "@/utils/supabase/server";
 import { z } from "zod";
+import { getAllPronouns } from "./pronouns";
 
 export async function signIn({ nickname, password }: LoginClient) {
   const supabase = await createClient();

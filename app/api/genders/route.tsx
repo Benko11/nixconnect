@@ -1,4 +1,4 @@
-import { getAllGenders } from "@/app/actions";
+import { getAllGenders } from "@/actions/genders";
 import { NextResponse } from "next/server";
 
 export async function GET() {

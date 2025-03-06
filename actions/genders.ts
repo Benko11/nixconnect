@@ -33,3 +33,13 @@ export async function getGenderByUser(userId: string) {
 
   return gender;
 }
+
+export async function getAllGenders() {
+  const supabase = await createClient();
+  const { data: genders, error } = await supabase
+    .from("genders")
+    .select()
+    .order("id");
+  if (error) throw new Error("Gender error");
+  return genders;
+}

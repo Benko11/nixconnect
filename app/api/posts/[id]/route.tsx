@@ -1,4 +1,4 @@
-import { getPostById } from "@/actions/get-posts";
+import { getPostById } from "@/actions/posts";
 import deletePostById from "@/actions/posts";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";

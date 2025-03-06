@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "./supabase/server";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 /**
  * Redirects to a specified path with an encoded message as a query parameter.
@@ -87,4 +89,8 @@ export function getRangeIndexes(pageNumber: number, LIMIT: number) {
   const startPage = pageNumber * LIMIT;
   const endPage = (pageNumber + 1) * LIMIT - 1;
   return [startPage, endPage];
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }

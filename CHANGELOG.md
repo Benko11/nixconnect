@@ -20,6 +20,19 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Database-level security enforcements** - properly implement the RLS policies in the tables
 - **Image upload in posts** - upload images in posts
 - **Story/gallery posts** - upload posts with a carousel of images
+- **Hashtags** - users will be able to use hashtags and search posts with the hashtags
+- **Search** - users will be able to search for content of the posts and users
+
+## [0.1.2] - 2025-03-06
+
+### Changed
+
+- **Refactoring** - light refactoring and lots of unused code has been removed
+
+### Added
+
+- **Full site search** - authenticated users can now search for other users on the network, as well as contents of some posts
+- **System logging** - first use of the unified logging system
 
 ## [0.1.1] - 2025-03-04
 

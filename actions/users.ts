@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
-import getPronounsForUser from "./get-pronouns";
-import { getGenderByUser } from "./get-gender";
+import getPronounsForUser from "./pronouns";
+import { getGenderByUser } from "./genders";
 
 export async function getUserById(id: string) {
   const supabase = await createClient();
@@ -28,4 +28,17 @@ export async function getAuthUser() {
   if (user == null) throw new Error("Empty user");
 
   return getUserById(user.id);
+}
+
+export async function getUserByNickname(nickname: string) {
+  const supabase = await createClient();
+  const { data: user } = await supabase
+    .from("users")
+    .select("*")
+    .ilike("nickname", nickname.toLowerCase())
+    .maybeSingle();
+  const pronouns = await getPronounsForUser(user.id);
+  const gender = await getGenderByUser(user.id);
+
+  return { ...user, pronouns, gender };
 }

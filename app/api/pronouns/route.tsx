@@ -1,4 +1,4 @@
-import { getAllPronouns } from "@/app/actions";
+import { getAllPronouns } from "@/actions/pronouns";
 import { NextResponse } from "next/server";
 
 export async function GET() {
