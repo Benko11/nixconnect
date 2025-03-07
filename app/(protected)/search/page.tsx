@@ -14,6 +14,7 @@ import Markdown from "react-markdown";
 import { useDebounce } from "react-use";
 import SearchResultSkeleton from "./SearchResultSkeleton";
 import { useRouter, useSearchParams } from "next/navigation";
+import ProfilePicture from "@/components/ProfilePicture";
 
 export default function Page() {
   const router = useRouter();
@@ -57,11 +58,7 @@ export default function Page() {
               href={`/profile/~${user.nickname}`}
               className="flex gap-2 items-center bg-default-neutral p-2"
             >
-              <img
-                src={user.avatar_url}
-                className="w-16"
-                alt={`${user.nickname}'s profile picture`}
-              />
+              <ProfilePicture size="small" user={user} />
               <div>~{user.nickname}</div>
             </Link>
           ))}

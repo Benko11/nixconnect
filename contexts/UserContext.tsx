@@ -7,7 +7,7 @@ interface UserObject {
   id: string;
   nickname: string;
   email: string;
-  avatar_url: string | null;
+  avatarUrl: string | null;
   gender: {
     id: number;
     name: string;
@@ -43,7 +43,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     id: data.id,
     nickname: data.nickname,
     email: data.email,
-    avatar_url: data.avatar_url,
+    avatarUrl: data.avatar_url,
     gender: data.gender,
     pronouns: data.pronouns,
   };

@@ -5,10 +5,19 @@ import { getUserById } from "@/utils/utils";
 
 export async function searchUsers(query: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { data: searchData, error } = await supabase
     .from("users")
     .select("id,nickname,avatar_url")
     .ilike("nickname", `${query.toLowerCase()}%`);
+  if (searchData == null) return;
+  const data = [];
+  for (let item of searchData) {
+    data.push({
+      id: item.id,
+      nickname: item.nickname,
+      avatarUrl: item.avatar_url,
+    });
+  }
 
   if (error) {
     // errorLogger.error("Could not search for users:", error);

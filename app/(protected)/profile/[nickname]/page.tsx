@@ -9,6 +9,7 @@ import UserSkeleton from "../UserSkeleton";
 import SimplePosts from "../simple-posts";
 import { useCallback } from "react";
 import { useAuthUser } from "@/contexts/UserContext";
+import ProfilePicture from "@/components/ProfilePicture";
 
 async function fetchUser(nickname: string) {
   const raw = await fetch(`/api/users/${nickname}`);
@@ -53,13 +54,7 @@ export default function Page() {
 
     return (
       <div className="flex gap-2">
-        {user.avatar_url && (
-          <img
-            src={user.avatar_url}
-            alt={`${user.nickname}'s profile picture`}
-            className="aspect-square max-w-48"
-          />
-        )}
+        <ProfilePicture size="large" user={user} />
         <div>
           <h2 className="text-2xl">~{user.nickname}</h2>
           <div>({user.pronouns.join("/")})</div>
@@ -72,7 +67,7 @@ export default function Page() {
         </div>
       </div>
     );
-  }, [userIsPending, user]);
+  }, [userIsPending, user, authUser?.id]);
 
   if (!userIsPending && user == null) return notFound();
 

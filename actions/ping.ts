@@ -33,7 +33,7 @@ export async function getPingsForPost(postId: string) {
       throw new Error("Error retrieving authors");
 
     pings.push({
-      author: { name: author.nickname, avatarUrl: author.avatar_url },
+      author: { nickname: author.nickname, avatarUrl: author.avatar_url },
       createdAt: raw.created_at,
       timestamp: getDeltaTime(raw.created_at),
     });

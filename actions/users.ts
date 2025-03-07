@@ -37,6 +37,9 @@ export async function getUserByNickname(nickname: string) {
     .select("*")
     .ilike("nickname", nickname.toLowerCase())
     .maybeSingle();
+  user.avatarUrl = user.avatar_url;
+  user.avatar_url = undefined;
+
   const pronouns = await getPronounsForUser(user.id);
   const gender = await getGenderByUser(user.id);
 

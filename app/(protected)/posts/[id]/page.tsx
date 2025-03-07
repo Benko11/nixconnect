@@ -11,6 +11,7 @@ import Markdown from "react-markdown";
 import PingSkeletonLoading from "./PingSkeletonLoading";
 import PostSkeletonLoading from "./PostSkeletonLoading";
 import { useAuthUser } from "@/contexts/UserContext";
+import ProfilePicture from "@/components/ProfilePicture";
 
 const fetchPingsForPost = (postId: string) =>
   fetch(`/api/pings/${postId}`).then((res) => res.json());
@@ -58,18 +59,13 @@ export default function Page() {
         </div>
         {pings.map((ping: Ping) => (
           <div key={ping.timestamp} className="flex items-center mt-2 gap-2">
-            {ping.author.avatarUrl && (
-              <img
-                src={ping.author.avatarUrl}
-                alt={ping.author.name}
-                className="w-14"
-              />
-            )}
+            <ProfilePicture size="small" user={ping.author} />
+
             <Link
               href={`/profile/~${ping.author}`}
               className="text-default-primary"
             >
-              ~{ping.author.name}
+              ~{ping.author.nickname}
             </Link>
           </div>
         ))}

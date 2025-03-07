@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import SimpleFeedSkeleton from "./SimpleFeedSkeleton";
 import SimplePosts from "./simple-posts";
 import Link from "next/link";
+import ProfilePicture from "@/components/ProfilePicture";
 
 async function fetchPosts(
   { pageParam }: { pageParam: number },
@@ -40,13 +41,7 @@ export default function Page() {
   const renderUser = () => {
     return (
       <div className="flex gap-2">
-        {user.avatar_url && (
-          <img
-            src={user.avatar_url}
-            alt={`${user.nickname}'s profile picture`}
-            className="aspect-square max-w-48"
-          />
-        )}
+        <ProfilePicture user={user} size="large" />
         <div>
           <h2 className="text-2xl">~{user.nickname}</h2>
           <div>({user.pronouns.join("/")})</div>

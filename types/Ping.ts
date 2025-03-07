@@ -2,7 +2,7 @@ export interface Ping {
   createdAt: string;
   timestamp: string;
   author: {
-    name: string;
+    nickname: string;
     avatarUrl?: string;
   };
 }

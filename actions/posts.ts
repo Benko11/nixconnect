@@ -56,6 +56,7 @@ export async function getRawPosts(page: number | null, desc = true) {
   const query = supabase
     .from("posts")
     .select("*")
+    .is("deleted_at", null)
     .order("created_at", { ascending: !desc })
     .limit(LIMIT)
     .range(start, end);
@@ -121,6 +122,7 @@ export async function getRawPostsByUser(
   const query = supabase
     .from("posts")
     .select("*")
+    .is("deleted_at", null)
     .eq("author_id", authorId)
     .order("created_at", { ascending: !desc })
     .range(start, end);

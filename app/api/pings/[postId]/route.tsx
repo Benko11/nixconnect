@@ -44,11 +44,15 @@ export async function POST(
     const { error: deleteError } = await supabase
       .from("post_pings")
       .delete()
-      .eq("post_id", postId);
+      .match({ post_id: postId, user_id: userId });
+
     if (deleteError) {
-      console.error(deleteError);
-      throw new Error(deleteError.message);
+      return NextResponse.json(
+        { message: deleteError.message },
+        { status: 500 }
+      );
     }
+
     return NextResponse.json({ message: "Post unpinged" });
   }
 

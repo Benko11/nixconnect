@@ -23,6 +23,22 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Hashtags** - users will be able to use hashtags and search posts with the hashtags
 - **Search** - users will be able to search for content of the posts and users
 
+## [0.1.3] - 2025-03-08
+
+### Added
+
+- **Double-click to ping** - you can double click a post to ping it
+
+### Changed
+
+- **New ping experience** - you can see the number of pings in the post and interact with them in real time, users can view ping information on all posts
+
+### Fixed
+
+- **Ping bug** - pings are now deleted properly
+- **Ping/Unping toggle** - you will now see toggled options for pinging posts
+- **Refactoring** - profile pictures are now easier to implement, and there are no warnings during build
+
 ## [0.1.2] - 2025-03-06
 
 ### Changed
