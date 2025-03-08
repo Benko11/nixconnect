@@ -2,16 +2,17 @@
 
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
-import Post from "@/components/Post";
+import Post, { fetchComments, fetchTogglePing } from "@/components/Post/Post";
 import { Ping } from "@/types/Ping";
-import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { notFound, useParams } from "next/navigation";
 import Markdown from "react-markdown";
 import PingSkeletonLoading from "./PingSkeletonLoading";
 import PostSkeletonLoading from "./PostSkeletonLoading";
 import { useAuthUser } from "@/contexts/UserContext";
-import ProfilePicture from "@/components/ProfilePicture";
+import PostPings from "@/components/Post/PostPings";
+import { useToastMessage } from "@/contexts/ToastMessageContext";
+import PostComments from "@/components/Post/PostComments";
 
 const fetchPingsForPost = (postId: string) =>
   fetch(`/api/pings/${postId}`).then((res) => res.json());
@@ -24,19 +25,51 @@ export default function Page() {
   const { id } = params;
   const { user } = useAuthUser();
   const isSignedIn = user != null;
+  const toastMessage = useToastMessage();
 
   const { data: post, isPending: postIsPending } = useQuery({
     queryKey: ["posts", id],
     queryFn: () => fetchPostById(id as string),
   });
 
-  const { data: dataPings, isPending: pingsIsPending } = useQuery({
+  const {
+    data: dataPings,
+    isPending: pingsIsPending,
+    refetch: refetchPings,
+  } = useQuery({
     queryKey: ["pings", id],
     queryFn: () => fetchPingsForPost(id as string),
     enabled: post != null,
   });
 
-  const pings = dataPings?.pings;
+  const togglePingMutation = useMutation({
+    mutationFn: () => fetchTogglePing(id as string),
+    onSuccess: async (data) => {
+      await refetchPings();
+      toastMessage.show(data.message, 8000);
+    },
+    onError: (data) => {
+      toastMessage.show(data.message, 8000);
+    },
+  });
+
+  const {
+    data: comments,
+    isPending: isPendingComments,
+    refetch: refetchComments,
+  } = useQuery({
+    queryKey: ["post-comments", id],
+    queryFn: () => fetchComments(id as string),
+    refetchOnWindowFocus: false,
+  });
+
+  const authNickname =
+    user != null && user.nickname != null ? user.nickname : "";
+  const isPinged =
+    dataPings?.pings.some(
+      (ping: Ping) => ping.author.nickname === authNickname
+    ) || false;
+
   if (postIsPending)
     return (
       <NarrowLayout>
@@ -46,31 +79,6 @@ export default function Page() {
 
   if (!postIsPending && post == null) {
     return notFound();
-  }
-
-  function renderPings() {
-    if (pingsIsPending) return <PingSkeletonLoading />;
-    if (pings == null || pings.length < 1) return;
-
-    return (
-      <div className="bg-default-neutral p-4 mt-4">
-        <div>
-          {pings.length} ping{pings.length > 1 && "s"}
-        </div>
-        {pings.map((ping: Ping) => (
-          <div key={ping.timestamp} className="flex items-center mt-2 gap-2">
-            <ProfilePicture size="small" user={ping.author} />
-
-            <Link
-              href={`/profile/~${ping.author}`}
-              className="text-default-primary"
-            >
-              ~{ping.author.nickname}
-            </Link>
-          </div>
-        ))}
-      </div>
-    );
   }
 
   return (
@@ -86,11 +94,44 @@ export default function Page() {
         createdAt={post.createdAt}
         timestamp={post.timestamp}
         raw={post.content}
+        showOptions={false}
       >
         <Markdown className="markdown-block">{post.content}</Markdown>
       </Post>
 
-      {renderPings()}
+      {pingsIsPending ? (
+        <PingSkeletonLoading />
+      ) : (
+        <div className="mt-4 flex flex-col gap-2">
+          <h2 className="text-xl">Pings</h2>
+          <PostPings
+            isOpen={true}
+            pings={dataPings?.pings}
+            isPending={togglePingMutation.isPending}
+            isPinged={isPinged}
+            onToggle={() => togglePingMutation.mutate()}
+          />
+        </div>
+      )}
+
+      <div className="mt-4 flex flex-col gap-2">
+        <div id="comments">
+          {isPendingComments ? (
+            <PingSkeletonLoading />
+          ) : (
+            <>
+              <h2 className="text-xl">Comments</h2>
+
+              <PostComments
+                comments={comments}
+                isOpen={true}
+                postId={id as string}
+                refetch={refetchComments}
+              />
+            </>
+          )}
+        </div>
+      </div>
     </NarrowLayout>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import Post from "@/components/Post";
+import Post from "@/components/Post/Post";
 import { useAuthUser } from "@/contexts/UserContext";
 import { Post as PostType } from "@/types/Post";
 import React from "react";

@@ -3,7 +3,7 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import NixInput from "@/components/NixInput";
-import Post from "@/components/Post";
+import Post from "@/components/Post/Post";
 import { useAuthUser } from "@/contexts/UserContext";
 import { Post as PostType } from "@/types/Post";
 import User from "@/types/User";
@@ -23,10 +23,15 @@ export default function Page() {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [isReady] = useDebounce(() => searchQuery, 800, [searchQuery]);
 
-  const { data: raw, isFetching } = useInfiniteQuery({
+  const {
+    data: raw,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
     queryKey: ["search", "infinite", searchQuery],
-    queryFn: () => search(searchQuery),
-    getNextPageParam: (lastPage) => lastPage.nextPage,
+    queryFn: ({ pageParam = 0 }) => search(searchQuery, { pageParam }),
+    getNextPageParam: (lastPage) => lastPage.posts.nextPage,
     initialPageParam: 0,
     refetchOnWindowFocus: false,
     enabled: !!isReady && searchQuery.length > 0,
@@ -34,6 +39,8 @@ export default function Page() {
   const { user } = useAuthUser();
 
   const data = raw?.pages[0];
+  const posts = raw?.pages.flatMap((page) => page.posts.data) || [];
+  console.log(posts);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -68,7 +75,7 @@ export default function Page() {
   };
 
   const renderPosts = () => {
-    if (data == null || data.posts.length < 1) return null;
+    if (data == null || posts.length < 1) return null;
 
     const isSignedIn = user != null;
 
@@ -76,7 +83,7 @@ export default function Page() {
       <div className="mt-4">
         <h3 className="text-xl mb-2">Posts</h3>
         <div className="flex flex-col gap-4">
-          {data.posts.map((post: PostType) => (
+          {posts.map((post: PostType) => (
             <Post
               author={post.author}
               createdAt={post.createdAt}
@@ -112,17 +119,25 @@ export default function Page() {
             onChange={(e) => setSearchQuery(e.target.value)}
             autoFocus={true}
           />
-          {!isFetching &&
-            data?.users.length === 0 &&
-            data?.posts.length === 0 && (
-              <div className="text-default-error mt-4">No results found</div>
-            )}
+          {!isFetching && data?.users.length === 0 && posts.length === 0 && (
+            <div className="text-default-error mt-4">No results found</div>
+          )}
           {isFetching ? (
             <SearchResultSkeleton />
           ) : (
             <>
               {renderUsers()} {renderPosts()}
             </>
+          )}
+          {hasNextPage && (
+            <div className="flex justify-center py-4">
+              <button
+                onClick={() => fetchNextPage()}
+                className="bg-default-dark w-full md:w-[80%] py-4"
+              >
+                Load more posts
+              </button>
+            </div>
           )}
         </div>
         <div className="w-80">
@@ -134,6 +149,9 @@ export default function Page() {
   );
 }
 
-async function search(query: string) {
-  return fetch(`/api/search?query=${query}`).then((res) => res.json());
+async function search(query: string, { pageParam }: { pageParam: number }) {
+  console.log("PP:", pageParam);
+  return await fetch(`/api/search?query=${query}&page=${pageParam}`).then(
+    (res) => res.json()
+  );
 }

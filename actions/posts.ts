@@ -57,6 +57,7 @@ export async function getRawPosts(page: number | null, desc = true) {
     .from("posts")
     .select("*")
     .is("deleted_at", null)
+    .is("main_post_id", null)
     .order("created_at", { ascending: !desc })
     .limit(LIMIT)
     .range(start, end);
@@ -123,6 +124,7 @@ export async function getRawPostsByUser(
     .from("posts")
     .select("*")
     .is("deleted_at", null)
+    .is("main_post_id", null)
     .eq("author_id", authorId)
     .order("created_at", { ascending: !desc })
     .range(start, end);

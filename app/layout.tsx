@@ -6,6 +6,7 @@ import ToastMessageWrapper from "./ToastMessageWrapper";
 import UserNavigation from "./UserNavigation";
 import QueryClientWrapper from "./QueryClientWrapper";
 import UserWrapper from "./UserWrapper";
+import Footer from "./Footer";
 
 export const metadata: Metadata = {
   title: "*NixConnect",
@@ -33,22 +34,7 @@ export default async function RootLayout({
                 </Link>
                 <UserNavigation />
               </nav>
-              <footer
-                className="bg-default-accent fixed w-full bottom-0 flex"
-                style={{ zIndex: 1000 }}
-              >
-                <div className="flex ml-auto gap-2">
-                  <Link href="/changelog">
-                    <div className="p-1">Changelog</div>
-                  </Link>
-                  <Link href="/help">
-                    <div className="p-1">Help</div>
-                  </Link>
-                  <Link href="/about">
-                    <div className="p-1">About</div>
-                  </Link>
-                </div>
-              </footer>
+              <Footer />
 
               <main className="py-8">{children}</main>
             </UserWrapper>

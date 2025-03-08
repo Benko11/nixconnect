@@ -5,7 +5,7 @@ export default function UltraWideLayout({
 }>) {
   return (
     <div className="flex justify-center py-6">
-      <div className="w-[1100px] max-w-[95%]">{children}</div>
+      <div className="w-[1150px] max-w-[95%]">{children}</div>
     </div>
   );
 }

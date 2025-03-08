@@ -23,6 +23,18 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Hashtags** - users will be able to use hashtags and search posts with the hashtags
 - **Search** - users will be able to search for content of the posts and users
 
+## [0.2] - 2025-03-08
+
+### Added
+
+- **Comments** - users can add comments and interact with them in a similar way to posts; right click on a comment to see the context menu
+- **Revamped View** - the view post section has been revamped to better suit the large space available
+
+### Changed
+
+- **Version handle** - version handle is now more prominent in the bottom bar, clicking it opens the changelog
+- **Refactoring and refinements** - redoing the code structure and refining some parts of the user experience
+
 ## [0.1.3] - 2025-03-08
 
 ### Added
@@ -57,7 +69,7 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Changelog removed from About** - all of the Changelog details are now available here
 - **ENV Versioning** - current version of \*NixConnect is available from a global source and in the About section
 
-## [0.1.0] - 2025-03-03
+## [0.1] - 2025-03-03
 
 ### Added
 

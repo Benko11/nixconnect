@@ -76,7 +76,10 @@ export default function Form() {
   }
 
   return (
-    <form className="pb-8 w-full md:w-[60%]" onSubmit={handleSubmit}>
+    <form
+      className="pb-8 w-full md:w-[60%] flex flex-col"
+      onSubmit={handleSubmit}
+    >
       {message && <div className="text-default-error pb-2">{message}</div>}
       <textarea
         name="post"
@@ -88,7 +91,7 @@ export default function Form() {
         autoFocus
       ></textarea>
       <button
-        className="bg-default-primary text-default-dark py-2 w-full -mt-2 disabled:opacity-70"
+        className="bg-default-primary text-default-dark py-2 w-full disabled:opacity-70"
         disabled={addMutation.isPending}
       >
         Post

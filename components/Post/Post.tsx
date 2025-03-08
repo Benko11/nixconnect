@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import ContextMenu from "./ContextMenu";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import ContextMenu from "../ContextMenu";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToastMessage } from "@/contexts/ToastMessageContext";
 import { useAuthUser } from "@/contexts/UserContext";
 import { Ping } from "@/types/Ping";
-import PostOptionsSkeleton from "./PostOptionsSkeleton";
-import ProfilePicture from "./ProfilePicture";
+import ProfilePicture from "../ProfilePicture";
+import PostPings from "./PostPings";
+import PostComments from "./PostComments";
+import PostActions from "./PostActions";
 
 interface PostProps {
   id: string;
@@ -19,6 +21,7 @@ interface PostProps {
   raw: string;
   createdAt: string;
   avatarUrl?: string;
+  showOptions?: boolean;
   children: React.ReactNode | React.ReactNode[];
 }
 
@@ -33,6 +36,7 @@ export default function Post({
   createdAt,
   avatarUrl,
   isSignedIn,
+  showOptions = true,
 }: PostProps) {
   const [contextMenu, setContextMenu] = useState({
     visible: false,
@@ -43,6 +47,8 @@ export default function Post({
   const [isTruncated, setIsTruncated] = useState(true);
   const [isLargePost, setIsLargePost] = useState(false);
   const [isPingsOpen, setIsPingsOpen] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+
   const contentRef = useRef<HTMLDivElement>(null);
 
   const queryClient = useQueryClient();
@@ -51,10 +57,20 @@ export default function Post({
   const {
     data: dataPings,
     isPending: isPendingPings,
-    refetch,
+    refetch: refetchPings,
   } = useQuery({
     queryKey: ["post-pings", id],
     queryFn: () => fetchPingPosts(id),
+    refetchOnWindowFocus: false,
+  });
+
+  const {
+    data: comments,
+    isPending: isPendingComments,
+    refetch: refetchComments,
+  } = useQuery({
+    queryKey: ["post-comments", id],
+    queryFn: () => fetchComments(id),
     refetchOnWindowFocus: false,
   });
 
@@ -92,83 +108,38 @@ export default function Post({
     }
   };
 
-  const handleTogglePing = async () => {
-    const raw = await fetch(`/api/pings/${id}`, { method: "POST" });
-    const data = await raw.json();
-    if (raw.ok) {
-      await refetch();
+  const pingToggleMutation = useMutation({
+    mutationFn: () => fetchTogglePing(id),
+    onSuccess: async (data) => {
+      await refetchPings();
       toastMessage.show(data.message, 8000);
-    } else {
+    },
+    onError: (data) => {
       toastMessage.errorShow(data.message, 8000);
-    }
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deletePost(id),
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ["posts", "infinite"] });
+      toastMessage.show(data.message, 8000);
+    },
+    onError: (data) => {
+      toastMessage.errorShow(data.message, 8000);
+    },
+  });
+
+  const handleTogglePing = async () => {
+    pingToggleMutation.mutate();
   };
 
   const handleDelete = async () => {
-    const raw = await fetch(`/api/posts/${id}`, { method: "DELETE" });
-    const data = await raw.json();
-    if (raw.ok) {
-      await queryClient.invalidateQueries({ queryKey: ["posts", "infinite"] });
-      toastMessage.show(data.message, 8000);
-    } else {
-      toastMessage.errorShow(data.message, 8000);
-    }
+    deleteMutation.mutate();
   };
 
   const handleRedirectToPost = () => {
     redirect(`/posts/${id}`);
-  };
-
-  const renderOptions = () => {
-    if (isPendingPings) return <PostOptionsSkeleton />;
-    return (
-      <>
-        <div
-          className={`${
-            isPinged ? `bg-default-accent` : ` bg-default-neutral`
-          } flex-grow p-1 px-2 cursor-pointer`}
-          onClick={() => setIsPingsOpen((prev) => !prev)}
-        >
-          {dataPings.pings.length} ping{dataPings.pings.length !== 1 && "s"}
-        </div>
-        <div className="bg-default-neutral flex-grow p-1 px-2">0 comments</div>
-      </>
-    );
-  };
-
-  const renderPingOptions = () => {
-    if (!isPingsOpen) return null;
-
-    const pings = dataPings?.pings;
-    if (pings == null) return null;
-
-    return (
-      <div className="bg-default-neutral">
-        <div className="flex flex-col gap-2 p-2 overflow-auto max-h-60">
-          <button
-            className="bg-default-primary text-default-dark p-2"
-            onClick={handleTogglePing}
-          >
-            Ping this post
-          </button>
-          {pings.map((ping: Ping) => (
-            <Link
-              href={`/profile/~${ping.author.nickname}`}
-              key={ping.createdAt}
-            >
-              <div
-                key={ping.createdAt}
-                className="bg-default-dark p-2 flex items-center gap-2"
-              >
-                <ProfilePicture user={ping.author} size="small" />
-                <div className="text-default-primary">
-                  ~{ping.author.nickname}
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    );
   };
 
   const authNickname =
@@ -194,11 +165,12 @@ export default function Post({
   const containerClasses = `p-4 flex flex-col gap-2 pb-8`.split(" ");
   if (isTruncated) containerClasses.push("max-h-[30rem] overflow-hidden");
   return (
-    <div
-      className="select-none flex flex-col gap-0.5"
-      onContextMenu={handleContextMenu}
-    >
-      <div className="bg-default-neutral" onDoubleClick={handleTogglePing}>
+    <div className="select-none flex flex-col gap-0.5">
+      <div
+        className="bg-default-neutral"
+        onDoubleClick={handleTogglePing}
+        onContextMenu={handleContextMenu}
+      >
         <div
           ref={contentRef}
           className={containerClasses.join(" ")}
@@ -215,8 +187,39 @@ export default function Post({
           </button>
         )}
       </div>
-      <div className="flex gap-0.5">{renderOptions()}</div>
-      {renderPingOptions()}
+      {showOptions && (
+        <>
+          <div className="flex gap-0.5">
+            <PostActions
+              commentsLength={comments?.length || 0}
+              pingsLength={dataPings?.pings.length}
+              isPending={[isPendingPings, isPendingComments]}
+              isPinged={isPinged}
+              onCommentToggle={() => {
+                setIsCommentsOpen((prev) => !prev);
+                setIsPingsOpen(false);
+              }}
+              onPingToggle={() => {
+                setIsCommentsOpen(false);
+                setIsPingsOpen((prev) => !prev);
+              }}
+            />
+          </div>
+          <PostPings
+            isOpen={isPingsOpen}
+            isPending={pingToggleMutation.isPending}
+            isPinged={isPinged}
+            pings={dataPings?.pings}
+            onToggle={handleTogglePing}
+          />
+          <PostComments
+            isOpen={isCommentsOpen}
+            postId={id}
+            comments={comments}
+            refetch={refetchComments}
+          />
+        </>
+      )}
 
       <div className="bg-default-neutral">
         <Link
@@ -243,4 +246,20 @@ export default function Post({
 
 async function fetchPingPosts(postId: string) {
   return await fetch(`/api/pings/${postId}`).then((res) => res.json());
+}
+
+export async function fetchComments(postId: string) {
+  return await fetch(`/api/posts/${postId}/comments`).then((res) => res.json());
+}
+
+export async function fetchTogglePing(postId: string) {
+  return await fetch(`/api/pings/${postId}`, { method: "POST" }).then((res) =>
+    res.json()
+  );
+}
+
+export async function deletePost(postId: string) {
+  return await fetch(`/api/posts/${postId}`, { method: "DELETE" }).then((res) =>
+    res.json()
+  );
 }
