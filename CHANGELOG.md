@@ -23,6 +23,18 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Hashtags** - users will be able to use hashtags and search posts with the hashtags
 - **Search** - users will be able to search for content of the posts and users
 
+## [0.2.1] - 2025-03-21
+
+### Added
+
+- **Icons** - some new graphical icons to better illustrate certain tasks
+- **Settings** - there is currently a design in place for Settings
+- **Change user data** - authenticated users can now change their avatars and emails
+
+### Changed
+
+- **Refactoring** - some components were refactored, as \*NixConnect's visual identity is being established
+
 ## [0.2] - 2025-03-08
 
 ### Added

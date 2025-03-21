@@ -15,7 +15,7 @@ export default function ProfilePicture({ user, size }: ProfilePictureProps) {
   } else {
     imageSize = 192;
   }
-  if (user.avatarUrl == null) return;
+  if (user.avatarUrl == null || user.avatarUrl === "") return;
 
   return (
     <Image

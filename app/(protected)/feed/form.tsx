@@ -1,5 +1,6 @@
 "use client";
 
+import PrimaryButton from "@/components/PrimaryButton";
 import { useToastMessage } from "@/contexts/ToastMessageContext";
 import PostClient from "@/types/PostClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -90,12 +91,7 @@ export default function Form() {
         value={post}
         autoFocus
       ></textarea>
-      <button
-        className="bg-default-primary text-default-dark py-2 w-full disabled:opacity-70"
-        disabled={addMutation.isPending}
-      >
-        Post
-      </button>
+      <PrimaryButton disabled={addMutation.isPending}>Post</PrimaryButton>
     </form>
   );
 }

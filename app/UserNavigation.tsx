@@ -4,6 +4,8 @@ import { useAuthUser } from "@/contexts/UserContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import SearchIcon from "../public/assets/icons/Search.png";
+import Image from "next/image";
 
 async function logout() {
   await fetch("/api/auth/logout", { method: "POST" });
@@ -63,6 +65,11 @@ export default function UserNavigation() {
     setIsMenuOpen(false);
   };
 
+  const handleGoToSettings = async () => {
+    router.push("/settings");
+    setIsMenuOpen(false);
+  };
+
   if (authUser.nickname == null) {
     return (
       <div className="flex gap-2 ml-auto items-center">
@@ -76,12 +83,18 @@ export default function UserNavigation() {
   if (authUser == null) return;
 
   return (
-    <div className="ml-auto relative select-none flex" ref={menuRef}>
+    <div
+      className="ml-auto relative select-none flex items-center"
+      ref={menuRef}
+    >
       <Link
         href="/search"
-        className="p-1 px-2 pr-6 hidden md:block opacity-90 hover:opacity-100 focus:opacity-100 bg-default-light text-default-neutral"
+        className="opacity-90 hover:opacity-100 focus:opacity-100 text-default-neutral flex items-center p-1"
       >
-        <div className="opacity-40">Search...</div>
+        <div className="bg-default-dark p-1">
+          <Image src={SearchIcon} alt="Search" width={16} height={16} />
+        </div>
+        <div className="bg-default-light px-3">Search</div>
       </Link>
       <div
         className="bg-default-secondary text-default-light p-1 cursor-pointer"
@@ -105,7 +118,10 @@ export default function UserNavigation() {
             >
               Search
             </li>
-            <li className="p-2 px-6 min-w-52 cursor-pointer hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent">
+            <li
+              className="p-2 px-6 min-w-52 cursor-pointer hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent"
+              onClick={handleGoToSettings}
+            >
               Settings
             </li>
             <li
