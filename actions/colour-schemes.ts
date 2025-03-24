@@ -47,10 +47,11 @@ export async function getColourSchemeById(id: number) {
 export async function getAuthUserColourScheme() {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
-  const userId = user.data.user?.id;
-  if (userId == null) {
-    throw new Error("Unauthorized access");
+  if (user == null || user.data.user == null) {
+    return { colourScheme: 1 };
   }
+
+  const userId = user.data.user.id;
 
   const { data: colourSchemeMaybe, error } = await supabase
     .from("user_preferences")

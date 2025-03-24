@@ -32,7 +32,11 @@ interface UserContextType {
 }
 
 async function fetchAuthUser() {
-  return await fetch("/api/auth/user").then((res) => res.json());
+  return await fetch("/api/auth/user")
+    .then((res) => res.json())
+    .catch(() => {
+      console.error("wtf");
+    });
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -55,8 +59,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const { data: colourSchemeData, isPending } = useQuery({
     queryKey: ["colour-scheme", "id"],
-    queryFn: () => fetchColourScheme(userData.preferences.colourScheme),
-    enabled: !!user?.preferences?.colourScheme,
+    queryFn: () => fetchColourScheme(userData.preferences.colourScheme || 1),
   });
 
   useEffect(() => {
