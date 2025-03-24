@@ -25,6 +25,7 @@ export async function getComments(postId: string) {
     .from("posts")
     .select("id,author_id,content,created_at")
     .eq("main_post_id", postId)
+    .is("deleted_at", null)
     .order("created_at", { ascending: false });
   if (data == null) return;
 

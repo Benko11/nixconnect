@@ -1,6 +1,7 @@
 "use client";
 
 import Breadcrumbs from "@/components/Breadcrumbs";
+import FormError from "@/components/FormError";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import NixInput from "@/components/NixInput";
 import PrimaryButton from "@/components/PrimaryButton";
@@ -20,13 +21,27 @@ export default function Page() {
     email: user?.email || "",
     avatarUrl: user?.avatarUrl || "",
   });
+  const [errors, setErrors] = useState({
+    email: "",
+    avatarUrl: "",
+  });
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const userDataMutation = useMutation({
     mutationFn: changeUserData,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(data);
+      if (data.errors) {
+        setErrors({
+          ...errors,
+          email: data.errors.email?._errors[0],
+          avatarUrl: data.errors.avatarUrl?._errors[0],
+        });
+        return;
+      }
+
       refetchUser();
       toastMessage.show("User data updated", 8000);
     },
@@ -62,6 +77,7 @@ export default function Page() {
               stateValue={form.email}
               onChange={handleInput}
             />
+            <FormError message={errors.email} />
           </div>
 
           <div>
@@ -72,6 +88,7 @@ export default function Page() {
               onChange={handleInput}
               required={false}
             />
+            <FormError message={errors.avatarUrl} />
           </div>
 
           {isValidHttpUrl(form.avatarUrl) && (

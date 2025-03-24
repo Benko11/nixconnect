@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import getPronounsForUser from "./pronouns";
 import { getGenderByUser } from "./genders";
+import { getAuthUserColourScheme } from "./colour-schemes";
 
 export async function getUserById(id: string) {
   const supabase = await createClient();
@@ -25,9 +26,11 @@ export async function getAuthUser() {
   const supabase = await createClient();
   const auth = await supabase.auth.getUser();
   const user = auth.data.user;
+  const colourScheme = await getAuthUserColourScheme();
+
   if (user == null) throw new Error("Empty user");
 
-  return getUserById(user.id);
+  return { ...(await getUserById(user.id)), preferences: { ...colourScheme } };
 }
 
 export async function getUserByNickname(nickname: string) {

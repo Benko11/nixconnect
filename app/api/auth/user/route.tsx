@@ -19,9 +19,16 @@ export async function PATCH(request: NextRequest) {
   try {
     const data = await request.json();
     console.log(data);
-    await updateAuthUserInfo(data);
+    const error = await updateAuthUserInfo(data);
+    if (error?.errors != null) {
+      return NextResponse.json({
+        message: "Could not change the information, please review errors below",
+        success: false,
+        errors: error.errors,
+      }); 
+    }
 
-    return NextResponse.json({ message: "I guess it worked...?" });
+    return NextResponse.json({ message: "Personal data changed successfully" });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: err }, { status: 500 });

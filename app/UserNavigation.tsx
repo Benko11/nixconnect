@@ -4,7 +4,7 @@ import { useAuthUser } from "@/contexts/UserContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import SearchIcon from "../public/assets/icons/Search.png";
+import SearchIcon from "@/public/assets/icons/Search.png";
 import Image from "next/image";
 
 async function logout() {

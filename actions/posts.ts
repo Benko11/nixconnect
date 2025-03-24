@@ -27,17 +27,17 @@ export async function createPost(content: string) {
 export default async function deletePostById(id: string) {
   const supabase = await createClient();
 
-  const { error: pingError } = await supabase
-    .from("post_pings")
-    .delete()
-    .eq("post_id", id);
-  if (pingError) {
-    throw new Error(pingError.message);
-  }
+  // const { error: pingError } = await supabase
+  //   .from("post_pings")
+  //   .delete()
+  //   .eq("post_id", id);
+  // if (pingError) {
+  //   throw new Error(pingError.message);
+  // }
 
   const { error: postsError } = await supabase
     .from("posts")
-    .delete()
+    .update({ deleted_at: "now()" })
     .eq("id", id);
   if (postsError) {
     throw new Error(postsError.message);

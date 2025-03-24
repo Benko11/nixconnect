@@ -1,3 +1,5 @@
+"use client";
+
 import Breadcrumbs from "@/components/Breadcrumbs";
 import WideLayout from "@/components/layouts/WideLayout";
 import Link from "next/link";
@@ -19,20 +21,23 @@ export default function Settings() {
             <div className="bg-default-secondary h-16 aspect-square flex justify-center items-center">
               <Image src={UserIcon} alt="User" width={24} height={24} />
             </div>
-            <div>User</div>
+            <div>Information about me</div>
           </div>
         </Link>
-        <div className="bg-default-neutral flex items-center gap-4">
-          <div className="bg-default-accent h-16 aspect-square flex justify-center items-center">
-            <Image
-              src={BoldAsteriskIcon}
-              alt="Appearance"
-              width={24}
-              height={24}
-            />
+        <Link href="/settings/personalization">
+          <div className="bg-default-neutral flex items-center gap-4">
+            <div className="bg-default-accent h-16 aspect-square flex justify-center items-center">
+              <Image
+                src={BoldAsteriskIcon}
+                alt="Appearance"
+                width={24}
+                height={24}
+              />
+            </div>
+            <div>Personalization</div>
           </div>
-          <div>Appearance</div>
-        </div>
+        </Link>
+
         <div className="bg-default-neutral flex items-center gap-4">
           <div className="bg-default-accent h-16 aspect-square flex justify-center items-center">
             <Image src={PadlockIcon} alt="Privacy" width={24} height={24} />

@@ -9,6 +9,8 @@ import {
 } from "@tanstack/react-query";
 import { deletePost } from "./Post/Post";
 import { useToastMessage } from "@/contexts/ToastMessageContext";
+import ContextMenuItem from "./ContextMenuItem";
+import BinIcon from "@/public/assets/icons/Bin.png";
 
 interface CommentProps {
   id: string;
@@ -54,7 +56,12 @@ export default function Comment({
     deleteMutation.mutate();
   };
 
-  const actions = [{ title: "Delete", action: handleDelete }];
+  const actions = [
+    {
+      title: <ContextMenuItem icon={BinIcon} label="Delete" />,
+      action: handleDelete,
+    },
+  ];
 
   const handleContextMenu = (e: React.MouseEvent<HTMLElement>) => {
     handleClick();

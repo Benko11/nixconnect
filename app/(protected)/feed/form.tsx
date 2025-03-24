@@ -1,5 +1,6 @@
 "use client";
 
+import FormError from "@/components/FormError";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useToastMessage } from "@/contexts/ToastMessageContext";
 import PostClient from "@/types/PostClient";
@@ -81,7 +82,7 @@ export default function Form() {
       className="pb-8 w-full md:w-[60%] flex flex-col"
       onSubmit={handleSubmit}
     >
-      {message && <div className="text-default-error pb-2">{message}</div>}
+      <FormError message={message} />
       <textarea
         name="post"
         id="post"

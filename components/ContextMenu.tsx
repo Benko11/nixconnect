@@ -1,8 +1,13 @@
+import { JSX } from "react";
+
 interface ContextMenuProps {
   x: number;
   y: number;
   visible: boolean;
-  actions: { title: string; action: () => void | Promise<void> }[];
+  actions: {
+    title: JSX.Element;
+    action: () => void | Promise<void>;
+  }[];
 }
 
 export default function ContextMenu({
@@ -21,10 +26,10 @@ export default function ContextMenu({
         zIndex: 1000,
       }}
     >
-      {actions.map(({ action, title }) => {
+      {actions.map(({ action, title }, index) => {
         return (
           <div
-            key={title}
+            key={index}
             className="cursor-pointer w-full hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent p-2"
             onClick={action}
           >

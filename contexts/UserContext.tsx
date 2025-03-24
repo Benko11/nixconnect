@@ -1,7 +1,14 @@
 "use client";
 
+import ColourScheme from "@/types/ColourScheme";
 import { useQuery } from "@tanstack/react-query";
-import { createContext, ReactNode, useCallback, useContext } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react";
 
 interface UserObject {
   id: string;
@@ -14,6 +21,9 @@ interface UserObject {
     description: string;
   };
   pronouns: string[];
+  preferences: {
+    colourScheme: number;
+  };
 }
 
 interface UserContextType {
@@ -27,31 +37,87 @@ async function fetchAuthUser() {
 
 const UserContext = createContext<UserContextType | null>(null);
 export function UserProvider({ children }: { children: ReactNode }) {
-  const { data, isPending, refetch } = useQuery({
+  const {
+    data: userData,
+    isPending: isUserLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["users", "auth"],
     queryFn: fetchAuthUser,
   });
 
-  const refetchUser = useCallback(() => {
-    refetch();
+  const refetchUser = useCallback(async () => {
+    await refetch();
   }, [refetch]);
 
-  if (isPending) return null;
-  const success = data?.message == null;
+  const success = userData?.message == null;
+  const user = success ? mapUserData(userData) : null;
 
-  const user: UserObject = {
-    id: data.id,
-    nickname: data.nickname,
-    email: data.email,
-    avatarUrl: data.avatar_url,
-    gender: data.gender,
-    pronouns: data.pronouns,
-  };
+  const { data: colourSchemeData, isPending } = useQuery({
+    queryKey: ["colour-scheme", "id"],
+    queryFn: () => fetchColourScheme(userData.preferences.colourScheme),
+    enabled: !!user?.preferences?.colourScheme,
+  });
+
+  useEffect(() => {
+    if (colourSchemeData) {
+      applyColours(colourSchemeData);
+    }
+  }, [colourSchemeData]);
+
+  if (isUserLoading || isPending) return null;
 
   return (
     <UserContext.Provider value={{ user: success ? user : null, refetchUser }}>
       {children}
     </UserContext.Provider>
+  );
+}
+
+function applyColours(colourSchemeData: {
+  primary_colour: string;
+  secondary_colour: string;
+  accent_colour: string;
+  error_colour: string;
+  neutral_colour: string;
+  light_colour: string;
+  dark_colour: string;
+}) {
+  if (colourSchemeData == null) return;
+
+  document.documentElement.style.setProperty(
+    "--primary-colour",
+    colourSchemeData.primary_colour
+  );
+
+  document.documentElement.style.setProperty(
+    "--secondary-colour",
+    colourSchemeData.secondary_colour
+  );
+
+  document.documentElement.style.setProperty(
+    "--accent-colour",
+    colourSchemeData.accent_colour
+  );
+
+  document.documentElement.style.setProperty(
+    "--error-colour",
+    colourSchemeData.error_colour
+  );
+
+  document.documentElement.style.setProperty(
+    "--neutral-colour",
+    colourSchemeData.neutral_colour
+  );
+
+  document.documentElement.style.setProperty(
+    "--light-colour",
+    colourSchemeData.light_colour
+  );
+
+  document.documentElement.style.setProperty(
+    "--dark-colour",
+    colourSchemeData.dark_colour
   );
 }
 
@@ -61,4 +127,22 @@ export function useAuthUser() {
     throw new Error("useAuthUser must be used within a UserProvider");
   }
   return context;
+}
+
+function mapUserData(userData: any): UserObject | null {
+  if (!userData) return null;
+
+  return {
+    id: userData.id,
+    nickname: userData.nickname,
+    email: userData.email,
+    avatarUrl: userData.avatar_url,
+    gender: userData.gender,
+    pronouns: userData.pronouns,
+    preferences: userData.preferences,
+  };
+}
+
+export async function fetchColourScheme(id: number) {
+  return await fetch(`/api/colour-schemes/${id}`).then((res) => res.json());
 }

@@ -30,7 +30,7 @@ export default async function RootLayout({
                 style={{ zIndex: 1000 }}
               >
                 <Link href="/" className="p-1">
-                  {metadata.title as string}
+                  <h1>{metadata.title as string}</h1>
                 </Link>
                 <UserNavigation />
               </nav>

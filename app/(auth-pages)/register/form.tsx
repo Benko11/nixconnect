@@ -6,6 +6,7 @@ import Genders from "./Genders";
 import NixInput from "@/components/NixInput";
 import RegisterClient from "@/types/RegisterClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import FormError from "@/components/FormError";
 
 export default function Form() {
   const [form, setForm] = useState<RegisterClient>({
@@ -110,9 +111,7 @@ export default function Form() {
           stateValue={form.nickname}
           onChange={handleInput}
         />
-        {errors.nickname && (
-          <div className="text-default-error">{errors.nickname}</div>
-        )}
+        <FormError message={errors.nickname} />
       </div>
 
       <div className="flex flex-col pb-4">
@@ -121,9 +120,7 @@ export default function Form() {
           stateValue={form.email}
           onChange={handleInput}
         />
-        {errors.email && (
-          <div className="text-default-error">{errors.email}</div>
-        )}
+        <FormError message={errors.email} />
       </div>
 
       <div className="grid grid-cols-2 pb-4 gap-x-4">
@@ -134,12 +131,8 @@ export default function Form() {
             stateValue={form.password}
             onChange={handleInput}
           />
-          {errors.password && (
-            <div className="text-default-error">{errors.password}</div>
-          )}
-          {errors.passwordAgain && (
-            <div className="text-default-error">{errors.passwordAgain}</div>
-          )}
+          <FormError message={errors.password} />
+          <FormError message={errors.passwordAgain} />
         </div>
         <div className="flex flex-col">
           <NixInput
@@ -176,9 +169,7 @@ export default function Form() {
         />
       )}
 
-      {errors?.pronouns && (
-        <div className="text-default-error">{errors.pronouns}</div>
-      )}
+      <FormError message={errors.pronouns} />
 
       <div className="pt-4">
         <button

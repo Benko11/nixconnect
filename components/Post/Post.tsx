@@ -12,6 +12,12 @@ import ProfilePicture from "../ProfilePicture";
 import PostPings from "./PostPings";
 import PostComments from "./PostComments";
 import PostActions from "./PostActions";
+import ClipboardIcon from "@/public/assets/icons/Clipboard.png";
+import EyeIcon from "@/public/assets/icons/Eye.png";
+import AsteriskIcon from "@/public/assets/icons/Asterisk.png";
+import BinIcon from "@/public/assets/icons/Bin.png";
+import SharesheetIcon from "@/public/assets/icons/Sharesheet.png";
+import ContextMenuItem from "../ContextMenuItem";
 
 interface PostProps {
   id: string;
@@ -108,6 +114,16 @@ export default function Post({
     }
   };
 
+  const handleCopyUrlToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(location.origin + "/posts/" + id);
+      toastMessage.show("Post URL copied to clipboard", 8000);
+    } catch (error) {
+      toastMessage.errorShow("Failed to copy", 8000);
+      console.error("Failed to copy", error);
+    }
+  };
+
   const pingToggleMutation = useMutation({
     mutationFn: () => fetchTogglePing(id),
     onSuccess: async (data) => {
@@ -150,16 +166,34 @@ export default function Post({
     ) || false;
 
   const actions = [
-    { title: "Copy", action: handleCopyToClipboard },
-    { title: "View", action: handleRedirectToPost },
+    {
+      title: <ContextMenuItem icon={ClipboardIcon} label="Copy" />,
+      action: handleCopyToClipboard,
+    },
+    {
+      title: <ContextMenuItem icon={EyeIcon} label="View" />,
+      action: handleRedirectToPost,
+    },
+    {
+      title: <ContextMenuItem icon={SharesheetIcon} label="Share" />,
+      action: handleCopyUrlToClipboard,
+    },
   ];
 
   if (isSignedIn) {
     actions.unshift({
-      title: isPinged ? "Unping" : "Ping",
+      title: (
+        <ContextMenuItem
+          label={isPinged ? "Unping" : "Ping"}
+          icon={AsteriskIcon}
+        />
+      ),
       action: handleTogglePing,
     });
-    actions.push({ title: "Delete", action: handleDelete });
+    actions.push({
+      title: <ContextMenuItem icon={BinIcon} label="Delete" />,
+      action: handleDelete,
+    });
   }
 
   const containerClasses = `p-4 flex flex-col gap-2 pb-8`.split(" ");

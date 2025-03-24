@@ -30,17 +30,13 @@ Why is it called \*NixConnect?
 
 - Because it is for the people who love \*NIX stuff and want to stay connected.
 
+Does this project have a future?
+
+- The Changelog very much suggests that it does. 🔥
+
 Why is it not in the Fediverse?
 
 - That's a good question.
-
-Does \*NixConnect contain nuts?
-
-- What are you, nuts? 🥜
-
-Why does your GitHub bio say LGBTQ+ forever?
-
-- Because we're here, we're queer, get used to it, etc.
 
 Why did the chicken cross the road?
 
@@ -62,9 +58,9 @@ What is gender?
 
 - Some bullshit to sell more toilets. 🚽
 
-Does this project have a future?
+Why does your GitHub bio say LGBTQ+ forever?
 
-- I hope so, I went to hell and back to finish it. 🔥
+- Because we're here, we're queer, get used to it, etc.
 
 Hotel?
 
