@@ -42,7 +42,6 @@ export async function signUp({
   pronouns,
   gender,
 }: RegisterClient) {
-  console.log("gender:", gender);
   const formSchema = z
     .object({
       nickname: z.string().min(2, {

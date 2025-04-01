@@ -1,22 +1,22 @@
 "use client";
 
 import Post from "@/components/Post/Post";
-import { useAuthUser } from "@/contexts/UserContext";
 import { Post as PostType } from "@/types/Post";
 import React from "react";
 import Markdown from "react-markdown";
 
-function renderSinglePost(post: PostType, id: string, isSignedIn: boolean) {
+function renderSinglePost(post: PostType, id: string) {
   return (
     <Post
       key={id}
       id={id}
-      isSignedIn={isSignedIn}
       author={post.author}
-      avatarUrl={post.avatarUrl}
       createdAt={post.createdAt}
       timestamp={post.timestamp}
       raw={post.content}
+      pings={post.pings}
+      comments={post.comments}
+      refetch={() => {}}
     >
       <Markdown className="markdown-block">{post.content}</Markdown>
     </Post>
@@ -24,13 +24,10 @@ function renderSinglePost(post: PostType, id: string, isSignedIn: boolean) {
 }
 
 export default function SimplePosts({ posts }: { posts: PostType[] }) {
-  const { user } = useAuthUser();
-  const isSignedIn = user != null;
-
   const renderPosts = () => {
     return (
       <React.Fragment>
-        {posts.map((post) => renderSinglePost(post, post.id, isSignedIn))}
+        {posts.map((post) => renderSinglePost(post, post.id))}
       </React.Fragment>
     );
   };

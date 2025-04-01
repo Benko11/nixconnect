@@ -1,8 +1,7 @@
 import { getDeltaTime } from "@/utils/getDeltaTime";
-import { Ping } from "@/types/Ping";
 import { createClient } from "@/utils/supabase/server";
-import { getUserById } from "@/utils/utils";
 import { NextResponse } from "next/server";
+import { getUserById } from "./users";
 
 export async function pingExists(userId: string, postId: string) {
   const supabase = await createClient();
@@ -26,17 +25,20 @@ export async function getPingsForPost(postId: string) {
     .eq("post_id", postId);
   if (data == null) return;
 
-  const pings: Ping[] = [];
-  for (const raw of data) {
-    const author = await getUserById(raw.user_id);
-    if (author == null || author.nickname == null)
-      throw new Error("Error retrieving authors");
+  const pings = await Promise.all(
+    data.map(async (item) => {
+      const author = await getUserById(item.user_id);
+      const timestamp = getDeltaTime(item.created_at);
+      if (author == null || author.nickname == null)
+        throw new Error("Error retrieving authors");
 
-    pings.push({
-      author: { nickname: author.nickname, avatarUrl: author.avatar_url },
-      createdAt: raw.created_at,
-      timestamp: getDeltaTime(raw.created_at),
-    });
-  }
+      return {
+        id: item.id,
+        author,
+        createdAt: item.created_at,
+        timestamp,
+      };
+    })
+  );
   return pings;
 }

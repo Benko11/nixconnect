@@ -8,11 +8,11 @@ export default function Footer() {
       style={{ zIndex: 1000 }}
     >
       <div className="flex mr-auto">
-        <Link href="/changelog" className="p-1 bg-default-secondary">
+        <Link href="/changelog" className="p-1 bg-default-secondary changelog">
           v{version}
         </Link>
       </div>
-      <div className="flex ml-auto gap-2">
+      <div className="flex ml-auto gap-2 links-footer">
         <Link href="/help">
           <div className="p-1">Help</div>
         </Link>

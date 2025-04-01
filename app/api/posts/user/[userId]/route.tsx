@@ -11,7 +11,7 @@ export async function GET(
   const { userId } = await params;
 
   try {
-    const posts = await getPosts(pageNumber, userId);
+    const posts = await getPosts(pageNumber, "", userId);
     return NextResponse.json({ ...posts });
   } catch (err) {
     console.error(err);

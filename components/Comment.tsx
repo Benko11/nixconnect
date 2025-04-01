@@ -2,28 +2,20 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import ContextMenu from "./ContextMenu";
-import {
-  QueryObserverResult,
-  RefetchOptions,
-  useMutation,
-} from "@tanstack/react-query";
+import { RefetchOptions, useMutation } from "@tanstack/react-query";
 import { deletePost } from "./Post/Post";
 import { useToastMessage } from "@/contexts/ToastMessageContext";
 import ContextMenuItem from "./ContextMenuItem";
 import BinIcon from "@/public/assets/icons/Bin.png";
+import Author from "@/types/Author";
 
 interface CommentProps {
   id: string;
   content: string;
   timestamp: string;
   createdAt: string;
-  author: {
-    nickname: string;
-    avatarUrl: string;
-  };
-  refetch: (
-    options?: RefetchOptions
-  ) => Promise<QueryObserverResult<unknown, Error>>;
+  author: Author;
+  refetch: (options?: RefetchOptions) => unknown;
 }
 
 export default function Comment({

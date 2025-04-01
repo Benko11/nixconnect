@@ -29,18 +29,21 @@ export async function getComments(postId: string) {
     .order("created_at", { ascending: false });
   if (data == null) return;
 
-  const comments = [];
-  for (const item of data) {
-    const author = await getUserById(item.author_id);
-    const timestamp = getDeltaTime(item.created_at);
+  return await Promise.all(
+    data.map(async (item) => {
+      const author = await getUserById(item.author_id);
+      if (author == null || author.nickname == null)
+        throw new Error("Error retrieving authors");
 
-    comments.push({
-      id: item.id,
-      author,
-      content: item.content,
-      created_at: item.created_at,
-      timestamp,
-    });
-  }
-  return comments;
+      const timestamp = getDeltaTime(item.created_at);
+
+      return {
+        id: item.id,
+        author,
+        content: item.content,
+        created_at: item.created_at,
+        timestamp,
+      };
+    })
+  );
 }

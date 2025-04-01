@@ -3,6 +3,9 @@ import { getDeltaTime } from "@/utils/getDeltaTime";
 import { createClient } from "@/utils/supabase/server";
 import { getRangeIndexes } from "@/utils/utils";
 import { NextResponse } from "next/server";
+import { getPingsForPost } from "./ping";
+import { getComments } from "./comments";
+import { getUserById } from "./users";
 
 export async function createPost(content: string) {
   if (content.trim().length < 1) {
@@ -48,7 +51,11 @@ export default async function deletePostById(id: string) {
 
 const LIMIT = 15;
 
-export async function getRawPosts(page: number | null, desc = true) {
+export async function getRawPosts(
+  page: number | null,
+  desc = true,
+  searchQuery: string = ""
+) {
   const supabase = await createClient();
   const pageNumber = page == null ? 1 : page;
   const [start, end] = getRangeIndexes(pageNumber, LIMIT);
@@ -58,6 +65,7 @@ export async function getRawPosts(page: number | null, desc = true) {
     .select("*")
     .is("deleted_at", null)
     .is("main_post_id", null)
+    .ilike("content", `%${searchQuery.toLowerCase()}%`)
     .order("created_at", { ascending: !desc })
     .limit(LIMIT)
     .range(start, end);
@@ -73,37 +81,36 @@ export async function getRawPosts(page: number | null, desc = true) {
 
 export async function getPosts(
   page: number | null,
+  searchQuery = "",
   authorId?: string,
   desc = true
 ) {
   const pageNumber = page == null ? 1 : page;
-  const supabase = await createClient();
   const raw =
     authorId == null
-      ? await getRawPosts(pageNumber, desc)
+      ? await getRawPosts(pageNumber, desc, searchQuery)
       : await getRawPostsByUser(pageNumber, authorId, desc);
   if (raw == null) return;
 
   const rawPosts = raw.posts;
-  const data: Post[] = [];
-  for (const row of rawPosts) {
-    const { data: authorData } = await supabase
-      .from("users")
-      .select("nickname,avatar_url")
-      .eq("id", row.author_id)
-      .single();
+  const data = await Promise.all(
+    rawPosts.map(async (item) => {
+      const author = await getUserById(item.author_id);
+      const timestamp = getDeltaTime(item.created_at);
+      const pings = await getPingsForPost(item.id);
+      const comments = await getComments(item.id);
 
-    const author = authorData?.nickname ?? null;
-
-    data.push({
-      id: row.id,
-      author,
-      avatarUrl: authorData?.avatar_url,
-      content: row.content,
-      timestamp: getDeltaTime(row.created_at),
-      createdAt: row.created_at,
-    });
-  }
+      return {
+        id: item.id,
+        author,
+        content: item.content,
+        timestamp,
+        createdAt: item.created_at,
+        pings,
+        comments,
+      };
+    })
+  );
 
   const nextPage = data.length < LIMIT ? null : raw.nextPage;
 
@@ -147,20 +154,19 @@ export async function getPostById(id: string) {
     .maybeSingle();
   if (postError) throw new Error(postError.message);
 
-  const { data: user, error: nicknameError } = await supabase
-    .from("users")
-    .select("nickname")
-    .eq("id", post.author_id)
-    .maybeSingle();
-  if (nicknameError) throw new Error(nicknameError.message);
-  if (user == null) throw new Error("User error");
-
+  const author = await getUserById(post.author_id);
   const timestamp = getDeltaTime(post.created_at);
+
+  const pings = await getPingsForPost(id);
+  const comments = await getComments(id);
+
   return {
     id,
-    author: user.nickname,
+    author,
     content: post.content,
     createdAt: post.created_at,
     timestamp,
+    pings,
+    comments,
   };
 }

@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import ContextMenu from "../ContextMenu";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  RefetchOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useToastMessage } from "@/contexts/ToastMessageContext";
 import { useAuthUser } from "@/contexts/UserContext";
 import { Ping } from "@/types/Ping";
@@ -12,23 +14,21 @@ import ProfilePicture from "../ProfilePicture";
 import PostPings from "./PostPings";
 import PostComments from "./PostComments";
 import PostActions from "./PostActions";
-import ClipboardIcon from "@/public/assets/icons/Clipboard.png";
-import EyeIcon from "@/public/assets/icons/Eye.png";
-import AsteriskIcon from "@/public/assets/icons/Asterisk.png";
-import BinIcon from "@/public/assets/icons/Bin.png";
-import SharesheetIcon from "@/public/assets/icons/Sharesheet.png";
-import ContextMenuItem from "../ContextMenuItem";
+import Comment from "@/types/Comment";
+import PostContextMenu from "./PostContextMenu";
+import Author from "@/types/Author";
 
 interface PostProps {
   id: string;
-  author: string;
+  author: Author;
   timestamp: string;
-  isSignedIn: boolean;
   raw: string;
   createdAt: string;
-  avatarUrl?: string;
   showOptions?: boolean;
+  pings: Ping[];
+  comments: Comment[];
   children: React.ReactNode | React.ReactNode[];
+  refetch: (options?: RefetchOptions) => unknown;
 }
 
 const MAX_HEIGHT = 400;
@@ -40,16 +40,10 @@ export default function Post({
   raw,
   timestamp,
   createdAt,
-  avatarUrl,
-  isSignedIn,
+  pings,
+  comments,
   showOptions = true,
 }: PostProps) {
-  const [contextMenu, setContextMenu] = useState({
-    visible: false,
-    x: 0,
-    y: 0,
-    postId: null,
-  });
   const [isTruncated, setIsTruncated] = useState(true);
   const [isLargePost, setIsLargePost] = useState(false);
   const [isPingsOpen, setIsPingsOpen] = useState(false);
@@ -60,33 +54,6 @@ export default function Post({
   const queryClient = useQueryClient();
   const toastMessage = useToastMessage();
 
-  const {
-    data: dataPings,
-    isPending: isPendingPings,
-    refetch: refetchPings,
-  } = useQuery({
-    queryKey: ["post-pings", id],
-    queryFn: () => fetchPingPosts(id),
-    refetchOnWindowFocus: false,
-  });
-
-  const {
-    data: comments,
-    isPending: isPendingComments,
-    refetch: refetchComments,
-  } = useQuery({
-    queryKey: ["post-comments", id],
-    queryFn: () => fetchComments(id),
-    refetchOnWindowFocus: false,
-  });
-
-  useEffect(() => {
-    document.addEventListener("click", handleClick);
-    return () => {
-      document.removeEventListener("click", handleClick);
-    };
-  }, []);
-
   useEffect(() => {
     if (contentRef.current) {
       setIsLargePost(contentRef.current.clientHeight > MAX_HEIGHT);
@@ -95,39 +62,11 @@ export default function Post({
 
   const { user } = useAuthUser();
 
-  const handleContextMenu = (e: React.MouseEvent<HTMLElement>) => {
-    handleClick();
-    setContextMenu({ postId: null, visible: true, x: e.pageX, y: e.pageY });
-  };
-
-  const handleClick = () => {
-    setContextMenu({ postId: null, visible: false, x: 0, y: 0 });
-  };
-
-  const handleCopyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(raw);
-      toastMessage.show("Post copied to clipboard", 8000);
-    } catch (error) {
-      toastMessage.errorShow("Failed to copy", 8000);
-      console.error("Failed to copy", error);
-    }
-  };
-
-  const handleCopyUrlToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(location.origin + "/posts/" + id);
-      toastMessage.show("Post URL copied to clipboard", 8000);
-    } catch (error) {
-      toastMessage.errorShow("Failed to copy", 8000);
-      console.error("Failed to copy", error);
-    }
-  };
-
   const pingToggleMutation = useMutation({
     mutationFn: () => fetchTogglePing(id),
     onSuccess: async (data) => {
-      await refetchPings();
+      await queryClient.invalidateQueries({ queryKey: ["posts", "infinite"] });
+      await queryClient.invalidateQueries({ queryKey: ["posts", id] });
       toastMessage.show(data.message, 8000);
     },
     onError: (data) => {
@@ -154,57 +93,26 @@ export default function Post({
     deleteMutation.mutate();
   };
 
-  const handleRedirectToPost = () => {
-    redirect(`/posts/${id}`);
-  };
-
   const authNickname =
     user != null && user.nickname != null ? user.nickname : "";
   const isPinged =
-    dataPings?.pings.some(
-      (ping: Ping) => ping.author.nickname === authNickname
-    ) || false;
-
-  const actions = [
-    {
-      title: <ContextMenuItem icon={ClipboardIcon} label="Copy" />,
-      action: handleCopyToClipboard,
-    },
-    {
-      title: <ContextMenuItem icon={EyeIcon} label="View" />,
-      action: handleRedirectToPost,
-    },
-    {
-      title: <ContextMenuItem icon={SharesheetIcon} label="Share" />,
-      action: handleCopyUrlToClipboard,
-    },
-  ];
-
-  if (isSignedIn) {
-    actions.unshift({
-      title: (
-        <ContextMenuItem
-          label={isPinged ? "Unping" : "Ping"}
-          icon={AsteriskIcon}
-        />
-      ),
-      action: handleTogglePing,
-    });
-    actions.push({
-      title: <ContextMenuItem icon={BinIcon} label="Delete" />,
-      action: handleDelete,
-    });
-  }
+    pings.some((ping: Ping) => ping.author.nickname === authNickname) || false;
 
   const containerClasses = `p-4 flex flex-col gap-2 pb-8`.split(" ");
   if (isTruncated) containerClasses.push("max-h-[30rem] overflow-hidden");
+
+  const { contextMenuHandlers, ContextMenuComponent } = PostContextMenu({
+    raw,
+    postId: id,
+    isPinged,
+    onTogglePing: handleTogglePing,
+    onDelete: handleDelete,
+    author,
+  });
+
   return (
     <div className="select-none flex flex-col gap-0.5">
-      <div
-        className="bg-default-neutral"
-        onDoubleClick={handleTogglePing}
-        onContextMenu={handleContextMenu}
-      >
+      <div className="bg-default-neutral" {...contextMenuHandlers}>
         <div
           ref={contentRef}
           className={containerClasses.join(" ")}
@@ -226,8 +134,8 @@ export default function Post({
           <div className="flex gap-0.5">
             <PostActions
               commentsLength={comments?.length || 0}
-              pingsLength={dataPings?.pings.length}
-              isPending={[isPendingPings, isPendingComments]}
+              pingsLength={pings.length}
+              isPending={[false]}
               isPinged={isPinged}
               onCommentToggle={() => {
                 setIsCommentsOpen((prev) => !prev);
@@ -243,14 +151,16 @@ export default function Post({
             isOpen={isPingsOpen}
             isPending={pingToggleMutation.isPending}
             isPinged={isPinged}
-            pings={dataPings?.pings}
+            pings={pings}
             onToggle={handleTogglePing}
           />
           <PostComments
             isOpen={isCommentsOpen}
             postId={id}
             comments={comments}
-            refetch={refetchComments}
+            refetch={() =>
+              queryClient.invalidateQueries({ queryKey: ["posts", id] })
+            }
           />
         </>
       )}
@@ -260,30 +170,17 @@ export default function Post({
           href={`/profile/~${author}`}
           className="flex text-sm items-center"
         >
-          <ProfilePicture size="small" user={{ nickname: author, avatarUrl }} />
-          <div className="p-4 text-default-primary">~{author}</div>
+          <ProfilePicture size="small" user={author} />
+          <div className="p-4 text-default-primary">~{author.nickname}</div>
           <div className="ml-auto pr-4" title={createdAt}>
             {timestamp}
           </div>
         </Link>
       </div>
 
-      <ContextMenu
-        visible={contextMenu.visible}
-        x={contextMenu.x}
-        y={contextMenu.y}
-        actions={actions}
-      />
+      {ContextMenuComponent}
     </div>
   );
-}
-
-async function fetchPingPosts(postId: string) {
-  return await fetch(`/api/pings/${postId}`).then((res) => res.json());
-}
-
-export async function fetchComments(postId: string) {
-  return await fetch(`/api/posts/${postId}/comments`).then((res) => res.json());
 }
 
 export async function fetchTogglePing(postId: string) {

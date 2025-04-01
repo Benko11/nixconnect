@@ -23,6 +23,21 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Hashtags** - users will be able to use hashtags and search posts with the hashtags
 - **Search** - users will be able to search for content of the posts and users
 
+## [0.2.3] - 2025-04-01
+
+## Added
+
+- **Search entries** - search entries now work, and can be selected to make a search
+
+## Fixed
+
+- **Mobile navigation optimizations** - header and footer navigation elements have been embiggened on touchscreens
+- **Default colour scheme on logout** - colour scheme is properly reset after user logs out
+- **Better colour scheme performance** - improved performance of loading and selecting colour schemes
+- **Hide irrelevant options in context menu** - irrelevant/unathorized actions are now hidden from the context menus
+- **Colour scheme in Markdown documents** - colour scheme is applied properly in Markdown documents
+- **Tweaks in 'View' page** - simplified API, bug fixes
+
 ## [0.2.2] - 2025-03-24
 
 ### Added

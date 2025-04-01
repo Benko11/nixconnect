@@ -23,6 +23,7 @@ export default function ProfilePicture({ user, size }: ProfilePictureProps) {
       alt={`${user.nickname}'s profile picture`}
       width={imageSize}
       height={imageSize}
+      priority={true}
     />
   );
 }

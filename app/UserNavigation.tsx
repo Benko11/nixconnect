@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import SearchIcon from "@/public/assets/icons/Search.png";
 import Image from "next/image";
+import { usePreference } from "@/contexts/PreferencesContext";
 
 async function logout() {
   await fetch("/api/auth/logout", { method: "POST" });
@@ -16,6 +17,7 @@ export default function UserNavigation() {
   const router = useRouter();
 
   const { user: authUser, refetchUser } = useAuthUser();
+  const { colourScheme } = usePreference();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -38,10 +40,10 @@ export default function UserNavigation() {
   if (!authUser) {
     return (
       <div className="flex gap-2 ml-auto items-center">
-        <Link href="/login" className="p-1">
+        <Link href="/login" className="p-1 top-link">
           Log in
         </Link>
-        <Link href="/register" className="p-1">
+        <Link href="/register" className="p-1 top-link">
           Sign up
         </Link>
       </div>
@@ -49,19 +51,15 @@ export default function UserNavigation() {
   }
 
   const handleLogout = async () => {
-    router.push("/login");
     await logout();
     setIsMenuOpen(false);
+    colourScheme.apply(1);
     refetchUser();
+    router.push("/login");
   };
 
   const handleGoToProfile = async () => {
     router.push("/profile");
-    setIsMenuOpen(false);
-  };
-
-  const handleGoToSearch = async () => {
-    router.push("/search");
     setIsMenuOpen(false);
   };
 
@@ -73,7 +71,7 @@ export default function UserNavigation() {
   if (authUser.nickname == null) {
     return (
       <div className="flex gap-2 ml-auto items-center">
-        <Link href="#" onClick={handleLogout}>
+        <Link href="#" onClick={handleLogout} className="top-link">
           Log out
         </Link>
       </div>
@@ -89,7 +87,7 @@ export default function UserNavigation() {
     >
       <Link
         href="/search"
-        className="opacity-90 hover:opacity-100 focus:opacity-100 text-default-neutral flex items-center p-1"
+        className="opacity-90 hover:opacity-100 focus:opacity-100 text-default-neutral flex items-center p-1 top-link search-button"
       >
         <div className="bg-default-dark p-1">
           <Image src={SearchIcon} alt="Search" width={16} height={16} />
@@ -97,26 +95,20 @@ export default function UserNavigation() {
         <div className="bg-default-light px-3">Search</div>
       </Link>
       <div
-        className="bg-default-secondary text-default-light p-1 cursor-pointer"
+        className="bg-default-secondary text-default-light p-1 cursor-pointer top-link"
         onClick={() => setIsMenuOpen((prev) => !prev)}
       >
         ~{authUser.nickname}
       </div>
 
       {isMenuOpen && (
-        <nav className="absolute right-0 top-10 select-none">
+        <nav className="absolute right-0 top-10 select-none top-navigation">
           <ul className="bg-default-dark text-default-light py-4">
             <li
               className="p-2 px-6 min-w-52 cursor-pointer hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent"
               onClick={handleGoToProfile}
             >
               Profile
-            </li>
-            <li
-              className="md:hidden p-2 px-6 min-w-52 cursor-pointer hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent"
-              onClick={handleGoToSearch}
-            >
-              Search
             </li>
             <li
               className="p-2 px-6 min-w-52 cursor-pointer hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent"

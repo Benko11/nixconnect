@@ -4,10 +4,9 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import NixInput from "@/components/NixInput";
 import Post from "@/components/Post/Post";
-import { useAuthUser } from "@/contexts/UserContext";
 import { Post as PostType } from "@/types/Post";
 import User from "@/types/User";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
@@ -15,13 +14,22 @@ import { useDebounce } from "react-use";
 import SearchResultSkeleton from "./SearchResultSkeleton";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProfilePicture from "@/components/ProfilePicture";
+import SearchEntry from "@/types/SearchEntry";
 
 export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [isReady] = useDebounce(() => searchQuery, 800, [searchQuery]);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [isReady] = useDebounce(
+    () => {
+      setDebouncedQuery(searchQuery);
+    },
+    1500,
+    [searchQuery]
+  );
+  const [isTouched, setIsTouched] = useState(false);
 
   const {
     data: raw,
@@ -36,21 +44,53 @@ export default function Page() {
     refetchOnWindowFocus: false,
     enabled: !!isReady && searchQuery.length > 0,
   });
-  const { user } = useAuthUser();
+
+  const searchEntryMutation = useMutation({
+    mutationFn: addSearchEntry,
+    onSuccess: () => {
+      refetchSearchEntries();
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
 
   const data = raw?.pages[0];
   const posts = raw?.pages.flatMap((page) => page.posts.data) || [];
-  console.log(posts);
+
+  const {
+    data: searchEntries,
+    isPending: isPendingSearchEntries,
+    error: errorSearchEntries,
+    refetch: refetchSearchEntries,
+  } = useQuery({
+    queryKey: ["search", "entries"],
+    queryFn: fetchSearchEntries,
+  });
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (searchQuery) {
-      params.set("q", searchQuery);
+    if (debouncedQuery) {
+      params.set("q", debouncedQuery);
     } else {
       params.delete("q");
     }
     router.replace(`${window.location.pathname}?${params.toString()}`, {});
-  }, [searchQuery, router]);
+  }, [debouncedQuery, router]);
+
+  useEffect(() => {
+    if (debouncedQuery.trim() === "" || !isTouched) return;
+
+    if ((debouncedQuery && data?.users.length) || posts.length) {
+      searchEntryMutation.mutate(debouncedQuery);
+    }
+  }, [
+    debouncedQuery,
+    data?.users.length,
+    posts.length,
+    isTouched,
+    searchEntryMutation,
+  ]);
 
   const renderUsers = () => {
     if (data == null || data.users.length < 1) return;
@@ -77,8 +117,6 @@ export default function Page() {
   const renderPosts = () => {
     if (data == null || posts.length < 1) return null;
 
-    const isSignedIn = user != null;
-
     return (
       <div className="mt-4">
         <h3 className="text-xl mb-2">Posts</h3>
@@ -89,14 +127,47 @@ export default function Page() {
               createdAt={post.createdAt}
               timestamp={post.timestamp}
               id={post.id}
-              isSignedIn={isSignedIn}
               raw={post.content}
               key={post.id}
+              pings={post.pings}
+              comments={post.comments}
+              refetch={() => {}}
             >
               <Markdown className="markdown-block">{post.content}</Markdown>
             </Post>
           ))}
         </div>
+      </div>
+    );
+  };
+
+  const renderSearchEntries = () => {
+    if (isPendingSearchEntries) return null;
+
+    if (errorSearchEntries)
+      return (
+        <div className="bg-default-error">Could not load search entries.</div>
+      );
+
+    if (searchEntries.length < 1)
+      return (
+        <div className="py-2">There are no search results to pick from.</div>
+      );
+
+    return (
+      <div className="bg-default-neutral p-2 flex flex-col gap-1">
+        {searchEntries.map((entry: SearchEntry) => (
+          <div
+            key={entry.id}
+            className="py-1 bg-default-dark px-4 cursor-pointer"
+            onClick={() => {
+              setSearchQuery(entry.query);
+              setIsTouched(false);
+            }}
+          >
+            {entry.query}
+          </div>
+        ))}
       </div>
     );
   };
@@ -116,7 +187,11 @@ export default function Page() {
             showLabel={false}
             placeholder="Search for posts or users..."
             stateValue={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              if (e.target.value.trim() === "") setIsTouched(false);
+              else setIsTouched(true);
+            }}
             autoFocus={true}
           />
           {!isFetching && data?.users.length === 0 && posts.length === 0 && (
@@ -142,7 +217,7 @@ export default function Page() {
         </div>
         <div className="w-80">
           <h3 className="text-xl">Recent searches</h3>
-          <div>There are no searches currently available to select from.</div>
+          {renderSearchEntries()}
         </div>
       </div>
     </UltraWideLayout>
@@ -150,8 +225,18 @@ export default function Page() {
 }
 
 async function search(query: string, { pageParam }: { pageParam: number }) {
-  console.log("PP:", pageParam);
   return await fetch(`/api/search?query=${query}&page=${pageParam}`).then(
     (res) => res.json()
   );
+}
+
+async function fetchSearchEntries() {
+  return await fetch("/api/search/entries").then((res) => res.json());
+}
+
+async function addSearchEntry(query: string) {
+  return await fetch("/api/search/entries", {
+    method: "POST",
+    body: JSON.stringify({ query }),
+  });
 }

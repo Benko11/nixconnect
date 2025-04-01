@@ -70,7 +70,6 @@ export default function Form() {
     },
     onError: (error) => {
       console.error(error);
-      console.log("huge shit");
     },
   });
 

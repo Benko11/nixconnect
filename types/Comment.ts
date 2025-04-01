@@ -1,7 +1,9 @@
 import Author from "./Author";
 
-export interface Ping {
+export default interface Comment {
+  id: string;
   author: Author;
+  content: string;
   createdAt: string;
   timestamp: string;
 }

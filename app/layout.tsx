@@ -7,6 +7,7 @@ import UserNavigation from "./UserNavigation";
 import QueryClientWrapper from "./QueryClientWrapper";
 import UserWrapper from "./UserWrapper";
 import Footer from "./Footer";
+import PreferencesWrapper from "./PreferencesWrapper";
 
 export const metadata: Metadata = {
   title: "*NixConnect",
@@ -24,19 +25,21 @@ export default async function RootLayout({
         <ToastMessageWrapper>
           <QueryClientWrapper>
             <UserWrapper>
-              <DisableRightClick />
-              <nav
-                className="bg-default-primary fixed w-full text-default-dark flex "
-                style={{ zIndex: 1000 }}
-              >
-                <Link href="/" className="p-1">
-                  <h1>{metadata.title as string}</h1>
-                </Link>
-                <UserNavigation />
-              </nav>
-              <Footer />
+              <PreferencesWrapper>
+                <DisableRightClick />
+                <nav
+                  className="bg-default-primary fixed w-full text-default-dark flex"
+                  style={{ zIndex: 1000 }}
+                >
+                  <Link href="/" className="p-1 nixconnect">
+                    <h1>{metadata.title as string}</h1>
+                  </Link>
+                  <UserNavigation />
+                </nav>
+                <Footer />
 
-              <main className="py-8">{children}</main>
+                <main className="py-8 main-container">{children}</main>
+              </PreferencesWrapper>
             </UserWrapper>
           </QueryClientWrapper>
         </ToastMessageWrapper>

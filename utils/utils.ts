@@ -74,17 +74,6 @@ export async function isSignedIn() {
   return userId != null;
 }
 
-export async function getUserById(userId: string) {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", userId)
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  return data;
-}
-
 export function getRangeIndexes(pageNumber: number, LIMIT: number) {
   const startPage = pageNumber * LIMIT;
   const endPage = (pageNumber + 1) * LIMIT - 1;

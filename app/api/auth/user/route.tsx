@@ -18,7 +18,7 @@ export async function GET() {
 export async function PATCH(request: NextRequest) {
   try {
     const data = await request.json();
-    console.log(data);
+
     const error = await updateAuthUserInfo(data);
     if (error?.errors != null) {
       return NextResponse.json({

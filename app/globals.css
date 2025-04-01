@@ -19,8 +19,22 @@
   --dark-colour: hsl(220, 5%, 10%);
 }
 
+input,
+textarea,
+select {
+  border-radius: 0;
+}
+
 .markdown-block {
   @apply flex flex-col gap-2;
+}
+
+.markdown-block.docs * {
+  @apply text-default-light;
+}
+
+.markdown-block.docs a {
+  @apply text-default-primary hover:underline;
 }
 
 .markdown-block.docs h1 {
@@ -86,5 +100,54 @@
   }
   100% {
     background: var(--neutral-colour);
+  }
+}
+
+@media only screen and (pointer: coarse) and (-webkit-min-device-pixel-ratio: 2),
+  only screen and (pointer: coarse) and (min--moz-device-pixel-ratio: 2),
+  only screen and (pointer: coarse) and (min-device-pixel-ratio: 2) {
+  .changelog {
+    @apply p-3 flex items-center justify-center;
+    padding-left: 1.5rem;
+  }
+
+  .links-footer a {
+    @apply py-2 px-3;
+  }
+
+  .links-footer a:last-child {
+    padding-right: 1rem;
+  }
+
+  .nixconnect {
+    @apply p-3;
+  }
+
+  .top-link {
+    @apply p-3 px-3;
+  }
+
+  .main-container {
+    @apply py-10;
+  }
+
+  .search-button {
+    @apply p-0 px-1;
+  }
+
+  .search-button div:nth-child(1) {
+    @apply p-3;
+  }
+
+  .search-button div:nth-child(2) {
+    @apply p-2 px-5;
+  }
+
+  .top-navigation {
+    @apply top-14;
+  }
+
+  .top-navigation li {
+    @apply p-4 px-8 min-w-72;
   }
 }

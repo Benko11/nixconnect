@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { getDefaultValueForPreference } from "./preferences";
 
 export async function getColourSchemes() {
   const supabase = await createClient();
@@ -41,14 +42,28 @@ export async function getColourSchemeById(id: number) {
     throw new Error(error.message);
   }
 
-  return data;
+  return {
+    id: data.id,
+    name: data.name,
+    primaryColour: data.primary_colour,
+    secondaryColour: data.secondary_colour,
+    accentColour: data.accent_colour,
+    errorColour: data.error_colour,
+    neutralColour: data.neutral_colour,
+    lightColour: data.light_colour,
+    darkColour: data.dark_colour,
+    backgroundColour: data.background_colour,
+  };
 }
 
 export async function getAuthUserColourScheme() {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
   if (user == null || user.data.user == null) {
-    return { colourScheme: 1 };
+    const { defaultvalue: defaultColourScheme } =
+      await getDefaultValueForPreference("colour-scheme");
+
+    return { colourScheme: defaultColourScheme };
   }
 
   const userId = user.data.user.id;
@@ -79,7 +94,7 @@ export async function getAuthUserColourScheme() {
   return colourScheme;
 }
 
-export async function applyColourScheme(id: number) {
+export async function setColourSchemeForAuthUser(id: number) {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
   const userId = user.data.user?.id;

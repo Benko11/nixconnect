@@ -22,6 +22,7 @@ export default function Page() {
     isFetching,
     hasNextPage,
     fetchNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["posts", "infinite"],
     queryFn: fetchPosts,
@@ -45,7 +46,7 @@ export default function Page() {
         </div>
       ) : (
         <>
-          <Posts posts={posts} />
+          <Posts posts={posts} refetch={refetch} />
           {isFetching && (
             <div className="py-4">
               <FeedSkeleton />

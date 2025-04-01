@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthUser } from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
+import { usePreference } from "@/contexts/PreferencesContext";
 
 async function fetchSignIn(data: { nickname: string; password: string }) {
   const res = await fetch("/api/auth/login", {
@@ -23,13 +24,16 @@ export default function Page() {
   const [error, setError] = useState("");
   const { refetchUser } = useAuthUser();
   const router = useRouter();
+  const { colourScheme } = usePreference();
+
   const loginMutation = useMutation({
     mutationFn: fetchSignIn,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (!data.success) setError(data.message);
       else {
         setError("");
-        refetchUser();
+        const data = await refetchUser();
+        colourScheme.apply(data?.preferences.colourScheme || 1);
         router.push("/feed");
       }
     },

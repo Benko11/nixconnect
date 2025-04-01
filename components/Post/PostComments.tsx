@@ -2,22 +2,19 @@
 
 import { useToastMessage } from "@/contexts/ToastMessageContext";
 import {
-  QueryObserverResult,
   RefetchOptions,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
 import { FormEvent, useState } from "react";
-import Comment from "../Comment";
-import { Post as CommentType } from "@/types/Post";
+import Comment from "@/components/Comment";
+import CommentType from "@/types/Comment";
 
 interface PostCommentsProps {
   postId: string;
   isOpen: boolean;
   comments: CommentType[] | null;
-  refetch: (
-    options?: RefetchOptions
-  ) => Promise<QueryObserverResult<unknown, Error>>;
+  refetch: (options?: RefetchOptions) => unknown;
 }
 
 export default function PostComments({
@@ -73,17 +70,17 @@ export default function PostComments({
 
       <div className="flex flex-col gap-2 mt-4">
         {comments?.map((comment) => {
-          console.log(comment.author);
           return (
             <Comment
               key={comment.id}
               id={comment.id}
               content={comment.content}
-              // @ts-expect-error it's okay!
               author={comment.author}
               createdAt={comment.createdAt}
               timestamp={comment.timestamp}
-              refetch={refetch}
+              refetch={() =>
+                queryClient.invalidateQueries({ queryKey: ["posts", postId] })
+              }
             />
           );
         })}

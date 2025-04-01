@@ -7,11 +7,11 @@ export async function getUserById(id: string) {
   const supabase = await createClient();
   const { data: user, error: userError } = await supabase
     .from("users")
-    .select()
+    .select("id,nickname,avatar_url")
     .eq("id", id)
     .maybeSingle();
   if (userError) throw new Error(userError.message);
-  if (user == null) return { ...user };
+  if (user == null) return null;
 
   let gender;
   try {
@@ -19,7 +19,13 @@ export async function getUserById(id: string) {
   } catch {}
   const pronouns = await getPronounsForUser(id);
 
-  return { ...user, pronouns, gender };
+  return {
+    id: user.id,
+    nickname: user.nickname,
+    avatarUrl: user.avatar_url,
+    pronouns,
+    gender,
+  };
 }
 
 export async function getAuthUser() {
