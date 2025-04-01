@@ -25,11 +25,11 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 
 ## [0.2.3] - 2025-04-01
 
-## Added
+### Added
 
 - **Search entries** - search entries now work, and can be selected to make a search
 
-## Fixed
+### Fixed
 
 - **Mobile navigation optimizations** - header and footer navigation elements have been embiggened on touchscreens
 - **Default colour scheme on logout** - colour scheme is properly reset after user logs out
