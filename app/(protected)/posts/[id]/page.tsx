@@ -93,6 +93,7 @@ export default function Page() {
               (ping: Ping) => ping.author.nickname === authNickname
             ) || false
           }
+          authorId={post.author.id}
           onToggle={() => togglePingMutation.mutate()}
         />
       </div>

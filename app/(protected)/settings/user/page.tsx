@@ -16,6 +16,7 @@ import { FormEvent, useState } from "react";
 export default function Page() {
   const toastMessage = useToastMessage();
   const { user, refetchUser } = useAuthUser();
+  console.log(user);
 
   const [form, setForm] = useState<{ email: string; avatarUrl: string }>({
     email: user?.email || "",

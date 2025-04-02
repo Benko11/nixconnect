@@ -86,7 +86,7 @@ export default function Post({
   });
 
   const handleTogglePing = async () => {
-    pingToggleMutation.mutate();
+    if (author.id !== user?.id) pingToggleMutation.mutate();
   };
 
   const handleDelete = async () => {
@@ -152,6 +152,7 @@ export default function Post({
             isPending={pingToggleMutation.isPending}
             isPinged={isPinged}
             pings={pings}
+            authorId={author.id}
             onToggle={handleTogglePing}
           />
           <PostComments
@@ -167,7 +168,7 @@ export default function Post({
 
       <div className="bg-default-neutral">
         <Link
-          href={`/profile/~${author}`}
+          href={`/profile/~${author.nickname}`}
           className="flex text-sm items-center"
         >
           <ProfilePicture size="small" user={author} />

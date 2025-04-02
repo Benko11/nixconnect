@@ -3,17 +3,20 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import SimpleFeedSkeleton from "../SimpleFeedSkeleton";
 import UserSkeleton from "../UserSkeleton";
 import SimplePosts from "../simple-posts";
-import { useCallback } from "react";
+import { useEffect } from "react";
 import { useAuthUser } from "@/contexts/UserContext";
 import ProfilePicture from "@/components/ProfilePicture";
 
 async function fetchUser(nickname: string) {
-  const raw = await fetch(`/api/users/${nickname}`);
-  return raw.json();
+  const response = await fetch(`/api/users/${nickname}`);
+
+  if (!response.ok) throw new Error(`User not found: ${response.status}`);
+
+  return response.json();
 }
 
 async function fetchPosts(
@@ -27,12 +30,31 @@ async function fetchPosts(
 export default function Page() {
   const { nickname } = useParams<{ nickname: string }>();
   const { user: authUser } = useAuthUser();
+  const router = useRouter();
 
-  const { data: user, isPending: userIsPending } = useQuery({
+  const {
+    data: user,
+    isFetched,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["user", nickname],
     queryFn: () => fetchUser(nickname.substring(1)),
     enabled: !!nickname,
+    retry: false,
   });
+
+  useEffect(() => {
+    if (isError) {
+      if (
+        error?.message?.includes("User not found") ||
+        error?.message?.includes("404")
+      ) {
+        router.replace("/not-found");
+      }
+    }
+  }, [isError, error, router]);
+
   const {
     data: postsRaw,
     error: postsError,
@@ -42,15 +64,19 @@ export default function Page() {
   } = useInfiniteQuery({
     queryKey: ["posts", "infinite", nickname],
     initialPageParam: 0,
-    queryFn: ({ pageParam }) => fetchPosts({ pageParam }, user.id),
+    queryFn: ({ pageParam }) => fetchPosts({ pageParam }, user?.id),
     getNextPageParam: (lastPage) => lastPage.nextPage,
     enabled: user != null,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
   });
 
-  const renderUser = useCallback(() => {
-    if (userIsPending) return <UserSkeleton />;
+  if (isError) return notFound();
+
+  const posts = postsRaw?.pages.flatMap((page) => page.data) || [];
+
+  const renderUser = () => {
+    if (!isFetched) return <UserSkeleton />;
 
     return (
       <div className="flex gap-2">
@@ -67,11 +93,7 @@ export default function Page() {
         </div>
       </div>
     );
-  }, [userIsPending, user, authUser?.id]);
-
-  if (!userIsPending && user == null) return notFound();
-
-  const posts = postsRaw?.pages.flatMap((page) => page.data) || [];
+  };
 
   const renderPosts = () => {
     if (postsError) {
@@ -82,7 +104,7 @@ export default function Page() {
       );
     }
 
-    if (!userIsPending && !postsIsFetching && posts.length === 0) {
+    if (isFetched && !postsIsFetching && posts.length === 0) {
       return (
         <div className="py-8">No posts from this user, what a lazy fellow.</div>
       );
@@ -102,22 +124,20 @@ export default function Page() {
             </button>
           </div>
         )}
-        {(userIsPending || postsIsFetching) && <SimpleFeedSkeleton />}
+        {postsIsFetching && <SimpleFeedSkeleton />}
       </div>
     );
   };
 
   return (
-    <>
-      <NarrowLayout>
-        <Breadcrumbs
-          currentTitle="User profile"
-          hierachy={[{ title: "Home", href: "/" }]}
-          classes="pb-4"
-        />
-        {renderUser()}
-        {renderPosts()}
-      </NarrowLayout>
-    </>
+    <NarrowLayout>
+      <Breadcrumbs
+        currentTitle="User profile"
+        hierachy={[{ title: "Home", href: "/" }]}
+        classes="pb-4"
+      />
+      {renderUser()}
+      {renderPosts()}
+    </NarrowLayout>
   );
 }

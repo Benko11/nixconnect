@@ -44,7 +44,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }, [refetch]);
 
   const success = userData?.message == null;
-  const user = success ? mapUserData(userData) : null;
+  const user = success ? userData : null;
   if (isUserLoading) return null;
 
   return (
@@ -60,18 +60,4 @@ export function useAuthUser() {
     throw new Error("useAuthUser must be used within a UserProvider");
   }
   return context;
-}
-
-function mapUserData(userData: any): UserObject | null {
-  if (!userData) return null;
-
-  return {
-    id: userData.id,
-    nickname: userData.nickname,
-    email: userData.email,
-    avatarUrl: userData.avatar_url,
-    gender: userData.gender,
-    pronouns: userData.pronouns,
-    preferences: userData.preferences,
-  };
 }

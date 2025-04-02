@@ -20,6 +20,7 @@ async function fetchPosts(
 
 export default function Page() {
   const { user } = useAuthUser();
+  console.log(user);
   const {
     data: postsRaw,
     error,

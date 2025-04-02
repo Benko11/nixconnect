@@ -23,6 +23,15 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Hashtags** - users will be able to use hashtags and search posts with the hashtags
 - **Search** - users will be able to search for content of the posts and users
 
+## [0.2.4] - 2025-04-03
+
+### Fixed
+
+- **User information settings fix** - user information is now displayed properly again
+- **Search entries fixed** - search entries work properly now, I hope
+- **Remove 'Ping this post' from own posts** - own posts now will not have a button for pinging in the `PostPings` menu
+- **Fix weird profile bugs** - clicking on the user profile from the footer now works
+
 ## [0.2.3] - 2025-04-01
 
 ### Added

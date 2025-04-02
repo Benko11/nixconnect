@@ -8,7 +8,7 @@ import { Post as PostType } from "@/types/Post";
 import User from "@/types/User";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Markdown from "react-markdown";
 import { useDebounce } from "react-use";
 import SearchResultSkeleton from "./SearchResultSkeleton";
@@ -66,6 +66,7 @@ export default function Page() {
   } = useQuery({
     queryKey: ["search", "entries"],
     queryFn: fetchSearchEntries,
+    staleTime: 60 * 1000,
   });
 
   useEffect(() => {
@@ -78,17 +79,24 @@ export default function Page() {
     router.replace(`${window.location.pathname}?${params.toString()}`, {});
   }, [debouncedQuery, router]);
 
+  const processedQueries = useRef(new Set());
+
   useEffect(() => {
     if (debouncedQuery.trim() === "" || !isTouched) return;
+    if (processedQueries.current.has(debouncedQuery)) return;
 
-    if ((debouncedQuery && data?.users.length) || posts.length) {
+    // Only mutate if we have actual results
+    const hasResults =
+      (data?.users && data.users.length > 0) || posts.length > 0;
+    if (hasResults) {
+      processedQueries.current.add(debouncedQuery);
       searchEntryMutation.mutate(debouncedQuery);
     }
   }, [
     debouncedQuery,
-    data?.users.length,
-    posts.length,
     isTouched,
+    data?.users,
+    posts.length,
     searchEntryMutation,
   ]);
 
