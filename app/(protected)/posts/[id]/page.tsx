@@ -67,13 +67,7 @@ export default function Page() {
         currentTitle={`Post from ~${post.author.nickname}`}
       />
       <Post
-        id={id}
-        author={post.author}
-        pings={post.pings}
-        comments={post.comments}
-        createdAt={post.createdAt}
-        timestamp={post.timestamp}
-        raw={post.content}
+        post={post}
         showOptions={false}
         refetch={() =>
           queryClient.invalidateQueries({ queryKey: ["posts", id] })
@@ -81,6 +75,10 @@ export default function Page() {
       >
         <Markdown className="markdown-block">{post.content}</Markdown>
       </Post>
+
+      {post.deletedAt != null && (
+        <div className="text-default-error mt-1">Post has been deleted</div>
+      )}
 
       <div className="mt-4 flex flex-col gap-2">
         <h2 className="text-xl">Pings</h2>
@@ -93,7 +91,7 @@ export default function Page() {
               (ping: Ping) => ping.author.nickname === authNickname
             ) || false
           }
-          authorId={post.author.id}
+          isOwnPost={user?.id === post.author.id}
           onToggle={() => togglePingMutation.mutate()}
         />
       </div>

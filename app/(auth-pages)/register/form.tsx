@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Pronouns from "./Pronouns";
-import Genders from "./Genders";
 import NixInput from "@/components/NixInput";
 import RegisterClient from "@/types/RegisterClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import FormError from "@/components/FormError";
+import RadioGroup from "@/components/Form/RadioGroup";
+import { Gender } from "@/types/Gender";
 
 export default function Form() {
   const [form, setForm] = useState<RegisterClient>({
@@ -31,7 +32,7 @@ export default function Form() {
     data: genders,
     error: gendersError,
     isPending: gendersIsPending,
-  } = useQuery({
+  } = useQuery<Gender[]>({
     queryKey: ["genders"],
     queryFn: fetchGenders,
   });
@@ -149,11 +150,20 @@ export default function Form() {
       ) : gendersError ? (
         <div className="text-default-error">Could not load genders</div>
       ) : (
-        <Genders
-          value={form.gender}
-          genders={genders}
-          onChange={handleGenderChange}
-        />
+        <div className="py-2 pb-4">
+          <h3>Gender</h3>
+
+          <RadioGroup
+            name="gender"
+            keys={genders.map((g) => g.id)}
+            labels={genders.map((g) => g.name)}
+            descriptions={genders.map((g) => g.description)}
+            onChange={handleGenderChange}
+            selected={
+              genders.map((g) => g.id).filter((v) => v === form.gender)[0]
+            }
+          />
+        </div>
       )}
 
       {pronounsIsPending ? (

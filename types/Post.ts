@@ -9,6 +9,7 @@ export interface Post {
   avatarUrl?: string;
   timestamp: string;
   createdAt: string;
+  deletedAt?: string;
   pings: Ping[];
   comments: Comment[];
 }

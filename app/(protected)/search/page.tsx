@@ -15,6 +15,7 @@ import SearchResultSkeleton from "./SearchResultSkeleton";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProfilePicture from "@/components/ProfilePicture";
 import SearchEntry from "@/types/SearchEntry";
+import LoadMore from "@/components/LoadMore";
 
 export default function Page() {
   const router = useRouter();
@@ -130,17 +131,7 @@ export default function Page() {
         <h3 className="text-xl mb-2">Posts</h3>
         <div className="flex flex-col gap-4">
           {posts.map((post: PostType) => (
-            <Post
-              author={post.author}
-              createdAt={post.createdAt}
-              timestamp={post.timestamp}
-              id={post.id}
-              raw={post.content}
-              key={post.id}
-              pings={post.pings}
-              comments={post.comments}
-              refetch={() => {}}
-            >
+            <Post post={post} key={post.id} refetch={() => {}}>
               <Markdown className="markdown-block">{post.content}</Markdown>
             </Post>
           ))}
@@ -212,16 +203,8 @@ export default function Page() {
               {renderUsers()} {renderPosts()}
             </>
           )}
-          {hasNextPage && (
-            <div className="flex justify-center py-4">
-              <button
-                onClick={() => fetchNextPage()}
-                className="bg-default-dark w-full md:w-[80%] py-4"
-              >
-                Load more posts
-              </button>
-            </div>
-          )}
+
+          <LoadMore enabled={hasNextPage} action={() => fetchNextPage()} />
         </div>
         <div className="w-80">
           <h3 className="text-xl">Recent searches</h3>

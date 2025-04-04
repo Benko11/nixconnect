@@ -165,6 +165,7 @@ export async function getPostById(id: string) {
     author,
     content: post.content,
     createdAt: post.created_at,
+    deletedAt: post.deleted_at,
     timestamp,
     pings,
     comments,

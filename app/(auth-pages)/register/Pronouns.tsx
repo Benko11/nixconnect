@@ -1,5 +1,6 @@
 "use client";
 
+import CheckboxGroup from "@/components/Form/CheckboxGroup";
 import { Pronoun } from "@/types/Pronoun";
 
 export default function Pronouns({
@@ -31,21 +32,15 @@ export default function Pronouns({
   }
 
   function displayPronouns() {
-    return pronouns.map((pronoun) => {
-      const p: Pronoun = pronoun[0];
-      return (
-        <div className="flex gap-2 select-none" key={p.id}>
-          <input
-            type="checkbox"
-            name="pronouns"
-            value={p.word}
-            id={`pronoun-${p.id}`}
-            onChange={onChange}
-          />
-          <label htmlFor={`pronoun-${p.id}`}>{p.word}</label>
-        </div>
-      );
-    });
+    return (
+      <CheckboxGroup
+        name="pronouns"
+        onChange={onChange}
+        selected={selected}
+        labels={pronouns.map((p) => p[0].word)}
+        values={pronouns.map((p) => p[0].word)}
+      />
+    );
   }
 
   return (

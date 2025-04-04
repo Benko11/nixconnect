@@ -17,16 +17,12 @@ import PostActions from "./PostActions";
 import Comment from "@/types/Comment";
 import PostContextMenu from "./PostContextMenu";
 import Author from "@/types/Author";
+import { redirect } from "next/navigation";
+import { Post as PostType } from "@/types/Post";
 
 interface PostProps {
-  id: string;
-  author: Author;
-  timestamp: string;
-  raw: string;
-  createdAt: string;
+  post: PostType;
   showOptions?: boolean;
-  pings: Ping[];
-  comments: Comment[];
   children: React.ReactNode | React.ReactNode[];
   refetch: (options?: RefetchOptions) => unknown;
 }
@@ -34,16 +30,20 @@ interface PostProps {
 const MAX_HEIGHT = 400;
 
 export default function Post({
-  id,
+  post,
   children,
-  author,
-  raw,
-  timestamp,
-  createdAt,
-  pings,
-  comments,
   showOptions = true,
 }: PostProps) {
+  const {
+    content,
+    author,
+    pings,
+    comments,
+    createdAt,
+    deletedAt,
+    id,
+    timestamp,
+  } = post;
   const [isTruncated, setIsTruncated] = useState(true);
   const [isLargePost, setIsLargePost] = useState(false);
   const [isPingsOpen, setIsPingsOpen] = useState(false);
@@ -58,7 +58,7 @@ export default function Post({
     if (contentRef.current) {
       setIsLargePost(contentRef.current.clientHeight > MAX_HEIGHT);
     }
-  }, [raw]);
+  }, [content]);
 
   const { user } = useAuthUser();
 
@@ -89,6 +89,30 @@ export default function Post({
     if (author.id !== user?.id) pingToggleMutation.mutate();
   };
 
+  const handleCopyContentToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(content);
+      toastMessage.show("Post copied to clipboard", 8000);
+    } catch (error) {
+      toastMessage.errorShow("Failed to copy", 8000);
+      console.error("Failed to copy", error);
+    }
+  };
+
+  const handleRedirectToPost = () => {
+    redirect(`/posts/${id}`);
+  };
+
+  const handleCopyUrlToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(location.origin + "/posts/" + id);
+      toastMessage.show("Post URL copied to clipboard", 8000);
+    } catch (error) {
+      toastMessage.errorShow("Failed to copy", 8000);
+      console.error("Failed to copy", error);
+    }
+  };
+
   const handleDelete = async () => {
     deleteMutation.mutate();
   };
@@ -101,13 +125,17 @@ export default function Post({
   const containerClasses = `p-4 flex flex-col gap-2 pb-8`.split(" ");
   if (isTruncated) containerClasses.push("max-h-[30rem] overflow-hidden");
 
+  const isOwnPost = author.id === user?.id;
+  const isDeleted = deletedAt != null;
   const { contextMenuHandlers, ContextMenuComponent } = PostContextMenu({
-    raw,
-    postId: id,
     isPinged,
     onTogglePing: handleTogglePing,
+    onCopy: handleCopyContentToClipboard,
+    onView: handleRedirectToPost,
+    onShare: handleCopyUrlToClipboard,
     onDelete: handleDelete,
-    author,
+    isOwnPost,
+    isDeleted,
   });
 
   return (
@@ -134,7 +162,7 @@ export default function Post({
           <div className="flex gap-0.5">
             <PostActions
               commentsLength={comments?.length || 0}
-              pingsLength={pings.length}
+              pings={pings}
               isPending={[false]}
               isPinged={isPinged}
               onCommentToggle={() => {
@@ -145,6 +173,12 @@ export default function Post({
                 setIsCommentsOpen(false);
                 setIsPingsOpen((prev) => !prev);
               }}
+              onCopy={handleCopyContentToClipboard}
+              onShare={handleCopyUrlToClipboard}
+              isOwnPost={isOwnPost}
+              isDeleted={isDeleted}
+              onView={handleRedirectToPost}
+              onDelete={handleDelete}
             />
           </div>
           <PostPings
@@ -152,7 +186,7 @@ export default function Post({
             isPending={pingToggleMutation.isPending}
             isPinged={isPinged}
             pings={pings}
-            authorId={author.id}
+            isOwnPost={isOwnPost}
             onToggle={handleTogglePing}
           />
           <PostComments

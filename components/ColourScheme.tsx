@@ -6,26 +6,15 @@ interface ColourSchemeProps {
 
 export default function ColourScheme({ colourScheme }: ColourSchemeProps) {
   return (
-    <div className="bg-default-dark p-2 inline-flex gap-2 items-center">
-      <div className="flex gap-0.5">
-        <div
-          className="w-4 h-4"
-          style={{ background: colourScheme.primaryColour }}
-        ></div>
-        <div
-          className="w-4 h-4"
-          style={{ background: colourScheme.secondaryColour }}
-        ></div>
-        <div
-          className="w-4 h-4"
-          style={{ background: colourScheme.accentColour }}
-        ></div>
-        <div
-          className="w-4 h-4 bg-default-error"
-          style={{ background: colourScheme.errorColour }}
-        ></div>
+    <div className="p-2 flex w-full gap-2 items-center">
+      <div>
+        <div>{colourScheme.name}</div>
+        <div className="text-sm">{colourScheme.description}</div>
       </div>
-      <div>{colourScheme.name}</div>
+      <div
+        className=" w-20 aspect-square mr-auto"
+        style={{ background: colourScheme.primaryColour }}
+      ></div>
     </div>
   );
 }

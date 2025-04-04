@@ -8,24 +8,16 @@ import { useToastMessage } from "@/contexts/ToastMessageContext";
 import ContextMenuItem from "./ContextMenuItem";
 import BinIcon from "@/public/assets/icons/Bin.png";
 import Author from "@/types/Author";
+import CommentType from "@/types/Comment";
 
 interface CommentProps {
-  id: string;
-  content: string;
-  timestamp: string;
-  createdAt: string;
-  author: Author;
+  comment: CommentType;
+  index: number;
   refetch: (options?: RefetchOptions) => unknown;
 }
 
-export default function Comment({
-  id,
-  content,
-  author,
-  timestamp,
-  createdAt,
-  refetch,
-}: CommentProps) {
+export default function Comment({ comment, refetch, index }: CommentProps) {
+  const { id, author, content, createdAt, timestamp } = comment;
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -72,7 +64,14 @@ export default function Comment({
   }, []);
 
   return (
-    <div className="flex flex-col" onContextMenu={handleContextMenu}>
+    <div
+      className="flex flex-col bg-default-dark"
+      onContextMenu={handleContextMenu}
+    >
+      <span className="bg-default-secondary self-start text-sm p-1">
+        #{index}
+      </span>
+
       <div className="bg-default-dark p-2">
         <Markdown className="markdown-block">{content}</Markdown>
       </div>

@@ -9,26 +9,29 @@ import AsteriskIcon from "@/public/assets/icons/Asterisk.png";
 import BinIcon from "@/public/assets/icons/Bin.png";
 
 import { useToastMessage } from "@/contexts/ToastMessageContext";
-import { redirect } from "next/navigation";
+
 import { useAuthUser } from "@/contexts/UserContext";
-import Author from "@/types/Author";
 
 interface PostContextMenuProps {
-  raw: string;
-  postId: string;
   onTogglePing: () => void;
   onDelete: () => void;
+  onCopy: () => void;
+  onView: () => void;
+  onShare: () => void;
   isPinged: boolean;
-  author: Author;
+  isOwnPost: boolean;
+  isDeleted: boolean;
 }
 
 export default function PostContextMenu({
-  raw,
-  postId,
   onDelete,
+  onCopy,
+  onView,
+  onShare,
   onTogglePing,
   isPinged,
-  author,
+  isOwnPost,
+  isDeleted,
 }: PostContextMenuProps) {
   const [contextMenu, setContextMenu] = useState({
     visible: false,
@@ -38,7 +41,6 @@ export default function PostContextMenu({
   const toastMessage = useToastMessage();
   const { user } = useAuthUser();
   const isSignedIn = user != null;
-  const isOwnPost = author.id === user?.id;
 
   useEffect(() => {
     document.addEventListener("click", handleClick);
@@ -56,45 +58,21 @@ export default function PostContextMenu({
     setContextMenu({ visible: true, x: e.pageX, y: e.pageY });
   };
 
-  const handleCopyContentToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(raw);
-      toastMessage.show("Post copied to clipboard", 8000);
-    } catch (error) {
-      toastMessage.errorShow("Failed to copy", 8000);
-      console.error("Failed to copy", error);
-    }
-  };
-
-  const handleCopyUrlToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(location.origin + "/posts/" + postId);
-      toastMessage.show("Post URL copied to clipboard", 8000);
-    } catch (error) {
-      toastMessage.errorShow("Failed to copy", 8000);
-      console.error("Failed to copy", error);
-    }
-  };
-
-  const handleRedirectToPost = () => {
-    redirect(`/posts/${postId}`);
-  };
-
   const actions: {
     title: JSX.Element;
     action: () => Promise<void> | void;
   }[] = [
     {
       title: <ContextMenuItem icon={ClipboardIcon} label="Copy" />,
-      action: handleCopyContentToClipboard,
+      action: onCopy,
     },
     {
       title: <ContextMenuItem icon={EyeIcon} label="View" />,
-      action: handleRedirectToPost,
+      action: onView,
     },
     {
       title: <ContextMenuItem icon={SharesheetIcon} label="Share" />,
-      action: handleCopyUrlToClipboard,
+      action: onShare,
     },
   ];
 
@@ -110,7 +88,7 @@ export default function PostContextMenu({
         action: onTogglePing,
       });
 
-    if (isOwnPost)
+    if (isOwnPost && !isDeleted)
       actions.push({
         title: <ContextMenuItem icon={BinIcon} label="Delete" />,
         action: onDelete,

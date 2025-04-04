@@ -9,4 +9,5 @@ export default interface ColourScheme {
   lightColour: string;
   darkColour: string;
   backgroundColour: string;
+  description: string;
 }

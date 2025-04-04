@@ -7,6 +7,7 @@ import Posts from "./posts";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import FeedSkeleton from "./FeedSkeleton";
 import { useAuthUser } from "@/contexts/UserContext";
+import LoadMore from "@/components/LoadMore";
 
 const fetchPosts = async ({ pageParam }: { pageParam: number }) => {
   const raw = await fetch(`/api/posts?page=${pageParam}`);
@@ -55,16 +56,10 @@ export default function Page() {
         </>
       )}
 
-      {hasNextPage && !isFetching && !error && (
-        <div className="flex justify-center py-4">
-          <button
-            onClick={() => fetchNextPage()}
-            className="bg-default-dark w-full md:w-[80%] py-4"
-          >
-            Load more posts
-          </button>
-        </div>
-      )}
+      <LoadMore
+        enabled={hasNextPage && !isFetching && !error}
+        action={() => fetchNextPage()}
+      />
     </UltraWideLayout>
   );
 }

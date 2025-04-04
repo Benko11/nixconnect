@@ -24,6 +24,7 @@ export default function Settings() {
             <div>Information about me</div>
           </div>
         </Link>
+
         <Link href="/settings/personalization">
           <div className="bg-default-neutral flex items-center gap-4">
             <div className="bg-default-accent h-16 aspect-square flex justify-center items-center">
@@ -38,12 +39,14 @@ export default function Settings() {
           </div>
         </Link>
 
-        <div className="bg-default-neutral flex items-center gap-4">
-          <div className="bg-default-accent h-16 aspect-square flex justify-center items-center">
-            <Image src={PadlockIcon} alt="Privacy" width={24} height={24} />
+        <Link href="/settings/privacy">
+          <div className="bg-default-neutral flex items-center gap-4">
+            <div className="bg-default-accent h-16 aspect-square flex justify-center items-center">
+              <Image src={PadlockIcon} alt="Privacy" width={24} height={24} />
+            </div>
+            <div>Privacy</div>
           </div>
-          <div>Privacy</div>
-        </div>
+        </Link>
       </div>
     </WideLayout>
   );

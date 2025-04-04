@@ -9,6 +9,7 @@ import SimpleFeedSkeleton from "./SimpleFeedSkeleton";
 import SimplePosts from "./simple-posts";
 import Link from "next/link";
 import ProfilePicture from "@/components/ProfilePicture";
+import LoadMore from "@/components/LoadMore";
 
 async function fetchPosts(
   { pageParam }: { pageParam: number },
@@ -20,7 +21,7 @@ async function fetchPosts(
 
 export default function Page() {
   const { user } = useAuthUser();
-  console.log(user);
+
   const {
     data: postsRaw,
     error,
@@ -45,7 +46,13 @@ export default function Page() {
         <ProfilePicture user={user} size="large" />
         <div>
           <h2 className="text-2xl">~{user.nickname}</h2>
-          <div>({user.pronouns.join("/")})</div>
+          <div>
+            <a href={`mailto:${user.email}`} className="text-default-primary">
+              {user.email}
+            </a>
+          </div>
+
+          <div>{user.pronouns.join("/")}</div>
           {user.gender && <div>{user.gender.name}</div>}
         </div>
       </div>
@@ -78,16 +85,11 @@ export default function Page() {
       <div className="py-8">
         {posts.length > 0 && <h3 className="text-xl pb-4">Latest</h3>}
         <SimplePosts posts={posts} />
-        {hasNextPage && !isFetching && (
-          <div className="flex justify-center">
-            <button
-              onClick={() => fetchNextPage()}
-              className="bg-default-dark w-full md:w-[80%] py-4"
-            >
-              Load more posts
-            </button>
-          </div>
-        )}
+        <LoadMore
+          enabled={hasNextPage && !isFetching}
+          action={() => fetchNextPage()}
+        />
+
         {isFetching && <SimpleFeedSkeleton />}
       </div>
     );

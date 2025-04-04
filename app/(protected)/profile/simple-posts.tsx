@@ -7,17 +7,7 @@ import Markdown from "react-markdown";
 
 function renderSinglePost(post: PostType, id: string) {
   return (
-    <Post
-      key={id}
-      id={id}
-      author={post.author}
-      createdAt={post.createdAt}
-      timestamp={post.timestamp}
-      raw={post.content}
-      pings={post.pings}
-      comments={post.comments}
-      refetch={() => {}}
-    >
+    <Post post={post} key={id} refetch={() => {}}>
       <Markdown className="markdown-block">{post.content}</Markdown>
     </Post>
   );

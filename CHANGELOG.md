@@ -23,6 +23,28 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Hashtags** - users will be able to use hashtags and search posts with the hashtags
 - **Search** - users will be able to search for content of the posts and users
 
+## [0.3]
+
+### Added
+
+- **New post interaction experience** - users can now perform all eligible actions using left-click actions, users who have pinged the post are visible without having to open the ping menu
+- **Privacy option for showing mail** - authenticated users can choose to display their email in their public profile, your e-mail will always show in your own view of the profile
+- **New radio components** - a new design language is present for the radio button menus that is consistent across forms
+- **New checkbox components** - custom look for checkboxes to reinforce visual identity of \*NixConnect
+- **Replies to comments**
+- **Redis caching for colour schemes**
+- **Hashtags and user handles in posts**
+
+### Changed
+
+- **Refactoring** - small reorganizations and more coherent code structure in many places
+- **Deleted marker** - when viewing individual posts if the post has been deleted, it is marked as such to the user
+
+### Fixed
+
+- **Colour scheme switching** - making two changes in one session does not change the option
+- **Search entry fix** - when no results are showed, the search entry will not be visible
+
 ## [0.2.4] - 2025-04-03
 
 ### Fixed

@@ -1,11 +1,12 @@
 "use client";
 
 import Breadcrumbs from "@/components/Breadcrumbs";
-import ColourScheme from "@/components/ColourScheme";
+import RadioGroup from "@/components/Form/RadioGroup";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import { usePreference } from "@/contexts/PreferencesContext";
 import { useToastMessage } from "@/contexts/ToastMessageContext";
 import { useAuthUser } from "@/contexts/UserContext";
+import ColourScheme from "@/types/ColourScheme";
 import ColourSchemeType from "@/types/ColourScheme";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
@@ -16,7 +17,7 @@ export default function Page() {
     data: colourSchemes,
     error: colourSchemesError,
     isPending: colourSchemesPending,
-  } = useQuery({
+  } = useQuery<ColourScheme[]>({
     queryKey: ["colour-schemes", "all"],
     queryFn: fetchColourSchemes,
   });
@@ -49,31 +50,27 @@ export default function Page() {
 
   function renderColourSchemes() {
     if (colourSchemesPending) return <div>Loading...</div>;
-    if (colourSchemes.length < 1) return;
+    if (colourSchemes == null || colourSchemes.length < 1) return;
 
     return (
       <form>
-        <div className="flex flex-col gap-2">
-          {colourSchemes.map((colourScheme: ColourSchemeType) => {
-            return (
-              <div className="flex items-center gap-2" key={colourScheme.id}>
-                <input
-                  type="radio"
-                  name="colour-scheme"
-                  id={`colour-scheme-${colourScheme.id.toString()}`}
-                  value={colourScheme.id.toString()}
-                  onChange={handleColourSchemeChange}
-                  checked={colourScheme.id === selected}
-                />
-                <label htmlFor={`colour-scheme-${colourScheme.id.toString()}`}>
-                  <ColourScheme
-                    colourScheme={colourScheme}
-                    key={colourScheme.id}
-                  />
-                </label>
+        <div className="flex flex-col">
+          <RadioGroup
+            name="colour-scheme"
+            keys={colourSchemes.map((c) => c.id)}
+            labels={colourSchemes.map((c) => c.name)}
+            descriptions={colourSchemes.map((c) => c.description)}
+            visuals={colourSchemes.map((c) => (
+              <div className="w-20 aspect-square grid grid-cols-2">
+                <div style={{ background: c.primaryColour }}></div>
+                <div style={{ background: c.secondaryColour }}></div>
+                <div style={{ background: c.accentColour }}></div>
+                <div style={{ background: c.errorColour }}></div>
               </div>
-            );
-          })}
+            ))}
+            selected={selected}
+            onChange={handleColourSchemeChange}
+          />
         </div>
       </form>
     );

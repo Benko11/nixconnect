@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { getDefaultValueForPreference } from "./preferences";
+import ColourScheme from "@/types/ColourScheme";
 
 export async function getColourSchemes() {
   const supabase = await createClient();
@@ -12,7 +13,7 @@ export async function getColourSchemes() {
     throw new Error("Could not retrieve colour schemes");
   }
 
-  const colourSchemes = data.map((item) => {
+  const colourSchemes: ColourScheme[] = data.map((item) => {
     return {
       id: item.id,
       name: item.name,
@@ -24,6 +25,7 @@ export async function getColourSchemes() {
       darkColour: item.dark_colour,
       lightColour: item.light_colour,
       backgroundColour: item.background_colour,
+      description: item.description,
     };
   });
 
@@ -53,6 +55,7 @@ export async function getColourSchemeById(id: number) {
     lightColour: data.light_colour,
     darkColour: data.dark_colour,
     backgroundColour: data.background_colour,
+    description: data.description,
   };
 }
 

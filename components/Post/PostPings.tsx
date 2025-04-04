@@ -11,7 +11,7 @@ interface PostPingsProps {
   isPending: boolean;
   pings: Ping[] | null;
   onToggle: () => void;
-  authorId: string;
+  isOwnPost: boolean;
 }
 
 export default function PostPings({
@@ -19,14 +19,12 @@ export default function PostPings({
   isPending,
   isPinged,
   pings,
+  isOwnPost,
   onToggle,
-  authorId,
 }: PostPingsProps) {
   const { user } = useAuthUser();
 
   if (!isOpen || pings == null) return null;
-
-  const isOwnPost = authorId === user?.id;
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();

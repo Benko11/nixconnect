@@ -10,6 +10,8 @@ import SimplePosts from "../simple-posts";
 import { useEffect } from "react";
 import { useAuthUser } from "@/contexts/UserContext";
 import ProfilePicture from "@/components/ProfilePicture";
+import useUserPreference from "@/hooks/useUserPreference";
+import LoadMore from "@/components/LoadMore";
 
 async function fetchUser(nickname: string) {
   const response = await fetch(`/api/users/${nickname}`);
@@ -71,6 +73,8 @@ export default function Page() {
     staleTime: 5 * 60 * 1000,
   });
 
+  const v = useUserPreference(user?.id, "show-mail");
+
   if (isError) return notFound();
 
   const posts = postsRaw?.pages.flatMap((page) => page.data) || [];
@@ -83,7 +87,14 @@ export default function Page() {
         <ProfilePicture size="large" user={user} />
         <div>
           <h2 className="text-2xl">~{user.nickname}</h2>
-          <div>({user.pronouns.join("/")})</div>
+          {v?.["show-mail"] === 1 && (
+            <div>
+              <a href={`mailto:${user.email}`} className="text-default-primary">
+                {user.email}
+              </a>
+            </div>
+          )}
+          <div>{user.pronouns.join("/")}</div>
           <div>{user.gender.name}</div>
           {authUser?.id === user.id && (
             <div className="text-default-error">
@@ -114,16 +125,11 @@ export default function Page() {
       <div className="py-8">
         {posts.length > 0 && <h3 className="text-xl pb-4">Latest</h3>}
         <SimplePosts posts={posts} />
-        {hasNextPage && !postsIsFetching && (
-          <div className="flex justify-center">
-            <button
-              onClick={() => fetchNextPage()}
-              className="bg-default-dark w-full md:w-[80%] py-4"
-            >
-              Load more posts
-            </button>
-          </div>
-        )}
+        <LoadMore
+          enabled={hasNextPage && !postsIsFetching}
+          action={() => fetchNextPage()}
+        />
+
         {postsIsFetching && <SimpleFeedSkeleton />}
       </div>
     );

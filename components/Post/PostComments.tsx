@@ -69,15 +69,12 @@ export default function PostComments({
       </form>
 
       <div className="flex flex-col gap-2 mt-4">
-        {comments?.map((comment) => {
+        {comments?.map((comment, index) => {
           return (
             <Comment
+              comment={comment}
               key={comment.id}
-              id={comment.id}
-              content={comment.content}
-              author={comment.author}
-              createdAt={comment.createdAt}
-              timestamp={comment.timestamp}
+              index={comments.length - index}
               refetch={() =>
                 queryClient.invalidateQueries({ queryKey: ["posts", postId] })
               }

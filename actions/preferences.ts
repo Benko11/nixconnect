@@ -26,11 +26,24 @@ export async function getValueForAuthUser(identifier: string) {
   const { data, error } = await supabase
     .from("user_preferences")
     .select("value")
-    .eq("user_id", authUser.id)
+    .match({ user_id: authUser.id, preference_identifier: identifier })
     .maybeSingle();
   if (error) throw new Error(error.message);
 
   if (data != null) return data.value;
 
+  return await getDefaultValueForPreference(identifier);
+}
+
+export async function getValueForUser(identifier: string, userId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("user_preferences")
+    .select("value")
+    .match({ user_id: userId, preference_identifier: identifier })
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+
+  if (data != null) return data.value;
   return await getDefaultValueForPreference(identifier);
 }

@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createContext, ReactNode, useContext, useEffect } from "react";
 
 interface PreferencesContextType {
+  showMail: { current: number };
   colourScheme: {
     apply: (colourSchemeId: number) => void;
     current: number;
@@ -20,32 +21,42 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   });
 
   const {
-    data: current,
-    error: errorCurrent,
-    isPending: isPendingCurrent,
+    data: currentCS,
+    error: errorCurrentCS,
+    isPending: isPendingCurrentCS,
   } = useQuery({
     queryKey: ["preferences", "colour-scheme", "current"],
     queryFn: fetchCurrentColourScheme,
     enabled: colourSchemes?.length > 0,
   });
 
+  const { data: currentSM, error: errorSM } = useQuery({
+    queryKey: ["preferences", "show-mail"],
+    queryFn: fetchCurrentShowMail,
+  });
+
   useEffect(() => {
-    if (isPendingCurrent) return;
+    if (isPendingCurrentCS) return;
 
-    applyColourScheme(current.colourScheme);
-  }, [current]);
+    applyColourScheme(currentCS.colourScheme);
+  }, [currentCS]);
 
-  if (isPendingCurrent) return null;
+  if (isPendingCurrentCS) return null;
 
-  if (errorColourSchemes || errorCurrent)
+  if (errorColourSchemes || errorCurrentCS)
     return <div>Could not load colour schemes</div>;
+
+  if (errorSM) return <div>Could not load show mail</div>;
 
   return (
     <PreferencesContext.Provider
       value={{
+        showMail: {
+          current: currentSM.showMail,
+        },
         colourScheme: {
           apply: applyColourScheme,
-          current: current?.colourScheme,
+          current: currentCS?.colourScheme,
         },
       }}
     >
@@ -115,4 +126,8 @@ async function fetchCurrentColourScheme() {
   return await fetch("/api/preferences/colour-scheme").then((res) =>
     res.json()
   );
+}
+
+async function fetchCurrentShowMail() {
+  return await fetch("/api/preferences/show-mail").then((res) => res.json());
 }
