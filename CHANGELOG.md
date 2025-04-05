@@ -31,7 +31,7 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Privacy option for showing mail** - authenticated users can choose to display their email in their public profile, your e-mail will always show in your own view of the profile
 - **New radio components** - a new design language is present for the radio button menus that is consistent across forms
 - **New checkbox components** - custom look for checkboxes to reinforce visual identity of \*NixConnect
-- **Replies to comments**
+- **Replies to comments** - authenticated user can reply to comments in posts by right-clicking on them
 - **Redis caching for colour schemes** - colour schemes are now served from a Redis server for better performance
 - **Hashtags and user handles in posts** - added posts can use hashtags, and mark other users with `~`
 
