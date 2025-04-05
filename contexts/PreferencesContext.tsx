@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createContext, ReactNode, useContext, useEffect } from "react";
 
 interface PreferencesContextType {
+  refetchPrefs: () => Promise<void>;
   showMail: { current: number };
   colourScheme: {
     apply: (colourSchemeId: number) => void;
@@ -24,13 +25,18 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     data: currentCS,
     error: errorCurrentCS,
     isPending: isPendingCurrentCS,
+    refetch: refetchCS,
   } = useQuery({
     queryKey: ["preferences", "colour-scheme", "current"],
     queryFn: fetchCurrentColourScheme,
     enabled: colourSchemes?.length > 0,
   });
 
-  const { data: currentSM, error: errorSM } = useQuery({
+  const {
+    data: currentSM,
+    error: errorSM,
+    refetch: refetchSM,
+  } = useQuery({
     queryKey: ["preferences", "show-mail"],
     queryFn: fetchCurrentShowMail,
   });
@@ -40,6 +46,11 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
 
     applyColourScheme(currentCS.colourScheme);
   }, [currentCS]);
+
+  async function refetchPrefs() {
+    await refetchCS();
+    await refetchSM();
+  }
 
   if (isPendingCurrentCS) return null;
 
@@ -51,6 +62,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   return (
     <PreferencesContext.Provider
       value={{
+        refetchPrefs: refetchPrefs,
         showMail: {
           current: currentSM.showMail,
         },
@@ -117,7 +129,7 @@ export function usePreference() {
 }
 
 async function fetchColourSchemes() {
-  return await fetch("/api/preferences/colour-schemes/").then((res) =>
+  return await fetch("/api/preferences/colour-schemes/redis").then((res) =>
     res.json()
   );
 }

@@ -11,7 +11,7 @@ export default function LoadMore({ enabled, action }: LoadMoreProps) {
     <div className="flex justify-center py-4">
       <button
         onClick={() => action()}
-        className="bg-default-dark w-full md:w-[80%] py-4"
+        className="bg-dark w-full md:w-[80%] py-4"
       >
         Load more posts
       </button>

@@ -3,19 +3,18 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import UltraWideLayout from "@/components/layouts/UltraWideLayout";
 import NixInput from "@/components/NixInput";
-import Post from "@/components/Post/Post";
 import { Post as PostType } from "@/types/Post";
 import User from "@/types/User";
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import Markdown from "react-markdown";
 import { useDebounce } from "react-use";
 import SearchResultSkeleton from "./SearchResultSkeleton";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProfilePicture from "@/components/ProfilePicture";
 import SearchEntry from "@/types/SearchEntry";
 import LoadMore from "@/components/LoadMore";
+import { renderSinglePost } from "../feed/posts";
 
 export default function Page() {
   const router = useRouter();
@@ -40,35 +39,15 @@ export default function Page() {
   } = useInfiniteQuery({
     queryKey: ["search", "infinite", searchQuery],
     queryFn: ({ pageParam = 0 }) => search(searchQuery, { pageParam }),
-    getNextPageParam: (lastPage) => lastPage.posts.nextPage,
+    getNextPageParam: (lastPage) => lastPage?.posts?.nextPage,
     initialPageParam: 0,
     refetchOnWindowFocus: false,
     enabled: !!isReady && searchQuery.length > 0,
   });
 
-  const searchEntryMutation = useMutation({
-    mutationFn: addSearchEntry,
-    onSuccess: () => {
-      refetchSearchEntries();
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
-
   const data = raw?.pages[0];
+  console.log(raw);
   const posts = raw?.pages.flatMap((page) => page.posts.data) || [];
-
-  const {
-    data: searchEntries,
-    isPending: isPendingSearchEntries,
-    error: errorSearchEntries,
-    refetch: refetchSearchEntries,
-  } = useQuery({
-    queryKey: ["search", "entries"],
-    queryFn: fetchSearchEntries,
-    staleTime: 60 * 1000,
-  });
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -91,15 +70,17 @@ export default function Page() {
       (data?.users && data.users.length > 0) || posts.length > 0;
     if (hasResults) {
       processedQueries.current.add(debouncedQuery);
-      searchEntryMutation.mutate(debouncedQuery);
     }
-  }, [
-    debouncedQuery,
-    isTouched,
-    data?.users,
-    posts.length,
-    searchEntryMutation,
-  ]);
+  }, [debouncedQuery, isTouched, data?.users, posts.length]);
+
+  const {
+    data: searchEntries,
+    error: errorSearchEntries,
+    isPending: isPendingSearchEntries,
+  } = useQuery({
+    queryKey: ["search", "entries", "recent"],
+    queryFn: fetchRecentSearches,
+  });
 
   const renderUsers = () => {
     if (data == null || data.users.length < 1) return;
@@ -112,7 +93,7 @@ export default function Page() {
             <Link
               key={user.id}
               href={`/profile/~${user.nickname}`}
-              className="flex gap-2 items-center bg-default-neutral p-2"
+              className="flex gap-2 items-center bg-neutral p-2"
             >
               <ProfilePicture size="small" user={user} />
               <div>~{user.nickname}</div>
@@ -130,11 +111,7 @@ export default function Page() {
       <div className="mt-4">
         <h3 className="text-xl mb-2">Posts</h3>
         <div className="flex flex-col gap-4">
-          {posts.map((post: PostType) => (
-            <Post post={post} key={post.id} refetch={() => {}}>
-              <Markdown className="markdown-block">{post.content}</Markdown>
-            </Post>
-          ))}
+          {posts.map((post: PostType) => renderSinglePost(post, () => {}))}
         </div>
       </div>
     );
@@ -144,9 +121,7 @@ export default function Page() {
     if (isPendingSearchEntries) return null;
 
     if (errorSearchEntries)
-      return (
-        <div className="bg-default-error">Could not load search entries.</div>
-      );
+      return <div className="bg-error">Could not load search entries.</div>;
 
     if (searchEntries.length < 1)
       return (
@@ -154,11 +129,11 @@ export default function Page() {
       );
 
     return (
-      <div className="bg-default-neutral p-2 flex flex-col gap-1">
+      <div className="bg-neutral p-2 flex flex-col gap-1">
         {searchEntries.map((entry: SearchEntry) => (
           <div
             key={entry.id}
-            className="py-1 bg-default-dark px-4 cursor-pointer"
+            className="py-1 bg-dark px-4 cursor-pointer"
             onClick={() => {
               setSearchQuery(entry.query);
               setIsTouched(false);
@@ -194,7 +169,7 @@ export default function Page() {
             autoFocus={true}
           />
           {!isFetching && data?.users.length === 0 && posts.length === 0 && (
-            <div className="text-default-error mt-4">No results found</div>
+            <div className="text-error mt-4">No results found</div>
           )}
           {isFetching ? (
             <SearchResultSkeleton />
@@ -207,7 +182,7 @@ export default function Page() {
           <LoadMore enabled={hasNextPage} action={() => fetchNextPage()} />
         </div>
         <div className="w-80">
-          <h3 className="text-xl">Recent searches</h3>
+          <h3 className="text-xl">Recent trends</h3>
           {renderSearchEntries()}
         </div>
       </div>
@@ -216,18 +191,11 @@ export default function Page() {
 }
 
 async function search(query: string, { pageParam }: { pageParam: number }) {
-  return await fetch(`/api/search?query=${query}&page=${pageParam}`).then(
-    (res) => res.json()
-  );
+  return await fetch(
+    `/api/search?query=${encodeURIComponent(query)}&page=${pageParam}`
+  ).then((res) => res.json());
 }
 
-async function fetchSearchEntries() {
-  return await fetch("/api/search/entries").then((res) => res.json());
-}
-
-async function addSearchEntry(query: string) {
-  return await fetch("/api/search/entries", {
-    method: "POST",
-    body: JSON.stringify({ query }),
-  });
+async function fetchRecentSearches() {
+  return await fetch(`/api/search/entries`).then((res) => res.json());
 }

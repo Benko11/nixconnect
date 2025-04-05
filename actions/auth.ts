@@ -4,6 +4,7 @@ import RegisterClient from "@/types/RegisterClient";
 import { createClient } from "@/utils/supabase/server";
 import { z } from "zod";
 import { getAllPronouns } from "./pronouns";
+import isAlphaNumericString from "@/utils/isAlphaNumericString";
 
 export async function signIn({ nickname, password }: LoginClient) {
   const supabase = await createClient();
@@ -44,10 +45,16 @@ export async function signUp({
 }: RegisterClient) {
   const formSchema = z
     .object({
-      nickname: z.string().min(2, {
-        message:
-          "Please use more than one character in your nickname, singular characters are characters, not names",
-      }),
+      nickname: z
+        .string()
+        .min(2, {
+          message:
+            "Please use more than one character in your nickname, singular characters are characters, not names",
+        })
+        .refine(isAlphaNumericString, {
+          message:
+            "Nickname may only contain alpha numeric characters (letters and numbers)",
+        }),
       password: z
         .string()
         .min(8, { message: "Password must be at least 8  characters" }),

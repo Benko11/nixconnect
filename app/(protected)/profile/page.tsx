@@ -47,7 +47,7 @@ export default function Page() {
         <div>
           <h2 className="text-2xl">~{user.nickname}</h2>
           <div>
-            <a href={`mailto:${user.email}`} className="text-default-primary">
+            <a href={`mailto:${user.email}`} className="text-primary">
               {user.email}
             </a>
           </div>
@@ -64,7 +64,7 @@ export default function Page() {
   const renderPosts = () => {
     if (error) {
       return (
-        <div className="text-default-error py-8">
+        <div className="text-error py-8">
           Something went wrong when displaying the page, please try refreshing.
         </div>
       );
@@ -72,9 +72,9 @@ export default function Page() {
 
     if (!isFetching && posts.length === 0) {
       return (
-        <div className="py-8 text-default-error">
+        <div className="py-8 text-error">
           Wouldn&apos;t you like to post something nice?{" "}
-          <Link href="/feed" className="text-default-primary">
+          <Link href="/feed" className="text-primary">
             Post now
           </Link>
         </div>

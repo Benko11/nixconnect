@@ -17,10 +17,7 @@ export default function GithubButton() {
   }
 
   return (
-    <button
-      className="text-default-primary ml-auto p-3 px-8"
-      onClick={handleGithub}
-    >
+    <button className="text-primary ml-auto p-3 px-8" onClick={handleGithub}>
       Use GitHub
     </button>
   );

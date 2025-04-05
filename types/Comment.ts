@@ -6,4 +6,6 @@ export default interface Comment {
   content: string;
   createdAt: string;
   timestamp: string;
+  index: number;
+  replyToIndex?: number;
 }

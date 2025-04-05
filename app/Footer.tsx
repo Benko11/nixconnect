@@ -4,11 +4,11 @@ export default function Footer() {
   const version = process.env.NIXCONNECT_VERSION!;
   return (
     <footer
-      className="bg-default-accent fixed w-full bottom-0 flex"
+      className="bg-accent fixed w-full bottom-0 flex"
       style={{ zIndex: 1000 }}
     >
       <div className="flex mr-auto">
-        <Link href="/changelog" className="p-1 bg-default-secondary changelog">
+        <Link href="/changelog" className="p-1 bg-secondary changelog">
           v{version}
         </Link>
       </div>

@@ -31,7 +31,7 @@ export default function CheckboxGroup({
             {!isChecked && <div>[ ]</div>}
             {isChecked && (
               <div>
-                [<span className="text-default-accent font-black">x</span>]
+                [<span className="text-accent font-black">x</span>]
               </div>
             )}
             <div>{label}</div>

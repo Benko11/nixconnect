@@ -3,7 +3,6 @@ import ProfilePicture from "../ProfilePicture";
 import Link from "next/link";
 import { FormEvent } from "react";
 import PrimaryButton from "../PrimaryButton";
-import { useAuthUser } from "@/contexts/UserContext";
 
 interface PostPingsProps {
   isOpen: boolean;
@@ -22,8 +21,6 @@ export default function PostPings({
   isOwnPost,
   onToggle,
 }: PostPingsProps) {
-  const { user } = useAuthUser();
-
   if (!isOpen || pings == null) return null;
 
   function handleSubmit(e: FormEvent) {
@@ -32,7 +29,7 @@ export default function PostPings({
   }
 
   return (
-    <div className="bg-default-neutral">
+    <div className="bg-neutral">
       <div className="flex flex-col gap-2 p-2 overflow-auto max-h-60">
         <form onSubmit={handleSubmit} className="flex flex-col">
           {!isOwnPost && (
@@ -46,12 +43,10 @@ export default function PostPings({
           <Link href={`/profile/~${ping.author.nickname}`} key={ping.createdAt}>
             <div
               key={ping.createdAt}
-              className="bg-default-dark p-2 flex items-center gap-2"
+              className="bg-dark p-2 flex items-center gap-2"
             >
               <ProfilePicture user={ping.author} size="small" />
-              <div className="text-default-primary">
-                ~{ping.author.nickname}
-              </div>
+              <div className="text-primary">~{ping.author.nickname}</div>
             </div>
           </Link>
         ))}

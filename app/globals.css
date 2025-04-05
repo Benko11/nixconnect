@@ -30,11 +30,11 @@ select {
 }
 
 .markdown-block.docs * {
-  @apply text-default-light;
+  @apply text-light;
 }
 
 .markdown-block.docs a {
-  @apply text-default-primary hover:underline;
+  @apply text-primary hover:underline;
 }
 
 .markdown-block.docs h1 {
@@ -43,12 +43,12 @@ select {
 
 .markdown-block.docs h3::before {
   content: "##";
-  @apply pr-2 text-default-accent;
+  @apply pr-2 text-accent;
 }
 
 .markdown-block.docs h2::before {
   content: "#";
-  @apply pr-2 text-default-accent;
+  @apply pr-2 text-accent;
 }
 
 .markdown-block:not(.docs) h1 {
@@ -69,15 +69,15 @@ select {
 }
 
 .markdown-block a {
-  @apply text-default-primary;
+  @apply text-primary;
 }
 
 .markdown-block code {
-  @apply font-display overflow-auto w-[20px] bg-default-background;
+  @apply font-display overflow-auto w-[20px] bg-background;
 }
 
 .markdown-block pre {
-  @apply bg-default-background py-2 px-4 whitespace-pre overflow-y-hidden overflow-x-auto m-0 max-w-full;
+  @apply bg-background py-2 px-4 whitespace-pre overflow-y-hidden overflow-x-auto m-0 max-w-full;
 }
 
 .markdown-block img {

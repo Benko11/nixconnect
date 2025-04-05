@@ -1,4 +1,4 @@
-import { getPostById } from "@/actions/posts";
+import { deleteHashtagsForPost, getPostById } from "@/actions/posts";
 import deletePostById from "@/actions/posts";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
@@ -44,6 +44,7 @@ export async function DELETE(
       );
 
     await deletePostById(id);
+    await deleteHashtagsForPost(id);
     return NextResponse.json({ message: "Post deleted" });
   } catch (err) {
     if (err instanceof Error) {

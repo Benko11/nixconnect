@@ -4,11 +4,30 @@ import Post from "@/components/Post/Post";
 import { Post as PostType } from "@/types/Post";
 import React from "react";
 import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
-function renderSinglePost(post: PostType, refetch: () => unknown) {
+const EnhancedMarkdown = ({ content }: { content: string }) => {
+  let processedContent = content.replace(
+    /#(\w+)/g,
+    (match, hashtag) => `[${match}](/search/?q=%23${hashtag})`
+  );
+
+  processedContent = processedContent.replace(
+    /~(\w+)/g,
+    (match, username) => `[${match}](/profile/~${username})`
+  );
+
+  return (
+    <Markdown className="markdown-block" rehypePlugins={[rehypeRaw]}>
+      {processedContent}
+    </Markdown>
+  );
+};
+
+export function renderSinglePost(post: PostType, refetch: () => unknown) {
   return (
     <Post key={post.id} post={post} refetch={refetch}>
-      <Markdown className="markdown-block">{post.content}</Markdown>
+      <EnhancedMarkdown content={post.content} />
     </Post>
   );
 }

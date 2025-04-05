@@ -19,7 +19,7 @@ export default function ContextMenu({
   if (!visible) return;
   return (
     <div
-      className="absolute border-4 border-default-dark py-2 bg-default-neutral w-40"
+      className="absolute border-4 border-dark py-2 bg-neutral w-40"
       style={{
         top: `${y + 10}px`,
         left: `${x + 10}px`,
@@ -30,7 +30,7 @@ export default function ContextMenu({
         return (
           <div
             key={index}
-            className="cursor-pointer w-full hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent p-2"
+            className="cursor-pointer w-full hover:bg-secondary focus:bg-accent active:bg-accent p-2"
             onClick={action}
           >
             {title}

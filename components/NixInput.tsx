@@ -29,7 +29,7 @@ export default function NixInput({
       : id;
 
   const classes =
-    "bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-100 focus:opacity-100 w-full";
+    "bg-light text-dark p-1 px-2 outline-none opacity-90 hover:opacity-100 focus:opacity-100 w-full";
   const renderInput = () => {
     if (stateValue == null) {
       return (
@@ -62,7 +62,7 @@ export default function NixInput({
     <>
       <label htmlFor={inputId}>
         {showLabel && label}{" "}
-        {showLabel && required && <span className="text-default-error">*</span>}
+        {showLabel && required && <span className="text-error">*</span>}
       </label>
       {renderInput()}
     </>

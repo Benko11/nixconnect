@@ -89,7 +89,7 @@ export default function Page() {
           <h2 className="text-2xl">~{user.nickname}</h2>
           {v?.["show-mail"] === 1 && (
             <div>
-              <a href={`mailto:${user.email}`} className="text-default-primary">
+              <a href={`mailto:${user.email}`} className="text-primary">
                 {user.email}
               </a>
             </div>
@@ -97,7 +97,7 @@ export default function Page() {
           <div>{user.pronouns.join("/")}</div>
           <div>{user.gender.name}</div>
           {authUser?.id === user.id && (
-            <div className="text-default-error">
+            <div className="text-error">
               You are viewing your profile in public view
             </div>
           )}
@@ -109,7 +109,7 @@ export default function Page() {
   const renderPosts = () => {
     if (postsError) {
       return (
-        <div className="text-default-error py-8">
+        <div className="text-error py-8">
           Something went wrong when displaying the page, please try refreshing.
         </div>
       );

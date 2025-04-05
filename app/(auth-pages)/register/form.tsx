@@ -103,7 +103,7 @@ export default function Form() {
 
   return (
     <form onSubmit={handleSubmit}>
-      {message && <div className="text-default-error pb-6">{message}</div>}
+      {message && <div className="text-error pb-6">{message}</div>}
       <div className="flex flex-col pb-4">
         <NixInput
           label="Nickname"
@@ -148,7 +148,7 @@ export default function Form() {
       {gendersIsPending ? (
         <div> Loading genders...</div>
       ) : gendersError ? (
-        <div className="text-default-error">Could not load genders</div>
+        <div className="text-error">Could not load genders</div>
       ) : (
         <div className="py-2 pb-4">
           <h3>Gender</h3>
@@ -169,7 +169,7 @@ export default function Form() {
       {pronounsIsPending ? (
         <div>Loading pronouns...</div>
       ) : pronounsError ? (
-        <div className="text-default-error">Could not load pronouns</div>
+        <div className="text-error">Could not load pronouns</div>
       ) : (
         <Pronouns
           pronouns={pronouns}
@@ -183,7 +183,7 @@ export default function Form() {
       <div className="pt-4">
         <button
           type="submit"
-          className="text-default-dark bg-default-primary p-3 px-8 text-lg disabled:opacity-70"
+          className="text-dark bg-primary p-3 px-8 text-lg disabled:opacity-70"
           // disabled={pending}
         >
           Sign up

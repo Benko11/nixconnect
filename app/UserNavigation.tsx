@@ -87,15 +87,15 @@ export default function UserNavigation() {
     >
       <Link
         href="/search"
-        className="opacity-90 hover:opacity-100 focus:opacity-100 text-default-neutral flex items-center p-1 top-link search-button"
+        className="opacity-90 hover:opacity-100 focus:opacity-100 text-neutral flex items-center p-1 top-link search-button"
       >
-        <div className="bg-default-dark p-1">
+        <div className="bg-dark p-1">
           <Image src={SearchIcon} alt="Search" width={16} height={16} />
         </div>
-        <div className="bg-default-light px-3">Search</div>
+        <div className="bg-light px-3">Search</div>
       </Link>
       <div
-        className="bg-default-secondary text-default-light p-1 cursor-pointer top-link"
+        className="bg-secondary text-light p-1 cursor-pointer top-link"
         onClick={() => setIsMenuOpen((prev) => !prev)}
       >
         ~{authUser.nickname}
@@ -103,21 +103,21 @@ export default function UserNavigation() {
 
       {isMenuOpen && (
         <nav className="absolute right-0 top-10 select-none top-navigation">
-          <ul className="bg-default-dark text-default-light py-4">
+          <ul className="bg-dark text-light py-4">
             <li
-              className="p-2 px-6 min-w-52 cursor-pointer hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent"
+              className="p-2 px-6 min-w-52 cursor-pointer hover:bg-secondary focus:bg-accent active:bg-accent"
               onClick={handleGoToProfile}
             >
               Profile
             </li>
             <li
-              className="p-2 px-6 min-w-52 cursor-pointer hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent"
+              className="p-2 px-6 min-w-52 cursor-pointer hover:bg-secondary focus:bg-accent active:bg-accent"
               onClick={handleGoToSettings}
             >
               Settings
             </li>
             <li
-              className="p-2 px-6 min-w-52 cursor-pointer hover:bg-default-secondary focus:bg-default-accent active:bg-default-accent"
+              className="p-2 px-6 min-w-52 cursor-pointer hover:bg-secondary focus:bg-accent active:bg-accent"
               onClick={handleLogout}
             >
               Log out

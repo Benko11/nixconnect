@@ -12,9 +12,8 @@ export default function ToastMessage({
   variant = "success",
 }: ToastMessageProps) {
   const classes = ["p-4", "select-none", "max-w-80", "cursor-pointer"];
-  if (variant === "success") classes.push("bg-default-dark");
-  if (variant === "error")
-    classes.push("bg-default-error", "text-default-dark");
+  if (variant === "success") classes.push("bg-dark");
+  if (variant === "error") classes.push("bg-error", "text-dark");
   return (
     <div
       className={classes.join(" ")}

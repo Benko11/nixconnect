@@ -33,11 +33,18 @@ export default function Form() {
   const queryClient = useQueryClient();
   const toastMessage = useToastMessage();
 
+  const searchEntryMutation = useMutation({ mutationFn: addSearchEntry });
+
   const addMutation = useMutation<PostClient, Error, string>({
     mutationFn: () => createPost(post),
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       setPost("");
       await queryClient.invalidateQueries({ queryKey: ["posts", "infinite"] });
+      searchEntryMutation.mutate({
+        queries: extractHashtags(),
+        // @ts-expect-error: Returned data does not match the client
+        postId: data.newPost.data[0].id,
+      });
       toastMessage.show("Post added", 8000);
     },
     onError: (error) => {
@@ -68,6 +75,12 @@ export default function Form() {
     setPlaceholder(renderPlaceholder());
   }, []);
 
+  function extractHashtags() {
+    const hashtagPattern = /#\w+/g;
+    const hashtags = post.match(hashtagPattern);
+    return hashtags ? hashtags : [];
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (post === "" || post.length < 1) {
@@ -86,7 +99,7 @@ export default function Form() {
       <textarea
         name="post"
         id="post"
-        className="resize-none aspect-[9/2] bg-default-light text-default-dark p-1 px-2 outline-none opacity-90 hover:opacity-95 focus:opacity-95 w-full"
+        className="resize-none aspect-[9/2] bg-light text-dark p-1 px-2 outline-none opacity-90 hover:opacity-95 focus:opacity-95 w-full"
         placeholder={placeholder || "Share something fun..."}
         onChange={(e) => setPost(e.target.value)}
         value={post}
@@ -95,4 +108,17 @@ export default function Form() {
       <PrimaryButton disabled={addMutation.isPending}>Post</PrimaryButton>
     </form>
   );
+}
+
+async function addSearchEntry({
+  queries,
+  postId,
+}: {
+  queries: string[];
+  postId: string;
+}) {
+  return await fetch("/api/search/entries", {
+    method: "POST",
+    body: JSON.stringify({ queries, postId }),
+  });
 }

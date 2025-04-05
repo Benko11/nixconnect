@@ -16,7 +16,7 @@ export default function Breadcrumbs({
     <h2 className={`text-2xl ${classes}`}>
       {hierachy.map((item) => (
         <React.Fragment key={item.href}>
-          <Link href={item.href} className="text-default-primary">
+          <Link href={item.href} className="text-primary">
             {item.title}
           </Link>{" "}
           /{" "}

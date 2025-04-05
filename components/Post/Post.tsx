@@ -14,9 +14,7 @@ import ProfilePicture from "../ProfilePicture";
 import PostPings from "./PostPings";
 import PostComments from "./PostComments";
 import PostActions from "./PostActions";
-import Comment from "@/types/Comment";
 import PostContextMenu from "./PostContextMenu";
-import Author from "@/types/Author";
 import { redirect } from "next/navigation";
 import { Post as PostType } from "@/types/Post";
 
@@ -140,7 +138,7 @@ export default function Post({
 
   return (
     <div className="select-none flex flex-col gap-0.5">
-      <div className="bg-default-neutral" {...contextMenuHandlers}>
+      <div className="bg-neutral" {...contextMenuHandlers}>
         <div
           ref={contentRef}
           className={containerClasses.join(" ")}
@@ -150,7 +148,7 @@ export default function Post({
         </div>
         {isTruncated && isLargePost && (
           <button
-            className="w-full bg-default-dark p-2"
+            className="w-full bg-dark p-2"
             onClick={() => setIsTruncated(false)}
           >
             Show more
@@ -200,13 +198,13 @@ export default function Post({
         </>
       )}
 
-      <div className="bg-default-neutral">
+      <div className="bg-neutral">
         <Link
           href={`/profile/~${author.nickname}`}
           className="flex text-sm items-center"
         >
           <ProfilePicture size="small" user={author} />
-          <div className="p-4 text-default-primary">~{author.nickname}</div>
+          <div className="p-4 text-primary">~{author.nickname}</div>
           <div className="ml-auto pr-4" title={createdAt}>
             {timestamp}
           </div>

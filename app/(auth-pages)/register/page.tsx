@@ -10,7 +10,7 @@ export default async function Page() {
   return (
     <WideLayout>
       <Breadcrumbs hierachy={hierarchy} currentTitle="Create account" />
-      <div className="bg-default-neutral p-4">
+      <div className="bg-neutral p-4">
         <div className="pb-4">
           We are excited for you to try out *NixConnect! First, we need you to
           fill a couple of things about you, i.e. your preferred persona.

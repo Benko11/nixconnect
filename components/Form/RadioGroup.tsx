@@ -28,7 +28,7 @@ export default function RadioGroup({
       className="cursor-pointer"
     >
       <div className="flex items-center gap-4 relative">
-        <div className="bg-default-dark p-4 py-10">
+        <div className="bg-dark p-4 py-10">
           <input
             type="radio"
             name={name}
@@ -40,10 +40,10 @@ export default function RadioGroup({
           />
           <div className="flex items-center justify-center">
             <div
-              className={`w-4 h-4 bg-transparent ${key === selected ? "bg-default-secondary" : "bg-default-light"}`}
+              className={`w-4 h-4 bg-transparent ${key === selected ? "bg-secondary" : "bg-light"}`}
             >
               <div
-                className={`translate-x-1 translate-y-1 w-2 h-2 bg-transparent ${key === selected && "bg-default-light"}`}
+                className={`translate-x-1 translate-y-1 w-2 h-2 bg-transparent ${key === selected && "bg-light"}`}
               ></div>
             </div>
           </div>

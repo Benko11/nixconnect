@@ -21,14 +21,14 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-display bg-default-background text-default-light">
+      <body className="font-display bg-background text-light">
         <ToastMessageWrapper>
           <QueryClientWrapper>
             <UserWrapper>
               <PreferencesWrapper>
                 <DisableRightClick />
                 <nav
-                  className="bg-default-primary fixed w-full text-default-dark flex"
+                  className="bg-primary fixed w-full text-dark flex"
                   style={{ zIndex: 1000 }}
                 >
                   <Link href="/" className="p-1 nixconnect">

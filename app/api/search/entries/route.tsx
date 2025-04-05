@@ -1,4 +1,4 @@
-import { addSearchQuery, getRecentSearches } from "@/actions/search";
+import { addSearchQueries, getRecentSearches } from "@/actions/search";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
@@ -12,8 +12,12 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const form = await request.json();
+  console.log(form);
   try {
-    await addSearchQuery(form.query);
+    await addSearchQueries(
+      new Set(form.queries.map((q: string) => q.toLowerCase())),
+      form.postId
+    );
     return NextResponse.json({ message: "Search entry added" });
   } catch (err) {
     console.error(err);

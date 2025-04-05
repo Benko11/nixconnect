@@ -46,7 +46,7 @@ export default function Pronouns({
   return (
     <div>
       <h3>
-        Pronouns <span className="text-default-error">*</span>
+        Pronouns <span className="text-error">*</span>
       </h3>
       {displayPronouns()}
       Current pronouns: {displayCurrentPronouns()}

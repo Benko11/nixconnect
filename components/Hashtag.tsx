@@ -6,7 +6,7 @@ interface HashtagProps {
 
 export default function Hashtag({ name }: HashtagProps) {
   return (
-    <Link href={`#${name}`} className="text-default-primary">
+    <Link href={`#${name}`} className="text-primary">
       #{name}
     </Link>
   );

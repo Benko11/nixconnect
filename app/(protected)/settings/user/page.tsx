@@ -69,7 +69,7 @@ export default function Page() {
         ]}
         currentTitle="User"
       />
-      <div className="bg-default-neutral mt-4 p-4">
+      <div className="bg-neutral mt-4 p-4">
         <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
           <div>
             <NixInput

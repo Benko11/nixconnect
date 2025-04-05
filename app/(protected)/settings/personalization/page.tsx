@@ -7,7 +7,6 @@ import { usePreference } from "@/contexts/PreferencesContext";
 import { useToastMessage } from "@/contexts/ToastMessageContext";
 import { useAuthUser } from "@/contexts/UserContext";
 import ColourScheme from "@/types/ColourScheme";
-import ColourSchemeType from "@/types/ColourScheme";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
 
@@ -30,6 +29,7 @@ export default function Page() {
     },
     onSuccess: () => {
       refetchUser();
+      refetchPrefs();
       toastMessage.show("Applied theme", 8000);
     },
     onError: () => {
@@ -38,7 +38,7 @@ export default function Page() {
   });
 
   const { refetchUser } = useAuthUser();
-  const { colourScheme } = usePreference();
+  const { colourScheme, refetchPrefs } = usePreference();
   const [selected, setSelected] = useState(colourScheme.current);
 
   const handleColourSchemeChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +61,7 @@ export default function Page() {
             labels={colourSchemes.map((c) => c.name)}
             descriptions={colourSchemes.map((c) => c.description)}
             visuals={colourSchemes.map((c) => (
-              <div className="w-20 aspect-square grid grid-cols-2">
+              <div className="w-20 aspect-square grid grid-cols-2" key={1}>
                 <div style={{ background: c.primaryColour }}></div>
                 <div style={{ background: c.secondaryColour }}></div>
                 <div style={{ background: c.accentColour }}></div>
@@ -87,7 +87,7 @@ export default function Page() {
       />
 
       <h3 className="text-xl mt-3 mb-1">Colour schemes</h3>
-      <div className="bg-default-neutral p-4">
+      <div className="bg-neutral p-4">
         {colourSchemesError ? (
           <div>Could not load colour schemes</div>
         ) : (
@@ -99,7 +99,7 @@ export default function Page() {
 }
 
 async function fetchColourSchemes() {
-  return await fetch("/api/preferences/colour-schemes").then((res) =>
+  return await fetch("/api/preferences/colour-schemes/redis").then((res) =>
     res.json()
   );
 }

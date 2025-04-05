@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { getUserById } from "./users";
+import { getUserById, getUserByNickname } from "./users";
 import { getDeltaTime } from "@/utils/getDeltaTime";
 
 export async function addComment(content: string, postId: string) {
@@ -21,16 +21,16 @@ export async function addComment(content: string, postId: string) {
 
 export async function getComments(postId: string) {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("posts")
-    .select("id,author_id,content,created_at")
-    .eq("main_post_id", postId)
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
+  const { data } = await supabase.rpc("get_simple_comment_tree", {
+    input_main_post_id: postId,
+    max_depth: 10,
+  });
   if (data == null) return;
 
   return await Promise.all(
+    // @ts-expect-error go to hell
     data.map(async (item) => {
+      console.log(item);
       const author = await getUserById(item.author_id);
       if (author == null || author.nickname == null)
         throw new Error("Error retrieving authors");
@@ -43,6 +43,8 @@ export async function getComments(postId: string) {
         content: item.content,
         created_at: item.created_at,
         timestamp,
+        index: item.comment_index,
+        replyToIndex: item.reply_to_index,
       };
     })
   );

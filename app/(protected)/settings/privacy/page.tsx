@@ -1,7 +1,6 @@
 "use client";
 
 import Breadcrumbs from "@/components/Breadcrumbs";
-import CheckboxGroup from "@/components/Form/CheckboxGroup";
 import CheckboxSingle from "@/components/Form/CheckboxSingle";
 import NarrowLayout from "@/components/layouts/NarrowLayout";
 import { usePreference } from "@/contexts/PreferencesContext";
@@ -33,8 +32,6 @@ export default function Page() {
     showPublicMailMutation.mutate(e.target.checked);
   };
 
-  const [selected, setSelected] = useState<string[]>([]);
-
   return (
     <NarrowLayout>
       <Breadcrumbs
@@ -45,7 +42,7 @@ export default function Page() {
         currentTitle="Privacy"
       />
 
-      <div className="bg-default-neutral p-4">
+      <div className="bg-neutral p-4">
         <form className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <CheckboxSingle

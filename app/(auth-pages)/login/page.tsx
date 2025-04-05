@@ -50,8 +50,8 @@ export default function Page() {
   return (
     <NarrowLayout>
       <h1 className="text-2xl pb-2">Log in</h1>
-      <div className="bg-default-neutral p-4">
-        {error && <div className="text-default-error">{error}</div>}
+      <div className="bg-neutral p-4">
+        {error && <div className="text-error">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col pb-4">
             <NixInput
@@ -72,11 +72,11 @@ export default function Page() {
           <div className="flex">
             <button
               type="submit"
-              className="text-default-dark bg-default-primary p-3 px-8 text-lg"
+              className="text-dark bg-primary p-3 px-8 text-lg"
             >
               Log In
             </button>
-            <Link className="text-default-primary  p-3 px-8" href="/register">
+            <Link className="text-primary  p-3 px-8" href="/register">
               Create account
             </Link>
             <GithubButton />
@@ -87,7 +87,7 @@ export default function Page() {
       </div>
       <div className="pt-4 flex gap-2">
         <div>Don&apos;t feel like making an account yet?</div>
-        <Link href="/feed" className="text-default-primary">
+        <Link href="/feed" className="text-primary">
           Preview the conversations
         </Link>
       </div>

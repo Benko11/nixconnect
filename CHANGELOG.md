@@ -32,18 +32,21 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **New radio components** - a new design language is present for the radio button menus that is consistent across forms
 - **New checkbox components** - custom look for checkboxes to reinforce visual identity of \*NixConnect
 - **Replies to comments**
-- **Redis caching for colour schemes**
-- **Hashtags and user handles in posts**
+- **Redis caching for colour schemes** - colour schemes are now served from a Redis server for better performance
+- **Hashtags and user handles in posts** - added posts can use hashtags, and mark other users with `~`
 
 ### Changed
 
+- **Nickname enforcement** - it is now enforced that the nickname can only contain alphanumeric characters
 - **Refactoring** - small reorganizations and more coherent code structure in many places
 - **Deleted marker** - when viewing individual posts if the post has been deleted, it is marked as such to the user
+- **Hashtag search** - instead of recent searches, the search results on the right now display current trends, which presently means that all hashtags from the posts are available to search
 
 ### Fixed
 
 - **Colour scheme switching** - making two changes in one session does not change the option
-- **Search entry fix** - when no results are showed, the search entry will not be visible
+- **Comment validation** - fixed the bug of creating an empty comment, and getting a false toast message of "Comment added"
+- **Remove irrelevant context menu options in comments** - hide "Delete" options from the context menu that require a user to be the author of the comment
 
 ## [0.2.4] - 2025-04-03
 

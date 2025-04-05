@@ -47,7 +47,7 @@ export async function searchPosts(query: string, page: number | null) {
   }
 }
 
-export async function addSearchQuery(query: string) {
+export async function addSearchQueries(queries: Set<String>, postId: string) {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
   const id = user.data.user?.id;
@@ -55,22 +55,20 @@ export async function addSearchQuery(query: string) {
     throw new Error("Access denied");
   }
 
-  const { error } = await supabase
-    .from("searches")
-    .insert({ user_id: id, query });
-  if (error) {
-    console.error(error);
-    throw new Error("Could not create search query log");
-  }
+  queries.forEach(async (query) => {
+    const { error } = await supabase
+      .from("searches")
+      .insert({ user_id: id, query, post_id: postId });
+    if (error) {
+      console.error(error);
+      throw new Error("Could not create search query log");
+    }
+  });
 }
 
 export async function getRecentSearches(limit = 15) {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("searches")
-    .select("id,query,created_at")
-    .order("created_at", { ascending: false })
-    .limit(limit);
+  const { data, error } = await supabase.rpc("get_recent_unique_queries");
 
   if (error) {
     console.error(error);

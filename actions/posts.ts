@@ -19,24 +19,19 @@ export async function createPost(content: string) {
   const userId = (await supabase.auth.getUser()).data.user?.id;
   if (userId == null) return;
 
-  const inserted = await supabase.from("posts").insert({
-    author_id: userId,
-    content,
-  });
+  const inserted = await supabase
+    .from("posts")
+    .insert({
+      author_id: userId,
+      content,
+    })
+    .select("id");
 
   return inserted;
 }
 
 export default async function deletePostById(id: string) {
   const supabase = await createClient();
-
-  // const { error: pingError } = await supabase
-  //   .from("post_pings")
-  //   .delete()
-  //   .eq("post_id", id);
-  // if (pingError) {
-  //   throw new Error(pingError.message);
-  // }
 
   const { error: postsError } = await supabase
     .from("posts")
@@ -47,6 +42,19 @@ export default async function deletePostById(id: string) {
   }
 
   return `Post ${id} deleted`;
+}
+
+export async function deleteHashtagsForPost(id: string) {
+  const supabase = await createClient();
+  const { error: postsError } = await supabase
+    .from("searches")
+    .delete()
+    .eq("post_id", id);
+  if (postsError) {
+    throw new Error(postsError.message);
+  }
+
+  return `Hashtags for post ${id} deleted`;
 }
 
 const LIMIT = 15;

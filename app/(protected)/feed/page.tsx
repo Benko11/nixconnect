@@ -42,7 +42,7 @@ export default function Page() {
         </div>
       )}
       {error ? (
-        <div className="text-default-error">
+        <div className="text-error">
           Something went wrong, please try refreshing the page.
         </div>
       ) : (

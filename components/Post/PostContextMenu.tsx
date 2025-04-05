@@ -8,8 +8,6 @@ import SharesheetIcon from "@/public/assets/icons/Sharesheet.png";
 import AsteriskIcon from "@/public/assets/icons/Asterisk.png";
 import BinIcon from "@/public/assets/icons/Bin.png";
 
-import { useToastMessage } from "@/contexts/ToastMessageContext";
-
 import { useAuthUser } from "@/contexts/UserContext";
 
 interface PostContextMenuProps {
@@ -38,7 +36,6 @@ export default function PostContextMenu({
     x: 0,
     y: 0,
   });
-  const toastMessage = useToastMessage();
   const { user } = useAuthUser();
   const isSignedIn = user != null;
 

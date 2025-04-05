@@ -9,7 +9,7 @@ export default function PrimaryButton({
 }: PrimaryButtonProps) {
   return (
     <button
-      className="bg-default-primary text-default-background p-2 disabled:opacity-70"
+      className="bg-primary text-background p-2 disabled:opacity-70"
       disabled={disabled}
     >
       {children}

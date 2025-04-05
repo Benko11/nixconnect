@@ -74,7 +74,7 @@ export default function PostActions({
     <>
       <div
         className={`${
-          isPinged ? `bg-default-accent` : ` bg-default-neutral`
+          isPinged ? `bg-accent` : ` bg-neutral`
         } cursor-pointer flex-grow`}
         onClick={onPingToggle}
       >
@@ -101,7 +101,7 @@ export default function PostActions({
                 img.avatarUrl?.trim() === "" ? (
                   <div
                     key={img.id}
-                    className="h-8 aspect-square flex items-center justify-center bg-default-dark"
+                    className="h-8 aspect-square flex items-center justify-center bg-dark"
                     title={img.nickname}
                   >
                     ~
@@ -118,10 +118,7 @@ export default function PostActions({
           </div>
         </div>
       </div>
-      <div
-        className={`bg-default-neutral px-6 ${sizing}`}
-        onClick={onCommentToggle}
-      >
+      <div className={`bg-neutral px-6 ${sizing}`} onClick={onCommentToggle}>
         <div className="flex items-center gap-1">
           <div>
             <Image src={BubbleIcon} alt="Comment" width={20} height={20} />
@@ -130,7 +127,7 @@ export default function PostActions({
         </div>
       </div>
       <div
-        className={`bg-default-neutral aspect-square ${sizing} px-3 relative`}
+        className={`bg-neutral aspect-square ${sizing} px-3 relative`}
         onClick={handleShowMore}
       >
         <div className="aspect-square">
@@ -139,31 +136,31 @@ export default function PostActions({
 
         {isMoreOpen && (
           <div
-            className="absolute border-4 border-default-dark bg-default-neutral top-12 right-0 w-40"
+            className="absolute border-4 border-dark bg-neutral top-12 right-0 w-40"
             style={{ zIndex: 1 }}
             ref={menuRef}
           >
             <div
-              className="cursor-pointer p-2 hover:bg-default-secondary active:bg-default-accent"
+              className="cursor-pointer p-2 hover:bg-secondary active:bg-accent"
               onClick={onView}
             >
               <ContextMenuItem icon={EyeIcon} label="View" />
             </div>
             <div
-              className="cursor-pointer p-2 hover:bg-default-secondary active:bg-default-accent"
+              className="cursor-pointer p-2 hover:bg-secondary active:bg-accent"
               onClick={onCopy}
             >
               <ContextMenuItem icon={ClipboardIcon} label="Copy" />
             </div>
             <div
-              className="cursor-pointer p-2 hover:bg-default-secondary active:bg-default-accent"
+              className="cursor-pointer p-2 hover:bg-secondary active:bg-accent"
               onClick={onShare}
             >
               <ContextMenuItem icon={SharesheetIcon} label="Share" />
             </div>
             {isOwnPost && !isDeleted && (
               <div
-                className="cursor-pointer p-2 hover:bg-default-secondary active:bg-default-accent"
+                className="cursor-pointer p-2 hover:bg-secondary active:bg-accent"
                 onClick={onDelete}
               >
                 <ContextMenuItem icon={BinIcon} label="Delete" />

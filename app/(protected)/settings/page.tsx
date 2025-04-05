@@ -17,8 +17,8 @@ export default function Settings() {
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         <Link href="/settings/user">
-          <div className="bg-default-neutral flex items-center gap-4">
-            <div className="bg-default-secondary h-16 aspect-square flex justify-center items-center">
+          <div className="bg-neutral flex items-center gap-4">
+            <div className="bg-secondary h-16 aspect-square flex justify-center items-center">
               <Image src={UserIcon} alt="User" width={24} height={24} />
             </div>
             <div>Information about me</div>
@@ -26,8 +26,8 @@ export default function Settings() {
         </Link>
 
         <Link href="/settings/personalization">
-          <div className="bg-default-neutral flex items-center gap-4">
-            <div className="bg-default-accent h-16 aspect-square flex justify-center items-center">
+          <div className="bg-neutral flex items-center gap-4">
+            <div className="bg-accent h-16 aspect-square flex justify-center items-center">
               <Image
                 src={BoldAsteriskIcon}
                 alt="Appearance"
@@ -40,8 +40,8 @@ export default function Settings() {
         </Link>
 
         <Link href="/settings/privacy">
-          <div className="bg-default-neutral flex items-center gap-4">
-            <div className="bg-default-accent h-16 aspect-square flex justify-center items-center">
+          <div className="bg-neutral flex items-center gap-4">
+            <div className="bg-accent h-16 aspect-square flex justify-center items-center">
               <Image src={PadlockIcon} alt="Privacy" width={24} height={24} />
             </div>
             <div>Privacy</div>
