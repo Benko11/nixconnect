@@ -27,6 +27,9 @@ CREATE TABLE IF NOT EXISTS user_pronouns (
     CONSTRAINT "user_pronouns_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES auth.users("id") ON DELETE SET NULL
 );
 
+ALTER TABLE user_pronouns
+ADD COLUMN order INTEGER;
+
 CREATE OR REPLACE FUNCTION prevent_last_pronoun_deletion()
 RETURNS TRIGGER AS $$
 BEGIN

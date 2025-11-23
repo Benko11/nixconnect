@@ -23,6 +23,21 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Hashtags** - users will be able to use hashtags and search posts with the hashtags
 - **Search** - users will be able to search for content of the posts and users
 
+## [0.3.1]
+
+### Added
+
+- **Basic admin structure**
+- **Bug tracker**
+
+### Fixed
+
+- **Hashtags not highlighting in the profile**
+- **Comments not being dynamically added to view**
+- **Too many options in the view for a single post**
+- **More options click bug**
+- **Rotate "Show More"** - the button for showing more options has been rotated
+
 ## [0.3] - 2025-04-05
 
 ### Added

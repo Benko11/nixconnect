@@ -44,7 +44,7 @@ export default function PostComments({
       await queryClient.invalidateQueries({
         queryKey: ["post-comments", postId],
       });
-      refetch();
+      await refetch();
       toastMessage.show("Comment added", 8000);
     },
     onError: (error) => {
@@ -73,8 +73,6 @@ export default function PostComments({
   };
 
   if (!isOpen) return null;
-
-  console.log(comments);
 
   return (
     <div className="bg-neutral p-2">
@@ -115,9 +113,10 @@ export default function PostComments({
               onReply={handleReply}
               comment={comment}
               key={comment.id}
-              refetch={() =>
-                queryClient.invalidateQueries({ queryKey: ["posts", postId] })
-              }
+              refetch={() => {
+                console.log("refetching");
+                queryClient.invalidateQueries({ queryKey: ["posts", postId] });
+              }}
             />
           );
         })}

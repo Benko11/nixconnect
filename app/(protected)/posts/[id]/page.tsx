@@ -60,8 +60,6 @@ export default function Page() {
     return notFound();
   }
 
-  console.log(post.comments);
-
   return (
     <NarrowLayout>
       <Breadcrumbs
