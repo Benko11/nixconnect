@@ -129,7 +129,7 @@ export function usePreference() {
 }
 
 async function fetchColourSchemes() {
-  return await fetch("/api/preferences/colour-schemes/redis").then((res) =>
+  return await fetch("/api/preferences/colour-schemes").then((res) =>
     res.json()
   );
 }
