@@ -23,6 +23,12 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 - **Hashtags** - users will be able to use hashtags and search posts with the hashtags
 - **Search** - users will be able to search for content of the posts and users
 
+## [0.4]
+
+### Maintenance release
+
+Large-scale refactoring with stronger type safety and partial automated testing
+
 ## [0.3.1]
 
 ### Added

@@ -1,5 +1,5 @@
 import { getDeltaTime } from "@/utils/getDeltaTime";
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it } from "vitest";
 
 describe("getDeltaTime", () => {
   it("should return the correct number of seconds", () => {
