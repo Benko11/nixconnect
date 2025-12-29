@@ -7,3 +7,8 @@ export const softDeletes = {
   ...hasTimestamps,
   deletedAt: timestamp(),
 };
+
+export const onlySoftDeletes = {
+  ...creatable,
+  deletedAt: timestamp(),
+};

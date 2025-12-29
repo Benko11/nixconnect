@@ -9,4 +9,6 @@ export default defineConfig({
   },
   casing: "snake_case",
   schemaFilter: ["public", "auth"],
+  verbose: true,
+  strict: true,
 });
