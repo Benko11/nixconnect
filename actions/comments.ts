@@ -1,4 +1,3 @@
-import { createClient } from "@/utils/supabase/server";
 import { getUserById, getUserByNickname } from "./users";
 import { getDeltaTime } from "@/utils/getDeltaTime";
 
@@ -46,6 +45,6 @@ export async function getComments(postId: string) {
         index: item.comment_index,
         replyToIndex: item.reply_to_index,
       };
-    })
+    }),
   );
 }

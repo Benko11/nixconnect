@@ -1,4 +1,4 @@
-import { getColourSchemes } from "@/actions/colour-schemes";
+import { getAll as getColourSchemes } from "@/services/colour-scheme-service";
 import { NextResponse } from "next/server";
 
 export async function GET() {

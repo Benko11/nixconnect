@@ -7,7 +7,8 @@ export const colourSchemeTable = pgTable("colour_schemes", {
   primary: t.varchar().notNull(),
   secondary: t.varchar().notNull(),
   accent: t.varchar().notNull(),
+  error: t.varchar().notNull(),
   neutral: t.varchar().notNull(),
   foreground: t.varchar().notNull(),
-  error: t.varchar().notNull(),
+  description: t.varchar().notNull(),
 });

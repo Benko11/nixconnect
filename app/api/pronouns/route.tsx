@@ -1,4 +1,4 @@
-import { getAllPronouns } from "@/actions/pronouns";
+import { getAll as getAllPronouns } from "@/services/pronoun-service";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -9,7 +9,7 @@ export async function GET() {
     console.error(err);
     return NextResponse.json(
       { message: "Something went wrong with getting the pronouns" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

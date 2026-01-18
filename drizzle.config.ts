@@ -8,7 +8,7 @@ export default defineConfig({
     url: process.env.LOCAL_DB,
   },
   casing: "snake_case",
-  schemaFilter: ["public", "auth"],
+  schemaFilter: ["public", "auth", "posts"],
   verbose: true,
   strict: true,
 });

@@ -8,37 +8,44 @@ export default function Pronouns({
   selected,
   onChange,
 }: {
-  pronouns: Pronoun[][];
+  pronouns: Pronoun[];
   selected: string[];
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   function getPronounByWord(word: string) {
-    return pronouns
-      .filter((pronoun) => pronoun[0].word === word)
-      .map((p) => {
-        return [p[0].word, p[1].word];
-      })[0];
+    const currentGroup = pronouns.filter((p) => p.word === word)[0].group;
+    const selectedPronouns = pronouns
+      .filter((p) => p.group === currentGroup)
+      .sort((a, b) => a.order - b.order);
+
+    return selectedPronouns;
   }
 
   function displayCurrentPronouns() {
     if (selected.length === 0) return "-";
+    if (selected.length === 1) {
+      console.log(getPronounByWord(selected[0]).map((p) => p.word));
 
-    if (selected.length === 1) return getPronounByWord(selected[0]).join("/");
-
-    if (selected.length === 2)
-      return selected.map((p) => getPronounByWord(p)[0]).join("/");
+      return getPronounByWord(selected[0])
+        .map((p) => p.word)
+        .join("/");
+    }
+    if (selected.length === 2) return selected.join("/");
 
     return "any";
   }
 
   function displayPronouns() {
+    const mainPronouns = pronouns
+      .filter((p) => p.order === 0)
+      .map((p) => p.word);
     return (
       <CheckboxGroup
         name="pronouns"
         onChange={onChange}
         selected={selected}
-        labels={pronouns.map((p) => p[0].word)}
-        values={pronouns.map((p) => p[0].word)}
+        labels={mainPronouns}
+        values={mainPronouns}
       />
     );
   }

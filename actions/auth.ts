@@ -1,38 +1,35 @@
 import { ConfirmDataClient } from "@/types/ConfirmDataClient";
 import LoginClient from "@/types/LoginClient";
 import RegisterClient from "@/types/RegisterClient";
-import { createClient } from "@/utils/supabase/server";
 import { z } from "zod";
 import { getAllPronouns } from "./pronouns";
 import isAlphaNumericString from "@/utils/isAlphaNumericString";
 
 export async function signIn({ nickname, password }: LoginClient) {
-  const supabase = await createClient();
-  const { data: user } = await supabase
-    .from("users")
-    .select("email")
-    .eq("nickname", nickname)
-    .maybeSingle();
-  if (user == null) {
-    throw new Error("This set of credentials does not match our records");
-  }
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email: user.email,
-    password,
-  });
-
-  if (error) {
-    const message = error.message.includes("confirm")
-      ? "Please check your inbox to verify your email"
-      : "This set of credentials does not match our records";
-    throw new Error(message);
-  }
+  // const supabase = await createClient();
+  // const { data: user } = await supabase
+  //   .from("users")
+  //   .select("email")
+  //   .eq("nickname", nickname)
+  //   .maybeSingle();
+  // if (user == null) {
+  //   throw new Error("This set of credentials does not match our records");
+  // }
+  // const { error } = await supabase.auth.signInWithPassword({
+  //   email: user.email,
+  //   password,
+  // });
+  // if (error) {
+  //   const message = error.message.includes("confirm")
+  //     ? "Please check your inbox to verify your email"
+  //     : "This set of credentials does not match our records";
+  //   throw new Error(message);
+  // }
 }
 
 export async function signOut() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
+  // const supabase = await createClient();
+  // await supabase.auth.signOut();
 }
 
 export async function signUp({
@@ -83,45 +80,45 @@ export async function signUp({
     return { errors };
   }
 
-  const supabase = await createClient();
-  const { data: userExists } = await supabase
-    .from("users")
-    .select("*")
-    .ilike("nickname", nickname.toLowerCase())
-    .maybeSingle();
+  // const supabase = await createClient();
+  // const { data: userExists } = await supabase
+  //   .from("users")
+  //   .select("*")
+  //   .ilike("nickname", nickname.toLowerCase())
+  //   .maybeSingle();
 
-  if (userExists != null)
-    throw new Error(
-      "User with selected nickname already exists, please try something else"
-    ).message;
+  // if (userExists != null)
+  //   throw new Error(
+  //     "User with selected nickname already exists, please try something else",
+  //   ).message;
 
-  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { data: { first_name: nickname, last_name: "" } },
-  });
-  if (signUpError) throw new Error(signUpError.message).message;
+  // const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+  //   email,
+  //   password,
+  //   options: { data: { first_name: nickname, last_name: "" } },
+  // });
+  // if (signUpError) throw new Error(signUpError.message).message;
 
-  const userId = signUpData.user!.id;
+  // const userId = signUpData.user!.id;
 
-  const { error: userError } = await supabase
-    .from("users")
-    .insert({ id: userId, nickname, email, gender_id: gender });
-  if (userError) throw new Error(userError.message);
+  // const { error: userError } = await supabase
+  //   .from("users")
+  //   .insert({ id: userId, nickname, email, gender_id: gender });
+  // if (userError) throw new Error(userError.message);
 
   const pronounsRaw = await getAllPronouns();
 
   const pronounIds = pronouns.flatMap((word) =>
     pronounsRaw.flatMap((group) =>
-      group.filter((pronoun) => pronoun.word === word).flatMap((w) => w.id)
-    )
+      group.filter((pronoun) => pronoun.word === word).flatMap((w) => w.id),
+    ),
   );
 
-  pronounIds.forEach(async (p) => {
-    await supabase
-      .from("user_pronouns")
-      .insert({ user_id: userId, pronoun_id: p });
-  });
+  // pronounIds.forEach(async (p) => {
+  //   await supabase
+  //     .from("user_pronouns")
+  //     .insert({ user_id: userId, pronoun_id: p });
+  // });
 }
 
 export async function confirmInformation({
@@ -146,33 +143,33 @@ export async function confirmInformation({
     return { errors };
   }
 
-  const supabase = await createClient();
-  const auth = await supabase.auth.getUser();
-  const user = auth.data.user;
-  if (user == null) return null;
+  // const supabase = await createClient();
+  // const auth = await supabase.auth.getUser();
+  // const user = auth.data.user;
+  // if (user == null) return null;
 
-  const email = user.email;
-  const id = user.id;
-  if (email == null || id == null) return null;
+  // const email = user.email;
+  // const id = user.id;
+  // if (email == null || id == null) return null;
 
-  const { error } = await supabase.from("users").insert({
-    id,
-    email,
-    nickname,
-    gender,
-  });
+  // const { error } = await supabase.from("users").insert({
+  //   id,
+  //   email,
+  //   nickname,
+  //   gender,
+  // });
 
-  if (error) throw new Error(error.message);
+  // if (error) throw new Error(error.message);
 
-  const pronounsRaw = await getAllPronouns();
+  // const pronounsRaw = await getAllPronouns();
 
-  const pronounIds = pronouns.flatMap((word) =>
-    pronounsRaw.flatMap((group) =>
-      group.filter((pronoun) => pronoun.word === word).flatMap((w) => w.id)
-    )
-  );
+  // const pronounIds = pronouns.flatMap((word) =>
+  //   pronounsRaw.flatMap((group) =>
+  //     group.filter((pronoun) => pronoun.word === word).flatMap((w) => w.id),
+  //   ),
+  // );
 
-  pronounIds.forEach(async (p) => {
-    await supabase.from("user_pronouns").insert({ user_id: id, pronoun_id: p });
-  });
+  // pronounIds.forEach(async (p) => {
+  //   await supabase.from("user_pronouns").insert({ user_id: id, pronoun_id: p });
+  // });
 }

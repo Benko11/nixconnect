@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
-import { createClient } from "./supabase/server";
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 
 /**
  * Redirects to a specified path with an encoded message as a query parameter.
@@ -13,65 +11,69 @@ import { twMerge } from "tailwind-merge";
 export function encodedRedirect(
   type: "error" | "success",
   path: string,
-  message: string
+  message: string,
 ) {
-  return redirect(`${path}?${type}=${encodeURIComponent(message)}`);
+  // return redirect(`${path}?${type}=${encodeURIComponent(message)}`);
 }
 
 export async function protectRoute() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user == null) {
-    return redirect("/login");
-  }
+  // const supabase = await createClient();
+  // const {
+  //   data: { user },
+  // } = await supabase.auth.getUser();
+  // if (user == null) {
+  //   return redirect("/login");
+  // }
 }
 
 export async function dismissRoute() {
-  const supabase = await createClient();
+  // const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user != null) {
-    return redirect("/feed");
-  }
+  // const {
+  //   data: { user },
+  // } = await supabase.auth.getUser();
+  // if (user != null) {
+  //   return redirect("/feed");
+  // }
+  return false;
 }
 
 export async function retrieveClient() {
-  const supabase = await createClient();
+  // const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user == null) {
-    return;
-  }
+  // const {
+  //   data: { user },
+  // } = await supabase.auth.getUser();
+  // if (user == null) {
+  //   return;
+  // }
 
-  const { data: me, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
+  // const { data: me, error } = await supabase
+  //   .from("users")
+  //   .select("*")
+  //   .eq("id", user.id)
+  //   .maybeSingle();
 
-  if (error) console.log(error);
+  // if (error) console.log(error);
 
-  return me;
+  // return me;
+
+  return false;
 }
 
 export async function requireBasicInfo() {
-  const x = await retrieveClient();
-  if (x == null) {
-    return redirect("/first-time");
-  }
+  // const x = await retrieveClient();
+  // if (x == null) {
+  //   return redirect("/first-time");
+  // }
+  return false;
 }
 
 export async function isSignedIn() {
-  const supabase = await createClient();
-  const userId = (await supabase.auth.getUser()).data.user?.id;
-  return userId != null;
+  // const supabase = await createClient();
+  // const userId = (await supabase.auth.getUser()).data.user?.id;
+  // return userId != null;
+  return false;
 }
 
 export function getRangeIndexes(pageNumber: number, LIMIT: number) {
@@ -81,5 +83,6 @@ export function getRangeIndexes(pageNumber: number, LIMIT: number) {
 }
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return "";
+  // return twMerge(clsx(inputs));
 }

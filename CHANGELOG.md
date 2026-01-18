@@ -10,24 +10,32 @@ This section describes a roadmap to turn \*NixConnect into an MVP (Minimum Viabl
 
 - **Settings** - design for the settings page with different categories
 - **User account management** - users can delete their accounts and change various information (except nickname)
-- **Colour scheme** - users can change colour schemes
 - **Admin role** - administrator account has extra privileges over the rest of the network, it can be extended to other accounts
-- **Single-click post interaction** - user can left-click a post and interact with it using the options in the statusbar
-- **Comments to posts** - user can add comments to posts in very much the same way
-- **More info in the post** - more information about the post can be viewed in the post (number of pings, number of comments, clicking on each shows details)
-- **Soft delete** - implement soft delete mechanisms
+- **Single-click post interaction** - user can left-click a post and interact with it using the options in the status bar
 - **Rich text editing for posts and comments** - users can use rich-text editing options when making a post or a comment
-- **Database-level security enforcements** - properly implement the RLS policies in the tables
 - **Image upload in posts** - upload images in posts
 - **Story/gallery posts** - upload posts with a carousel of images
-- **Hashtags** - users will be able to use hashtags and search posts with the hashtags
-- **Search** - users will be able to search for content of the posts and users
 
 ## [0.4]
 
 ### Maintenance release
 
 Large-scale refactoring with stronger type safety and partial automated testing
+
+### Added
+
+- **Partial automated testing** - using Vitest
+- **Bug tracker** - inform me, the admin about any possible issues with the system
+- **More robust database design** - more tables, more timestamps, more flexibility going forward (inspired by Mastodon's database structure)
+
+### Changed
+
+- **Custom authentication** - Supabase authentication has been removed in place of using NextAuth.js
+- **Working registration** - You can now actually sign up for a \*NixConnect account without need for my intervention or using a GitHub account
+
+### Removed
+
+- **Supabase removal** - it is replaced by Drizzle ORM, cloud is handled by Neon Postgres
 
 ## [0.3.1]
 
