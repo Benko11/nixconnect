@@ -10,7 +10,6 @@ This project is possible due to support and work of many people, here are some n
 
 - [~benko11](https://nixconnect.vercel.app/profile/~benko11) - author, developer and maintainer of the project
 - [~cxivo](https://nixconnect.vercel.app/profile/~cxivo) - made some icons, ardent supporter of the project
-- [~fanoplanes](https://nixconnect.vercel.app/profile/~fanoplanes) - user testing, emotional support ❤️
 - my mum and other family and friends
 
 Retro fonts used here are downloaded from the site: [https://int10h.org/](https://int10h.org/) Huge kudos to them!
