@@ -1,105 +1,104 @@
-import getPronounsForUser from "./pronouns";
-import { getGenderByUser } from "./genders";
+import { db } from "@/db/db";
+import { usersTable } from "@/db/schemas/users";
+import { eq, ilike } from "drizzle-orm";
+import { auth } from "@/auth";
 import { getAuthUserColourScheme } from "./colour-schemes";
 
 export async function getUserById(id: string) {
-  // const supabase = await createClient();
-  // const { data: user, error: userError } = await supabase
-  //   .from("users")
-  //   .select("id,nickname,avatar_url")
-  //   .eq("id", id)
-  //   .maybeSingle();
-  // if (userError) throw new Error(userError.message);
-  // if (user == null) return null;
+  const user = await db.query.usersTable.findFirst({
+    where: eq(usersTable.id, id),
+    with: {
+      gender: true,
+      pronouns: {
+        with: {
+          pronoun: true,
+        },
+      },
+    },
+  });
 
-  // let gender;
-  // try {
-  //   gender = await getGenderByUser(id);
-  // } catch {}
-  // const pronouns = await getPronounsForUser(id);
+  if (!user) return null;
 
-  // return {
-  //   id: user.id,
-  //   nickname: user.nickname,
-  //   avatarUrl: user.avatar_url,
-  //   pronouns,
-  //   gender,
-  // };
-
-  return [];
+  return {
+    id: user.id,
+    nickname: user.nickname,
+    avatarUrl: (user as any).avatar_url, // Assuming standard naming check
+    pronouns: user.pronouns.map(p => p.pronoun.word),
+    gender: user.gender?.name,
+  };
 }
 
 export async function getRawAuthUser() {
-  // const supabase = await createClient();
-  // const authUser = await supabase.auth.getUser();
-  // if (authUser == null) throw new Error("Unauthorized access");
+  const session = await auth();
+  const id = session?.user?.id;
+  if (!id) throw new Error("Unauthorized access");
 
-  // const id = authUser.data.user?.id;
-  // if (id == null) throw new Error("Unauthorized access");
+  const user = await db.query.usersTable.findFirst({
+    where: eq(usersTable.id, id),
+    with: {
+      gender: true,
+      pronouns: {
+        with: {
+          pronoun: true,
+        },
+      },
+    },
+  });
 
-  // const { data: user, error: userError } = await supabase
-  //   .from("users")
-  //   .select("*")
-  //   .eq("id", id)
-  //   .maybeSingle();
-  // if (userError) throw new Error(userError.message);
-  // if (user == null) return null;
+  if (!user) return null;
 
-  // const gender = await getGenderByUser(id);
-  // const pronouns = await getPronounsForUser(id);
-
-  // return {
-  //   id: user.id,
-  //   nickname: user.nickname,
-  //   email: user.email,
-  //   avatarUrl: user.avatar_url,
-  //   pronouns,
-  //   gender,
-  // };
-
-  return [];
+  return {
+    id: user.id,
+    nickname: user.nickname,
+    email: user.email,
+    avatarUrl: (user as any).avatar_url,
+    pronouns: user.pronouns.map(p => p.pronoun.word),
+    gender: user.gender?.name,
+  };
 }
 
 export async function getAuthUser() {
-  // const supabase = await createClient();
-  // const auth = await supabase.auth.getUser();
-  // const user = auth.data.user;
+  const session = await auth();
+  const user = session?.user;
+  if (!user) throw new Error("Empty user");
 
-  // const colourScheme = await getAuthUserColourScheme();
+  const colourScheme = await getAuthUserColourScheme();
+  const userAdditionalData = await getRawAuthUser();
 
-  // if (user == null) throw new Error("Empty user");
+  if (!userAdditionalData) return null;
 
-  // const userAdditionalData = await getRawAuthUser();
-
-  // const userObject = {
-  //   id: user.id,
-  //   nickname: userAdditionalData?.nickname,
-  //   email: userAdditionalData?.email,
-  //   gender: userAdditionalData?.gender,
-  //   pronouns: userAdditionalData?.pronouns,
-  //   avatarUrl: userAdditionalData?.avatarUrl,
-  //   preferences: { ...colourScheme },
-  // };
-
-  // return userObject;
-
-  return [];
+  return {
+    id: user.id,
+    nickname: userAdditionalData.nickname,
+    email: userAdditionalData.email,
+    gender: userAdditionalData.gender,
+    pronouns: userAdditionalData.pronouns,
+    avatarUrl: userAdditionalData.avatarUrl,
+    preferences: { ...colourScheme },
+  };
 }
 
 export async function getUserByNickname(nickname: string) {
-  // const supabase = await createClient();
-  // const { data: user } = await supabase
-  //   .from("users")
-  //   .select("*")
-  //   .ilike("nickname", nickname.toLowerCase())
-  //   .maybeSingle();
-  // user.avatarUrl = user.avatar_url;
-  // user.avatar_url = undefined;
+  const user = await db.query.usersTable.findFirst({
+    where: ilike(usersTable.nickname, nickname.toLowerCase()),
+    with: {
+      gender: true,
+      pronouns: {
+        with: {
+          pronoun: true,
+        },
+      },
+    },
+  });
 
-  // const pronouns = await getPronounsForUser(user.id);
-  // const gender = await getGenderByUser(user.id);
+  if (!user) return null;
 
-  // return { ...user, pronouns, gender };
-
-  return [];
+  return {
+    id: user.id,
+    nickname: user.nickname,
+    email: user.email,
+    avatarUrl: (user as any).avatar_url,
+    pronouns: user.pronouns.map(p => p.pronoun.word),
+    gender: user.gender?.name,
+  };
 }

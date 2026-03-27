@@ -1,44 +1,45 @@
+import { db } from "@/db/db";
+import { postsPingsTable } from "@/db/schemas/posts-pings";
+import { eq, and } from "drizzle-orm";
 import { getDeltaTime } from "@/utils/getDeltaTime";
-import { createClient } from "@/utils/supabase/server";
-import { NextResponse } from "next/server";
 import { getUserById } from "./users";
 
 export async function pingExists(userId: string, postId: string) {
-  const supabase = await createClient();
+  const ping = await db.query.postsPingsTable.findFirst({
+    where: and(
+      eq(postsPingsTable.userId, userId),
+      eq(postsPingsTable.postId, postId)
+    ),
+  });
 
-  const { data: ping, error: pingError } = await supabase
-    .from("post_pings")
-    .select()
-    .eq("user_id", userId)
-    .eq("post_id", postId)
-    .maybeSingle();
-  if (pingError)
-    return NextResponse.json({ message: pingError.message }, { status: 500 });
   return ping != null;
 }
 
 export async function getPingsForPost(postId: string) {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("post_pings")
-    .select()
-    .eq("post_id", postId);
-  if (data == null) return;
+  const data = await db.query.postsPingsTable.findMany({
+    where: eq(postsPingsTable.postId, postId),
+  });
+
+  if (!data) return [];
 
   const pings = await Promise.all(
     data.map(async (item) => {
-      const author = await getUserById(item.user_id);
-      const timestamp = getDeltaTime(item.created_at);
-      if (author == null || author.nickname == null)
-        throw new Error("Error retrieving authors");
+      const author = await getUserById(item.userId);
+      const timestamp = getDeltaTime(item.createdAt);
+      if (author == null || author.nickname == null) {
+        // Log error but don't crash the whole list fetch if one author is missing
+        console.error(`Error retrieving author for user_id: ${item.userId}`);
+        return null;
+      }
 
       return {
         id: item.id,
         author,
-        createdAt: item.created_at,
+        createdAt: item.createdAt,
         timestamp,
       };
     })
   );
-  return pings;
+
+  return pings.filter((p): p is NonNullable<typeof p> => p !== null);
 }

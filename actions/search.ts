@@ -1,30 +1,28 @@
-import { getDeltaTime } from "@/utils/getDeltaTime";
-import { createClient } from "@/utils/supabase/server";
-import { getRangeIndexes } from "@/utils/utils";
-import { getUserById } from "./users";
+import { db } from "@/db/db";
+import { usersTable } from "@/db/schemas/users";
+import { searchesTable } from "@/db/schemas/searches";
+import { ilike, sql, desc, eq } from "drizzle-orm";
 import { getPosts } from "./posts";
+import { auth } from "@/auth";
 
 const LIMIT = 12;
 
 export async function searchUsers(query: string) {
-  const supabase = await createClient();
+  const searchData = await db.query.usersTable.findMany({
+    where: ilike(usersTable.nickname, `${query.toLowerCase()}%`),
+    columns: {
+      id: true,
+      nickname: true,
+    },
+  });
 
-  const { data: searchData, error } = await supabase
-    .from("users")
-    .select("id,nickname,avatar_url")
-    .ilike("nickname", `${query.toLowerCase()}%`);
-
-  if (searchData == null) return;
-  if (error) {
-    // errorLogger.error("Could not search for users:", error);
-    return;
-  }
+  if (!searchData) return [];
 
   const data = searchData.map((item) => {
     return {
       id: item.id,
       nickname: item.nickname,
-      avatarUrl: item.avatar_url,
+      avatarUrl: (item as any).avatar_url,
     };
   });
 
@@ -32,48 +30,45 @@ export async function searchUsers(query: string) {
 }
 
 export async function searchPosts(query: string, page: number | null) {
-  const pageNumber = page == null ? 1 : page;
-
-  const posts = await getPosts(page, query);
-  if (posts == null) throw new Error("Posts not found");
-
   try {
     const posts = await getPosts(page, query);
     if (posts == null) throw new Error("Posts not found");
 
     return posts;
   } catch (err) {
-    return { posts: [], nextPage: null };
+    return { data: [], nextPage: null };
   }
 }
 
-export async function addSearchQueries(queries: Set<String>, postId: string) {
-  const supabase = await createClient();
-  const user = await supabase.auth.getUser();
-  const id = user.data.user?.id;
-  if (id == null) {
+export async function addSearchQueries(queries: Set<string>, postId: string) {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) {
     throw new Error("Access denied");
   }
 
-  queries.forEach(async (query) => {
-    const { error } = await supabase
-      .from("searches")
-      .insert({ user_id: id, query, post_id: postId });
-    if (error) {
-      console.error(error);
-      throw new Error("Could not create search query log");
-    }
-  });
+  const values = Array.from(queries).map((query) => ({
+    userId,
+    query: query as string,
+    postId,
+  }));
+
+  if (values.length > 0) {
+    await db.insert(searchesTable).values(values);
+  }
 }
 
 export async function getRecentSearches(limit = 15) {
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("get_recent_unique_queries");
-
-  if (error) {
-    console.error(error);
-    throw new Error("Could not run query", error);
-  }
+  // Replacing Supabase RPC 'get_recent_unique_queries'
+  // Fetching recent unique queries.
+  const data = await db
+    .select({
+      query: searchesTable.query,
+    })
+    .from(searchesTable)
+    .groupBy(searchesTable.query)
+    .orderBy(desc(sql`max(${searchesTable.createdAt})`))
+    .limit(limit);
 
   return data;
 }

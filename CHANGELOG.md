@@ -32,10 +32,12 @@ Large-scale refactoring with stronger type safety and partial automated testing
 
 - **Custom authentication** - Supabase authentication has been removed in place of using NextAuth.js
 - **Working registration** - You can now actually sign up for a \*NixConnect account without need for my intervention or using a GitHub account
+- **Updated dependencies** - many security vulnerabilities have been fixed by upgrading existing packages
 
 ### Removed
 
 - **Supabase removal** - it is replaced by Drizzle ORM, cloud is handled by Neon Postgres
+- **REDIS removal** - there were no tangible benefits to using the technology (not at this _zero_ scale), so it was rolled back
 
 ## [0.3.1]
 

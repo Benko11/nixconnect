@@ -1,43 +1,43 @@
-import UserDataClient from "@/types/UserDataClient";
+import { db } from "@/db/db";
+import { usersTable } from "@/db/schemas/users";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { auth } from "@/auth";
 
-export async function updateAuthUserInfo(data: UserDataClient) {
-  // const supabase = await createClient();
-  // const authUser = await supabase.auth.getUser();
-  // const id = authUser.data.user?.id;
+export async function updateAuthUserInfo(data: { email: string; avatarUrl: string }) {
+  const session = await auth();
+  const userId = session?.user?.id;
 
-  // if (authUser == null || id == null) {
-  //   throw new Error("Insufficent permissions to edit user data");
-  // }
+  if (!session || !userId) {
+    throw new Error("Insufficient permissions to edit user data");
+  }
 
-  // const formSchema = z.object({
-  //   email: z
-  //     .string()
-  //     .trim()
-  //     .email({ message: "Please use valid email address" }),
-  //   avatarUrl: z.union([
-  //     z.literal(""),
-  //     z
-  //       .string()
-  //       .trim()
-  //       .url({ message: "Please add a valid URL for the avatar" }),
-  //   ]),
-  // });
-  // const result = formSchema.safeParse(data);
-  // if (!result.success) {
-  //   const errors = result.error.format();
-  //   return { errors };
-  // }
+  const formSchema = z.object({
+    email: z
+      .string()
+      .trim()
+      .email({ message: "Please use valid email address" }),
+    avatarUrl: z.union([
+      z.literal(""),
+      z
+        .string()
+        .trim()
+        .url({ message: "Please add a valid URL for the avatar" }),
+    ]),
+  });
 
-  // const { email, avatarUrl } = data;
+  const result = formSchema.safeParse(data);
+  if (!result.success) {
+    const errors = result.error.format();
+    return { errors };
+  }
 
-  // const { error } = await supabase
-  //   .from("users")
-  //   .update({ email, avatar_url: avatarUrl })
-  //   .eq("id", id);
+  const { email, avatarUrl } = data;
 
-  // if (error) {
-  //   throw new Error("Something went wrong with your request");
-  // }
-  return [];
+  await db
+    .update(usersTable)
+    .set({ email, avatarUrl })
+    .where(eq(usersTable.id, userId));
+
+  return { success: true };
 }

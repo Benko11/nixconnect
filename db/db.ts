@@ -1,10 +1,10 @@
-import { drizzle } from "drizzle-orm/node-postgres";
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./index";
 
-export const db = drizzle(
-  "postgresql://benko11:benko11@localhost:5432/nixconnect_local",
-  {
+const sql = neon(process.env.DATABASE_URL!);
+
+export const db = drizzle(sql, {
     schema,
     casing: "snake_case",
-  },
-);
+});
